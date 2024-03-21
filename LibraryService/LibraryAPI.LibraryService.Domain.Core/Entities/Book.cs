@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace LibraryAPI.LibraryService.Domain.Core
+namespace LibraryAPI.LibraryService.Domain.Core.Entities
 {
     public class Book
     {

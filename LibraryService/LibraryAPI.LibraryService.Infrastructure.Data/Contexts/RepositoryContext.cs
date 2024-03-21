@@ -1,4 +1,5 @@
-using LibraryAPI.LibraryService.Domain.Core;
+using LibraryAPI.LibraryService.Domain.Core.Entities;
+using LibraryAPI.LibraryService.Infrastructure.Data.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.LibraryService.Infrastructure.Data.Contexts
@@ -14,7 +15,12 @@ namespace LibraryAPI.LibraryService.Infrastructure.Data.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfiguration(new BooksConfiguration());
+        }
+
+        public RepositoryContext()
+        {
+            Database.EnsureCreated();
         }
     }
 }

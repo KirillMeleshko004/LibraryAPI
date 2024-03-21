@@ -5,6 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.LibraryService.Infrastructure.Data.Repos
 {
+    /// <summary>
+    /// Base class for all repositories
+    /// Include basic CRUD operations
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
         private readonly RepositoryContext _context;

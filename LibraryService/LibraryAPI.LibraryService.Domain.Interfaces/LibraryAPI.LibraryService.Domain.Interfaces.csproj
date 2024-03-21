@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LibraryAPI.LibraryService.Domain.Core\LibraryAPI.LibraryService.Domain.Core.csproj" />
+    <ProjectReference Include="..\LibraryAPI.LibraryService.Shared\LibraryAPI.LibraryService.Shared.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
