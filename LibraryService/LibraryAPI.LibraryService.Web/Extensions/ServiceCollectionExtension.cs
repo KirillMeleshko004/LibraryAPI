@@ -2,7 +2,7 @@ using LibraryAPI.LibraryService.Domain.Interfaces.Loggers;
 using LibraryAPI.LibraryService.Infrastructure.Logging;
 using NLog;
 
-namespace LibraryAPI.LibraryService.Web
+namespace LibraryAPI.LibraryService.Web.Extensions
 {
     public static class ServiceCollectionExtension
     {

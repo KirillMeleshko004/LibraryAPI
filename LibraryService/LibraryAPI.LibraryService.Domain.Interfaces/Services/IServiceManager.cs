@@ -2,6 +2,6 @@ namespace LibraryAPI.LibraryService.Domain.Interfaces.Services
 {
     public interface IServiceManager
     {
-        IBooksService Books { get; set; }
+        IBooksService Books { get; }
     }
 }

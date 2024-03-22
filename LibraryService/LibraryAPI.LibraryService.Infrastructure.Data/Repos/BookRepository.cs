@@ -43,13 +43,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Data.Repos
             await Task.CompletedTask;
             return;
         }
-        public async Task UpdateBookAsync(Book book)
-        {
-            Update(book);
-            
-            await Task.CompletedTask;
-            return;
-        }
+        
         public async Task DeleteBookAsync(Book book)
         {
             Delete(book);

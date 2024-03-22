@@ -11,7 +11,6 @@ namespace LibraryAPI.LibraryService.Domain.Interfaces.Repos
         Task<Book> GetBookByISBNAsync(string ISBN, bool trackChanges);
 
         Task AddBookAsync(Book book);
-        Task UpdateBookAsync(Book book);
         Task DeleteBookAsync(Book book);
 
     }
