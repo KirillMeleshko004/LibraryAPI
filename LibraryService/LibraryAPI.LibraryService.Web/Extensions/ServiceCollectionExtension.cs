@@ -1,5 +1,11 @@
 using LibraryAPI.LibraryService.Domain.Interfaces.Loggers;
+using LibraryAPI.LibraryService.Domain.Interfaces.Repos;
+using LibraryAPI.LibraryService.Domain.Interfaces.Services;
+using LibraryAPI.LibraryService.Infrastructure.Data.Contexts;
+using LibraryAPI.LibraryService.Infrastructure.Data.Repos;
 using LibraryAPI.LibraryService.Infrastructure.Logging;
+using LibraryAPI.LibraryService.Services;
+using Microsoft.EntityFrameworkCore;
 using NLog;
 
 namespace LibraryAPI.LibraryService.Web.Extensions
@@ -26,6 +32,25 @@ namespace LibraryAPI.LibraryService.Web.Extensions
                         .AllowAnyOrigin();
                 });
             });
+        }
+
+        public static void ConfigureServices(this IServiceCollection services)
+        {
+            //pass assembly with mapping profiles
+            services.AddAutoMapper(typeof(Program).Assembly);
+
+            services.AddSingleton<IServiceManager, ServiceManager>();
+        }
+
+        public static void ConfigureData(this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            services.AddDbContext<RepositoryContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("DefaultDb"));
+            });
+
+            services.AddSingleton<IRepositoryManager, RepositoryManager>();
         }
     }
 }

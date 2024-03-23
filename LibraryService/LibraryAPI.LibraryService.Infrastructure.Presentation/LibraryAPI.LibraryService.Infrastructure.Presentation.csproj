@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LibraryAPI.LibraryService.Domain.Interfaces\LibraryAPI.LibraryService.Domain.Interfaces.csproj" />
+    <ProjectReference Include="..\LibraryAPI.LibraryService.Shared\LibraryAPI.LibraryService.Shared.csproj" />
   </ItemGroup>
 
 

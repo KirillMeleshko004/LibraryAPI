@@ -1,6 +1,5 @@
 using AutoMapper;
 using LibraryAPI.LibraryService.Domain.Core.Entities;
-using LibraryAPI.LibraryService.Domain.Core.Exceptions;
 using LibraryAPI.LibraryService.Domain.Interfaces.Loggers;
 using LibraryAPI.LibraryService.Domain.Interfaces.Repos;
 using LibraryAPI.LibraryService.Domain.Interfaces.Services;
@@ -25,25 +24,28 @@ namespace LibraryAPI.LibraryService.Services.Books
 
         public async Task<BookDto?> GetBookByIdAsync(Guid id)
         {
-            var book = await GetBookByIdAndCheckIfExistAsync(id,
-                trackChanges: false);
+            var book = await _repo.Books.GetBookByIdAsync(id, trackChanges : false);
+
+            if(book == null) return null;
 
             var bookDto = _mapper.Map<BookDto>(book);
 
             return bookDto;
         }
 
-        public async Task<BookDto?> GetBookByISBDAsync(string ISBN)
+        public async Task<BookDto?> GetBookByISBNAsync(string ISBN)
         {
-            var book = await GetBookByISBNAndCheckIfExistAsync(ISBN,
+            var book =  await _repo.Books.GetBookByISBNAsync(ISBN, 
                 trackChanges: false);
+
+            if(book == null) return null;
 
             var bookDto = _mapper.Map<BookDto>(book);
 
             return bookDto;            
         }
 
-        public async Task<IEnumerable<BookDto?>> GetBooksAsync(BookParameters parameters)
+        public async Task<IEnumerable<BookDto>> GetBooksAsync(BookParameters parameters)
         {            
             var books = await _repo.Books.GetBooksAsync(parameters, 
                 trackChanges: false);
@@ -65,35 +67,31 @@ namespace LibraryAPI.LibraryService.Services.Books
             return bookToReturn;
         }
 
-        public async Task UpdateBook(Guid id, BookForUpdateDto bookDto)
+        public async Task<BookDto?> UpdateBook(Guid id, BookForUpdateDto bookDto)
         {
-            var book = await GetBookByIdAndCheckIfExistAsync(id, trackChanges: true);
+            var book = await _repo.Books.GetBookByIdAsync(id, trackChanges : true);
+
+            if(book == null) return null;
 
             _mapper.Map(bookDto, book);
 
             await _repo.SaveChangesAsync();
+
+            var bookToReturn = _mapper.Map<BookDto>(book);
+
+            return bookToReturn;
         }
 
         public async Task DeleteBook(Guid id)
         {
-            var book = await GetBookByIdAndCheckIfExistAsync(id, trackChanges: false);
+            var book = await _repo.Books.GetBookByIdAsync(id, trackChanges : true);
+
+            //If book not exist or already deleted
+            if(book == null) return;
 
             await _repo.Books.DeleteBookAsync(book);
             
             await _repo.SaveChangesAsync();
-        }
-
-        private async Task<Book> GetBookByIdAndCheckIfExistAsync(Guid id, bool trackChanges)
-        {
-            return await _repo.Books.GetBookByIdAsync(id, trackChanges) ??
-                throw new BookNotFoundException(id);
-        }
-
-        private async Task<Book> GetBookByISBNAndCheckIfExistAsync(string ISBN, 
-            bool trackChanges)
-        {
-            return await _repo.Books.GetBookByISBNAsync(ISBN, trackChanges) ??
-                throw new BookNotFoundException(ISBN);
         }
 
     }

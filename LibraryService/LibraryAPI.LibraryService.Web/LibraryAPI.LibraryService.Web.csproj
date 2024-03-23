@@ -2,10 +2,17 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LibraryAPI.LibraryService.Infrastructure.Logging\LibraryAPI.LibraryService.Infrastructure.Logging.csproj" />
+    <ProjectReference Include="..\LibraryAPI.LibraryService.Services\LibraryAPI.LibraryService.Services.csproj" />
+    <ProjectReference Include="..\LibraryAPI.LibraryService.Infrastructure.Data\LibraryAPI.LibraryService.Infrastructure.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 
   <PropertyGroup>
