@@ -2,12 +2,13 @@ using LibraryAPI.LibraryService.Domain.Interfaces.Loggers;
 using LibraryAPI.LibraryService.Domain.Interfaces.Services;
 using LibraryAPI.LibraryService.Shared.DTOs;
 using LibraryAPI.LibraryService.Shared.RequestFeatures;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
 {
     [ApiController]
-    [Route("api/{controller}")]
+    [Route("api/books")]
     public class BooksController : ControllerBase
     {
         private readonly IServiceManager _services;
@@ -19,7 +20,10 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
             _logger = logger;
         }
 
+
         [HttpGet("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetBookById(Guid id)
         {
             var book = await _services.Books.GetBookByIdAsync(id);
@@ -33,6 +37,8 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
         } 
 
         [HttpGet("{ISBN}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetBookByISBN(string ISBN)
         {
             var book = await _services.Books.GetBookByISBNAsync(ISBN);
@@ -46,7 +52,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
         } 
 
         [HttpGet]
-        public async Task<IActionResult> GetBooks(BookParameters parameters)
+        public async Task<IActionResult> GetBooks([FromQuery]BookParameters parameters)
         {
             var books = await _services.Books.GetBooksAsync(parameters);
             
@@ -54,6 +60,8 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
         } 
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateBook(
             [FromBody]BookForCreationDto bookForCreation)
         {
@@ -65,6 +73,9 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
         } 
 
         [HttpPut("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateBook(Guid id,
             [FromBody]BookForUpdateDto bookForUpdate)
         {
@@ -79,6 +90,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
         } 
 
         [HttpDelete("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteBookById(Guid id)
         {
             await _services.Books.DeleteBook(id);

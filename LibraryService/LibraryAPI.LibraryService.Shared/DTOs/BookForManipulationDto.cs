@@ -1,12 +1,23 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace LibraryAPI.LibraryService.Shared.DTOs
 {
     public abstract record BookForManipulationDto
     {
-        public string? ISBN { get; set; }
-        public string? Title { get; set; }
-        public string? Author { get; set; }
-        public string? Genre { get; set; }
-        public string? Description { get; set; }
+        [Required]
+        public string ISBN { get; set; } = null!;
+
+        [Required]
+        public string Title { get; set; } = null!;
+
+        [Required]
+        public string Author { get; set; } = null!;
+
+        [Required]
+        public string Genre { get; set; } = null!;
+        
+        [Required]
+        public string Description { get; set; } = null!;
         
         public DateTime? BorrowTime { get; set; }
         public DateTime? ReturnTime { get; set; }

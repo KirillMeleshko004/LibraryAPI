@@ -25,15 +25,15 @@ namespace LibraryAPI.LibraryService.Infrastructure.Data.Repos
                 .SortBooks(parameters.OrderBy)
                 .ToListAsync();
         }
-        public async Task<Book> GetBookByIdAsync(Guid id, bool trackChanges)
+        public async Task<Book?> GetBookByIdAsync(Guid id, bool trackChanges)
         {
             return await Get(b => b.Id.Equals(id), trackChanges)
-                .SingleAsync();
+                .SingleOrDefaultAsync();
         }
-        public async Task<Book> GetBookByISBNAsync(string ISBN, bool trackChanges)
+        public async Task<Book?> GetBookByISBNAsync(string ISBN, bool trackChanges)
         {
             return await Get(b => b.ISBN.Equals(ISBN), trackChanges)
-                .SingleAsync();
+                .SingleOrDefaultAsync();
         }
 
         public async Task AddBookAsync(Book book)

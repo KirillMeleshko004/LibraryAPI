@@ -8,7 +8,7 @@ namespace LibraryAPI.LibraryService.Shared.RequestFeatures
     {
         const int MAX_PAGE_SIZE = 50;
 
-        public int PageNumber { get; set; }
+        public int PageNumber { get; set; } = 1;
 
         //Default page size
         private int _pageSize = 10;

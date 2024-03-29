@@ -26,7 +26,11 @@ namespace LibraryAPI.LibraryService.Services.Books
         {
             var book = await _repo.Books.GetBookByIdAsync(id, trackChanges : false);
 
-            if(book == null) return null;
+            if(book == null)
+            {
+                _logger.LogWarn($"Book with id: {id} was not found.");
+                return null;
+            }
 
             var bookDto = _mapper.Map<BookDto>(book);
 
@@ -38,7 +42,11 @@ namespace LibraryAPI.LibraryService.Services.Books
             var book =  await _repo.Books.GetBookByISBNAsync(ISBN, 
                 trackChanges: false);
 
-            if(book == null) return null;
+            if(book == null)
+            {
+                _logger.LogWarn($"Book with ISBN: {ISBN} was not found.");
+                return null;
+            }
 
             var bookDto = _mapper.Map<BookDto>(book);
 
@@ -62,6 +70,8 @@ namespace LibraryAPI.LibraryService.Services.Books
             await _repo.Books.AddBookAsync(book);
             await _repo.SaveChangesAsync();
 
+            _logger.LogInfo($"Book with id: {book.Id} was created.");
+
             var bookToReturn = _mapper.Map<BookDto>(book);
 
             return bookToReturn;
@@ -71,7 +81,11 @@ namespace LibraryAPI.LibraryService.Services.Books
         {
             var book = await _repo.Books.GetBookByIdAsync(id, trackChanges : true);
 
-            if(book == null) return null;
+            if(book == null)
+            {
+                _logger.LogWarn($"While updating, book with id: {id} was not found.");
+                return null;
+            }
 
             _mapper.Map(bookDto, book);
 
@@ -92,6 +106,8 @@ namespace LibraryAPI.LibraryService.Services.Books
             await _repo.Books.DeleteBookAsync(book);
             
             await _repo.SaveChangesAsync();
+
+            _logger.LogInfo($"Book with id: {book.Id} was deleted.");
         }
 
     }

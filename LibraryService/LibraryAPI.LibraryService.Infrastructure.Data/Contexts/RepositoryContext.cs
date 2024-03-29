@@ -18,7 +18,8 @@ namespace LibraryAPI.LibraryService.Infrastructure.Data.Contexts
             modelBuilder.ApplyConfiguration(new BooksConfiguration());
         }
 
-        public RepositoryContext()
+        public RepositoryContext(DbContextOptions<RepositoryContext> options) 
+            : base(options)
         {
             Database.EnsureCreated();
         }

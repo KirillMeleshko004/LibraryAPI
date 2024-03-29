@@ -7,8 +7,8 @@ namespace LibraryAPI.LibraryService.Domain.Interfaces.Repos
     {
         
         Task<IEnumerable<Book>> GetBooksAsync(BookParameters parameters, bool trackChanges);
-        Task<Book> GetBookByIdAsync(Guid id, bool trackChanges);
-        Task<Book> GetBookByISBNAsync(string ISBN, bool trackChanges);
+        Task<Book?> GetBookByIdAsync(Guid id, bool trackChanges);
+        Task<Book?> GetBookByISBNAsync(string ISBN, bool trackChanges);
 
         Task AddBookAsync(Book book);
         Task DeleteBookAsync(Book book);
