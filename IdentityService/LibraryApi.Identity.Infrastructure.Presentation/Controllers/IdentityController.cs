@@ -58,6 +58,16 @@ namespace LibraryAPI.Identity.Infrastructure.Presentation.Controllers
          return Ok(token);
       }
 
+      [HttpPost("refresh")]
+      public async Task<IActionResult> RefreshToken([FromBody]TokenDto expiredToken)
+      {
+         var token = await _services.Users.RefreshTokenAsync(expiredToken);
+
+         if(token == null) return Unauthorized();
+
+         return Ok(token);
+      }
+
       [Authorize]
       [HttpGet("test")]
       public IActionResult Test()

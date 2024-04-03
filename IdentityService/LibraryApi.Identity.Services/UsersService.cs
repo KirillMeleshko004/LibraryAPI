@@ -1,7 +1,6 @@
-using System.Runtime.Intrinsics.Arm;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
-using System.Text.Unicode;
 using AutoMapper;
 using LibraryApi.Identity.Domain.Core.ConfigModels;
 using LibraryApi.Identity.Domain.Core.Entities;
@@ -31,6 +30,7 @@ namespace LibraryApi.Identity.Services
          _jwtOptions = options;
       }
 
+      //Validate if email and password are correct
       public async Task<bool> IsUserValidAsync(UserForAuthorizationDto userDto)
       {
          var user = await _userManager.FindByEmailAsync(userDto.Email);
@@ -50,23 +50,20 @@ namespace LibraryApi.Identity.Services
          return res;
       }
 
+      //Issue new TokenDto with refresh tokend time prolongation
       public async Task<TokenDto> GetTokenAsync(string email)
       {
          var user = await _userManager.FindByEmailAsync(email)
             ?? throw new Exception("User not found");
 
-         //Receive list of claims for user
-         var claims = await GetClaimsAsync(user);
+         var token = await CreateTokenAsync(user, true);
 
-         var credentials = GetSigningCredentials();
+         await _userManager.UpdateAsync(user);
 
-         var tokenDescriptor = GetTokenDescriptor(claims, credentials);
-
-         var accessToken = new JsonWebTokenHandler().CreateToken(tokenDescriptor);
-
-         return new TokenDto {AccessToken = accessToken};
+         return token;
       }
 
+      //Creates new user
       public async Task<(IdentityResult result, User? user)> CreateUserAsync(
          UserForCreationDto userDto)
       {
@@ -79,8 +76,49 @@ namespace LibraryApi.Identity.Services
          return (res, user);
       }
 
+      //Issue new TokenDto object. If expired token invalid returns null
+      public async Task<TokenDto?> RefreshTokenAsync(TokenDto expiredToken)
+      {
+         var jwt = await GetValidTokenAsync(expiredToken.AccessToken);
+         
+         if(jwt == null) return null;
+
+         var email = jwt.GetClaim(JwtRegisteredClaimNames.Email).Value.ToString();
+         var user = await _userManager.FindByEmailAsync(email)
+            ?? throw new Exception($"User with email: {email} not found");
+
+         var token = await CreateTokenAsync(user, false);
+
+         await _userManager.UpdateAsync(user);
+
+         return token;
+      }
+
 
       #region Private methods
+
+      //Creates tokenDto objcect, with new access and refresh tokens
+      //new refresh token wrote to user (need to call Update on DB to save)
+      private async Task<TokenDto> CreateTokenAsync(User user, bool extendLifetime)
+      {
+         //Receive list of claims for user
+         var claims = await GetClaimsAsync(user);
+         var credentials = GetSigningCredentials();
+
+         var tokenDescriptor = GetTokenDescriptor(claims, credentials);
+
+         var accessToken = new JsonWebTokenHandler().CreateToken(tokenDescriptor);
+         var refreshToken = GetRefreshToken();
+
+         user.RefreshToken = refreshToken;
+
+         if(extendLifetime)
+         {
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+         }
+
+         return new TokenDto { AccessToken = accessToken, RefreshToken = refreshToken };
+      }
 
       //Returns list of claims associated with user
       private async Task<IEnumerable<Claim>> GetClaimsAsync(User user)
@@ -118,8 +156,6 @@ namespace LibraryApi.Identity.Services
       private SecurityTokenDescriptor GetTokenDescriptor(IEnumerable<Claim> claims, 
          SigningCredentials credentials)
       {
-         var a = DateTime.Now.AddMinutes(Convert.ToDouble(_jwtOptions.Expires));
-
          var descriptor = new SecurityTokenDescriptor
          {
             Issuer = _jwtOptions.ValidIssuer,
@@ -130,6 +166,52 @@ namespace LibraryApi.Identity.Services
          };
 
          return descriptor;
+      }
+
+      //Create random 64 bytes string
+      private string GetRefreshToken()
+      {
+         var randBytes = new byte[64];
+         var gen = RandomNumberGenerator.Create();
+
+         gen.GetBytes(randBytes);
+
+         return Convert.ToBase64String(randBytes);
+      }
+
+      //Retrieve JsonWebToken from expired token
+      //return null if token invalid
+      private async Task<JsonWebToken?> GetValidTokenAsync(string expiredToken)
+      {
+         var secretKey = Environment.GetEnvironmentVariable("LIBRARY_SECRET") ??
+            throw new Exception("Secret key didn't setted");
+
+         var handler = new JsonWebTokenHandler();
+         
+         var res = await handler.ValidateTokenAsync(expiredToken, 
+            new TokenValidationParameters
+            {
+               ValidateAudience = true,
+               ValidateIssuer = true,
+               ValidateLifetime = false,
+               ValidateIssuerSigningKey = true,
+
+               ValidIssuer = _jwtOptions.ValidIssuer,
+               ValidAudience = _jwtOptions.ValidAudience,
+               IssuerSigningKey = 
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!)) 
+            });
+
+         if(!res.IsValid) 
+         {
+            _logger.LogWarn(
+                  $"{nameof(GetValidTokenAsync)}: expired token validation failed. Reason: {res.Exception.Message}."
+               );
+
+            return null;
+         }
+
+         return handler.ReadJsonWebToken(expiredToken);
       }
 
       #endregion

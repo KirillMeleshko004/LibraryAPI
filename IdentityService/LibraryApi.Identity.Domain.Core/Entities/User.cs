@@ -10,5 +10,8 @@ namespace LibraryApi.Identity.Domain.Core.Entities
 
       [Required]
       public string LastName { get; set; } = null!;
+
+      public string? RefreshToken { get; set; }
+      public DateTime RefreshTokenExpiryTime { get; set; }
    }
 }

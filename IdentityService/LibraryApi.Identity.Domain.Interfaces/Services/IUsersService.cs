@@ -10,8 +10,9 @@ namespace LibraryApi.Identity.Domain.Interfaces.Services
       Task<bool> IsUserValidAsync(UserForAuthorizationDto userDto);
 
       Task<TokenDto> GetTokenAsync(string email);
+      
+      Task<TokenDto?> RefreshTokenAsync(TokenDto expiredToken);
 
       Task<(IdentityResult result, User? user)> CreateUserAsync(UserForCreationDto userDto);
-
    }
 }
