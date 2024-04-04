@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Text;
 using LibraryApi.Identity.Domain.Core.ConfigModels;
 using LibraryApi.Identity.Domain.Core.Entities;
@@ -8,16 +7,19 @@ using LibraryApi.Identity.Infrastructure.Data.Contexts;
 using LibraryApi.Identity.Infrastructure.Logger;
 using LibraryApi.Identity.Services;
 using LibraryAPI.Identity.Infrastructure.Presentation;
+using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using NLog;
 
 namespace LibraryApi.Identity.Web.Extensions
 {
    public static class ServiceCollectionExtension
    {
+      //Register and configure logger for application
       public static void ConfigureLogger(this IServiceCollection services)
       {
          LogManager.Setup(options =>
@@ -30,6 +32,7 @@ namespace LibraryApi.Identity.Web.Extensions
          services.TryAddSingleton<IIdentityLogger, IdentityLogger>();
       }
 
+      //Adding Cors policies to application
       public static void ConfigureCors(this IServiceCollection services)
       {
          services.AddCors(options =>
@@ -43,6 +46,8 @@ namespace LibraryApi.Identity.Web.Extensions
          });
       }
 
+      //Configure all data store and retrieve options, 
+      //like database context and repositories
       public static void ConfigureData(this IServiceCollection services, 
          IConfiguration configuration)
       {
@@ -59,10 +64,13 @@ namespace LibraryApi.Identity.Web.Extensions
          services.TryAddScoped<IServiceManager, ServiceManager>();
       }
 
+      //Configuring API controllers
       public static void ConfigurePresentationControllers(this IServiceCollection services)
       {
          services.AddControllers(options =>
          {
+            //return http 406 Not Acceptable when Accept header contains
+            //unsupported format
             options.RespectBrowserAcceptHeader = true;
             options.ReturnHttpNotAcceptable = true;
          }).AddApplicationPart(typeof(AssemblyReference).Assembly);
@@ -130,6 +138,52 @@ namespace LibraryApi.Identity.Web.Extensions
          IConfiguration configuration)
       {
          services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+      }
+
+      public static void ConfigureSwagger(this IServiceCollection services)
+      {
+         services.AddSwaggerGen(options =>
+         {
+            options.SwaggerDoc("v0", 
+               new OpenApiInfo
+               {
+                  Title = "Identity API v0", 
+                  Version="v0"
+               }); 
+
+            options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme,
+               new OpenApiSecurityScheme{
+                  Name = "Authorization",
+                  In = ParameterLocation.Header,
+                  Type = SecuritySchemeType.ApiKey,
+                  Scheme = JwtBearerDefaults.AuthenticationScheme,
+                  Description = "JWT Authorization header using the Bearer scheme."
+               });
+            
+            //Add an authorization header to each endpoint when the request is sent. 
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+            {
+               //since OpenApiSecurityRequirement implements 
+               //Dictionary<OpenApiSecurityScheme,IList<String>>
+               //dictionary initialization syntax is used
+               {
+                  new OpenApiSecurityScheme
+                  {
+                     //Object to allow referencing other components in the specification
+                     //Reference early created security scheme 
+                     Reference = new OpenApiReference
+                     {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = JwtBearerDefaults.AuthenticationScheme
+                     },
+                     Name = JwtBearerDefaults.AuthenticationScheme
+                  },
+                  //the value of the dictionary is a required list of scope names 
+                  //for the execution only if the security scheme is oauth2 or openIdConnect
+                  new List<string>()
+               }
+            });
+         });
       }
    }
 }

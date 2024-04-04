@@ -11,12 +11,12 @@ using Microsoft.OpenApi.Models;
 using NLog;
 
 namespace LibraryAPI.LibraryService.Web.Extensions
-{   
+{
     /// <summary>
     /// Class contains exstensions to simplify app configuration and dependency injection
     /// </summary>
     public static class ServiceCollectionExtension
-    {   
+    {
         //Register and configure logger for application
         public static void ConfigureLogging(this IServiceCollection services)
         {
@@ -77,15 +77,17 @@ namespace LibraryAPI.LibraryService.Web.Extensions
                 options.ReturnHttpNotAcceptable = true;
             }).AddApplicationPart(typeof(AssemblyReference).Assembly);
         }
-        
+
         public static void ConfigureSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v0", 
-                    new OpenApiInfo{ 
-                        Title = "Library API", 
-                        Version = "v0"});
+                options.SwaggerDoc("v0",
+                    new OpenApiInfo
+                    {
+                        Title = "Library API",
+                        Version = "v0"
+                    });
             });
         }
     }
