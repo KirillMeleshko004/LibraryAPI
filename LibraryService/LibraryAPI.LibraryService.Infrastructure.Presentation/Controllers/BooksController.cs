@@ -36,7 +36,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
             return Ok(book);
         } 
 
-        [HttpGet("{ISBN}")]
+        [HttpGet("isbn/{ISBN}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetBookByISBN(string ISBN)

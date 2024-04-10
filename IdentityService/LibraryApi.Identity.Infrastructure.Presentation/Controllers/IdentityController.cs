@@ -33,7 +33,7 @@ namespace LibraryAPI.Identity.Infrastructure.Presentation.Controllers
             string error = string.Empty;
             foreach(var err in res.result.Errors)
             {
-               error += $"{err.Code}. {err.Description}";
+               error += $"{err.Code}. {err.Description}\n";
             }
             return BadRequest(error);
          }

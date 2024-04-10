@@ -73,6 +73,11 @@ namespace LibraryApi.Identity.Services
 
          var res = await _userManager.CreateAsync(user, userDto.Password);
 
+         if(res.Succeeded)
+         {
+            await _userManager.AddToRolesAsync(user, userDto.UserRoles);
+         }
+
          return (res, user);
       }
 
@@ -84,6 +89,9 @@ namespace LibraryApi.Identity.Services
          if(jwt == null) return null;
 
          var email = jwt.GetClaim(JwtRegisteredClaimNames.Email).Value.ToString();
+
+         if(!await IsRefreshTokenValid(expiredToken.RefreshToken, email)) return null;
+
          var user = await _userManager.FindByEmailAsync(email)
             ?? throw new Exception($"User with email: {email} not found");
 
@@ -132,7 +140,8 @@ namespace LibraryApi.Identity.Services
 
          foreach(var role in roles)
          {
-            claims.Add(new(ClaimTypes.Role, role));
+            //Not Claims.Role since Ocelot has problem with parsing its name
+            claims.Add(new("Roles", role));
          }
          
          return claims;
@@ -212,6 +221,13 @@ namespace LibraryApi.Identity.Services
          }
 
          return handler.ReadJsonWebToken(expiredToken);
+      }
+
+      private async Task<bool> IsRefreshTokenValid(string refreshToken, string email)
+      {
+         var token = (await _userManager.FindByEmailAsync(email))?.RefreshToken;
+
+         return refreshToken.Equals(token);
       }
 
       #endregion

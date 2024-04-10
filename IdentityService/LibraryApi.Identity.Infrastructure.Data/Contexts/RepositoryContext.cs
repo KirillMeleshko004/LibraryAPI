@@ -1,4 +1,5 @@
 using LibraryApi.Identity.Domain.Core.Entities;
+using LibraryApi.Identity.Infrastructure.Data.Configuration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +21,8 @@ namespace LibraryApi.Identity.Infrastructure.Data.Contexts
 
       protected override void OnModelCreating(ModelBuilder builder)
       {
+         builder.ApplyConfiguration(new RolesConfiguration());
+
          base.OnModelCreating(builder);
       }
 
