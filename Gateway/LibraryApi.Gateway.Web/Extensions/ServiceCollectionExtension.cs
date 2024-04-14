@@ -1,8 +1,12 @@
+using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using LibraryApi.Gateway.Web.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.IdentityModel.Tokens;
-using Ocelot.Administration;
 using Ocelot.DependencyInjection;
 
 namespace LibraryApi.Gateway.Web
@@ -15,7 +19,28 @@ namespace LibraryApi.Gateway.Web
       {
          services.AddOcelot(configuration);
       }
+      
+      //Configure ASP.NET Data protection keys
+      public static void ConfigureDataProtection(this IServiceCollection services)
+      {
+         //if OS is windows leave default configuration with DPAPI
+         if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
 
+         var keyDirName = Environment.GetEnvironmentVariable("KEY_DIR_NAME")!;
+         var x509CertPath = Environment.GetEnvironmentVariable("CERT_PATH")!;
+         var certPassword = Environment.GetEnvironmentVariable("CERT_PASSWORD")!;
+
+         services.AddDataProtection()
+            .PersistKeysToFileSystem(new DirectoryInfo(keyDirName))
+            .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration
+            {
+               ValidationAlgorithm = ValidationAlgorithm.HMACSHA256,
+               EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC
+            })
+            //Adding keys encryption with X509 certificate
+            //Using X509 since DPAPI unavailible for linux
+            .ProtectKeysWithCertificate(new X509Certificate2(x509CertPath, certPassword));
+      }
 
       public static void ConfigureAuthentication(this IServiceCollection services,
          IConfiguration configuration)

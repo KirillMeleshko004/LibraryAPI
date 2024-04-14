@@ -1,0 +1,59 @@
+services:
+  gateway:
+    container_name: gateway
+    build: ./Gateway/
+    ports:
+      - "5141:8080"
+    env_file:
+      - ./Gateway/gateway.env
+      - ./Security/security.env
+    volumes:
+      - ./Security/Keys:/security/keys
+    depends_on:
+      - indentity
+      - library
+
+  indentity:
+    container_name: indentity
+    build: ./IdentityService/
+    env_file:
+      - ./IdentityService/identity.env
+      - ./Security/security.env
+    volumes:
+      - ./Security/Keys:/security/keys
+    depends_on:
+      - identitydb
+
+  identitydb:
+    container_name: indentitydb
+    build: ./DB/
+    ports:
+      - "1434:1433"
+    environment:
+      - ACCEPT_EULA=y
+      - SA_PASSWORD=A&VeryComplex123Password
+    volumes:
+      - ./sql/identity/data:/var/opt/mssql/data
+      - ./sql/identity/log:/var/opt/mssql/log
+      - ./sql/identity/secrets:/var/opt/mssql/secrets
+
+  library:
+    container_name: library
+    build: ./LibraryService/
+    env_file:
+      - ./LibraryService/library.env
+    depends_on:
+      - librarydb
+
+  librarydb:
+    container_name: librarydb
+    build: ./DB/
+    ports:
+      - "1435:1433"
+    environment:
+      - ACCEPT_EULA=y
+      - SA_PASSWORD=A&VeryComplex123Password
+    volumes:
+      - ./sql/library/data:/var/opt/mssql/data
+      - ./sql/library/log:/var/opt/mssql/log
+      - ./sql/library/secrets:/var/opt/mssql/secrets

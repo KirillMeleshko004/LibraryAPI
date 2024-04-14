@@ -17,6 +17,7 @@ builder.Services.ConfigureIdentity();
 builder.Services.ConfigureAuthentication(builder.Configuration);
 
 builder.Services.ConfigureOptions(builder.Configuration);
+builder.Services.ConfigureDataProtection();
 
 var app = builder.Build();
 

@@ -1,0 +1,111 @@
+{
+   "Routes": [
+      {
+         "UpstreamPathTemplate": "/books",
+         "UpstreamHttpMethod": [ "Get" ],
+         "DownstreamPathTemplate": "/api/books",
+         "DownstreamScheme": "http",
+         "DownstreamHostAndPorts": [
+           {
+            "Host": "library",
+            "Port": 8080
+           }
+         ]
+      },
+      {
+         "UpstreamPathTemplate": "/books/{id}",
+         "UpstreamHttpMethod": [ "Get" ],
+         "DownstreamPathTemplate": "/api/books/{id}",
+         "DownstreamScheme": "http",
+         "DownstreamHostAndPorts": [
+           {
+            "Host": "library",
+            "Port": 8080
+           }
+         ]
+      },
+      {
+         "UpstreamPathTemplate": "/books/isbn/{isbn}",
+         "UpstreamHttpMethod": [ "Get" ],
+         "DownstreamPathTemplate": "/api/books/isbn/{isbn}",
+         "DownstreamScheme": "http",
+         "DownstreamHostAndPorts": [
+           {
+            "Host": "library",
+            "Port": 8080
+           }
+         ]
+      },
+      {
+         "UpstreamPathTemplate": "/books",
+         "UpstreamHttpMethod": [ "Post" ],
+         "DownstreamPathTemplate": "/api/books",
+         "DownstreamScheme": "http",
+         "DownstreamHostAndPorts": [
+           {
+            "Host": "library",
+            "Port": 8080
+           }
+         ],
+         "AuthenticationOptions": {
+            "AuthenticationProviderKey": "Bearer"
+         }
+      },
+      {
+         "UpstreamPathTemplate": "/books/{id}",
+         "UpstreamHttpMethod": [ "Put", "Delete" ],
+         "DownstreamPathTemplate": "/api/books/{id}",
+         "DownstreamScheme": "http",
+         "DownstreamHostAndPorts": [
+            {
+             "Host": "library",
+             "Port": 8080
+            }
+         ],
+         "AuthenticationOptions": {
+            "AuthenticationProviderKey": "Bearer"
+         }
+      },
+
+
+      {
+         "UpstreamPathTemplate": "/reg",
+         "UpstreamHttpMethod": [ "Post" ],
+         "DownstreamPathTemplate": "/api/reg",
+         "DownstreamScheme": "http",
+         "DownstreamHostAndPorts": [
+           {
+            "Host": "indentity",
+            "Port": 8080
+           }
+         ]
+      },
+      {
+         "UpstreamPathTemplate": "/auth",
+         "UpstreamHttpMethod": [ "Post" ],
+         "DownstreamPathTemplate": "/api/auth",
+         "DownstreamScheme": "http",
+         "DownstreamHostAndPorts": [
+           {
+            "Host": "indentity",
+            "Port": 8080
+           }
+         ]
+      },
+      {
+         "UpstreamPathTemplate": "/refresh",
+         "UpstreamHttpMethod": [ "Post" ],
+         "DownstreamPathTemplate": "/api/refresh",
+         "DownstreamScheme": "http",
+         "DownstreamHostAndPorts": [
+           {
+            "Host": "indentity",
+            "Port": 8080
+           }
+         ]
+      }
+   ],
+   "GlobalConfiguration": {
+       "BaseUrl": "http://localhost:5141"
+   }
+}
