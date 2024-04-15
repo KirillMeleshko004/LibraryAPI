@@ -1,3 +1,4 @@
+using LibraryAPI.LibraryService.Domain.Core.Results;
 using LibraryAPI.LibraryService.Domain.Interfaces.Loggers;
 using LibraryAPI.LibraryService.Domain.Interfaces.Services;
 using LibraryAPI.LibraryService.Shared.DTOs;
@@ -28,13 +29,13 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
         {
             var book = await _services.Books.GetBookByIdAsync(id);
 
-            if(book == null)
+            if (book == null)
             {
                 return NotFound($"Book with id: {id} not found.");
             }
-            
+
             return Ok(book);
-        } 
+        }
 
         [HttpGet("isbn/{ISBN}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -43,59 +44,69 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
         {
             var book = await _services.Books.GetBookByISBNAsync(ISBN);
 
-            if(book == null)
+            if (book == null)
             {
                 return NotFound($"Book with ISBN: {ISBN} not found.");
             }
-            
+
             return Ok(book);
-        } 
+        }
 
         [HttpGet]
-        public async Task<IActionResult> GetBooks([FromQuery]BookParameters parameters)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetBooks([FromQuery] BookParameters parameters)
         {
             var books = await _services.Books.GetBooksAsync(parameters);
-            
+
             return Ok(books);
-        } 
+        }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateBook(
-            [FromBody]BookForCreationDto bookForCreation)
+            [FromBody] BookForCreationDto bookForCreation)
         {
-            var createdBook = await _services.Books.CreateBookAsync(bookForCreation);
-            
-            return CreatedAtAction(nameof(GetBookById), 
-                new { id = createdBook.Id }, 
-                createdBook);
-        } 
+            var res = await _services.Books.CreateBookAsync(bookForCreation);
+
+            if (res.Status == OpStatus.Fail)
+            {
+                return StatusCode((int)res.Error!.ErrorType,
+                    new { message = res.Error.Description });
+            }
+
+            return CreatedAtAction(nameof(GetBookById),
+                new { id = res.Value!.Id },
+                res.Value);
+        }
 
         [HttpPut("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateBook(Guid id,
-            [FromBody]BookForUpdateDto bookForUpdate)
+            [FromBody] BookForUpdateDto bookForUpdate)
         {
-            var updatedBook = await _services.Books.UpdateBook(id, bookForUpdate);
+            var res = await _services.Books.UpdateBookAsync(id, bookForUpdate);
 
-            if(updatedBook == null)
+            if (res.Status == OpStatus.Fail)
             {
-                return NotFound($"Book with ISBN: {id} not found.");
+                return StatusCode((int)res.Error!.ErrorType,
+                    new { message = res.Error.Description });
             }
-            
+
             return NoContent();
-        } 
+        }
+
 
         [HttpDelete("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteBookById(Guid id)
         {
-            await _services.Books.DeleteBook(id);
-            
+            await _services.Books.DeleteBookAsync(id);
+
             return NoContent();
-        } 
+        }
     }
 }

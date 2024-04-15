@@ -9,13 +9,21 @@ namespace LibraryAPI.LibraryService.Infrastructure.Data.Repos
     /// that all repositories use same database context
     /// </summary>
     public class RepositoryManager : IRepositoryManager
-    {   
+    {
         private readonly RepositoryContext _context;
-        public IBookRepository Books 
-        { 
-            get 
+        public IBookRepository Books
+        {
+            get
             {
                 return new BookRepository(_context);
+            }
+        }
+
+        public IAuthorRepository Authors
+        {
+            get
+            {
+                return new AuthorRepository(_context);
             }
         }
 

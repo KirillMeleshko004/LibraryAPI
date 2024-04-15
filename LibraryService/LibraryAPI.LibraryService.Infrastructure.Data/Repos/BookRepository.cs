@@ -17,22 +17,25 @@ namespace LibraryAPI.LibraryService.Infrastructure.Data.Repos
 
         }
 
-        public async Task<IEnumerable<Book>> GetBooksAsync(BookParameters parameters, 
+        public async Task<IEnumerable<Book>> GetBooksAsync(BookParameters parameters,
             bool trackChanges)
         {
             return await Get(trackChanges)
                 .FilterBooks(parameters)
-                .SortBooks(parameters.OrderBy)
+                .Sort(parameters.OrderBy)
+                .Include(b => b.Author)
                 .ToListAsync();
         }
         public async Task<Book?> GetBookByIdAsync(Guid id, bool trackChanges)
         {
             return await Get(b => b.Id.Equals(id), trackChanges)
+                .Include(b => b.Author)
                 .SingleOrDefaultAsync();
         }
         public async Task<Book?> GetBookByISBNAsync(string ISBN, bool trackChanges)
         {
             return await Get(b => b.ISBN.Equals(ISBN), trackChanges)
+                .Include(b => b.Author)
                 .SingleOrDefaultAsync();
         }
 
@@ -40,16 +43,15 @@ namespace LibraryAPI.LibraryService.Infrastructure.Data.Repos
         {
             Create(book);
 
-            await Task.CompletedTask;
-            return;
+            //Loading related entity to created book
+            await _context.Entry(book).Reference(b => b.Author).LoadAsync();
         }
-        
+
         public async Task DeleteBookAsync(Book book)
         {
             Delete(book);
-            
+
             await Task.CompletedTask;
-            return;
         }
     }
 }

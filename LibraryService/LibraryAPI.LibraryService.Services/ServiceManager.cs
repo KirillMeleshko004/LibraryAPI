@@ -2,6 +2,7 @@ using AutoMapper;
 using LibraryAPI.LibraryService.Domain.Interfaces.Loggers;
 using LibraryAPI.LibraryService.Domain.Interfaces.Repos;
 using LibraryAPI.LibraryService.Domain.Interfaces.Services;
+using LibraryAPI.LibraryService.Services.Authors;
 using LibraryAPI.LibraryService.Services.Books;
 
 namespace LibraryAPI.LibraryService.Services
@@ -15,12 +16,21 @@ namespace LibraryAPI.LibraryService.Services
     {
         //Make services Lazy to save resources if service not used during request
         private readonly Lazy<IBooksService> _books;
+        private readonly Lazy<IAuthorsService> _authors;
 
-        public IBooksService Books 
-        { 
+        public IBooksService Books
+        {
             get
             {
                 return _books.Value;
+            }
+        }
+
+        public IAuthorsService Authors
+        {
+            get
+            {
+                return _authors.Value;
             }
         }
 
@@ -29,6 +39,10 @@ namespace LibraryAPI.LibraryService.Services
         {
             _books = new Lazy<IBooksService>(
                 () => new BooksService(repositoryManager, logger, mapper)
+            );
+
+            _authors = new Lazy<IAuthorsService>(
+                () => new AuthorsService(repositoryManager, logger, mapper)
             );
         }
 
