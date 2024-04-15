@@ -64,6 +64,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateBook(
             [FromBody] BookForCreationDto bookForCreation)
@@ -84,6 +85,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
         [HttpPut("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateBook(Guid id,
             [FromBody] BookForUpdateDto bookForUpdate)
@@ -102,6 +104,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
 
         [HttpDelete("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> DeleteBookById(Guid id)
         {
             await _services.Books.DeleteBookAsync(id);

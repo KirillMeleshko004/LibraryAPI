@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
 {
    [ApiController]
-    [Route("api/authors")]
+   [Route("api/authors")]
    public class AuthorController : ControllerBase
    {
       private readonly IServiceManager _services;
@@ -23,7 +23,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
 
       [HttpGet]
       [ProducesResponseType(StatusCodes.Status200OK)]
-      public async Task<IActionResult> GetAuthors([FromQuery]AuthorParameters parameters)
+      public async Task<IActionResult> GetAuthors([FromQuery] AuthorParameters parameters)
       {
          var authors = await _services.Authors.GetAuthorsAsync(parameters);
 
@@ -37,7 +37,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
       {
          var author = await _services.Authors.GetAuthorByIdAsync(id);
 
-         if(author == null)
+         if (author == null)
          {
             return NotFound($"Author with id: {id} not found.");
          }
@@ -48,18 +48,19 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
       [HttpPost]
       [ProducesResponseType(StatusCodes.Status201Created)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
-      public async Task<IActionResult> CreateAuthor([FromBody]AuthorForCreationDto authorDto)
+      [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+      public async Task<IActionResult> CreateAuthor([FromBody] AuthorForCreationDto authorDto)
       {
 
          var res = await _services.Authors.CreateAuthorAsync(authorDto);
 
          if (res.Status == OpStatus.Fail)
          {
-               return StatusCode((int)res.Error!.ErrorType,
-                  new { message = res.Error.Description });
+            return StatusCode((int)res.Error!.ErrorType,
+               new { message = res.Error.Description });
          }
-            
-         return CreatedAtAction(nameof(GetAuthorById), 
+
+         return CreatedAtAction(nameof(GetAuthorById),
             new { id = res.Value!.Id },
             res.Value);
 
@@ -68,16 +69,17 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
       [HttpPut("{id:guid}")]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
+      [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
-      public async Task<IActionResult> UpdateAuthor(Guid id, 
-         [FromBody]AuthorForUpdateDto authorDto)
+      public async Task<IActionResult> UpdateAuthor(Guid id,
+         [FromBody] AuthorForUpdateDto authorDto)
       {
          var res = await _services.Authors.UpdateAuthorAsync(id, authorDto);
 
          if (res.Status == OpStatus.Fail)
          {
-               return StatusCode((int)res.Error!.ErrorType,
-                  new { message = res.Error.Description });
+            return StatusCode((int)res.Error!.ErrorType,
+               new { message = res.Error.Description });
          }
 
          return NoContent();
@@ -85,6 +87,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
 
       [HttpDelete("{id:guid}")]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
+      [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       public async Task<IActionResult> DeleteAuthor(Guid id)
       {
          await _services.Authors.DeleteAuthorAsync(id);

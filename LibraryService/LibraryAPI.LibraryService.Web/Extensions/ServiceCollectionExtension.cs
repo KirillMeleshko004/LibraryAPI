@@ -88,7 +88,40 @@ namespace LibraryAPI.LibraryService.Web.Extensions
                         Title = "Library API",
                         Version = "v0"
                     });
+                options.AddSecurityDefinition("Bearer",
+                    new OpenApiSecurityScheme
+                    {
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = "Bearer",
+                        Description = "JWT Authorization header using the Bearer scheme."
+                    });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    //since OpenApiSecurityRequirement implements 
+                    //Dictionary<OpenApiSecurityScheme,IList<String>>
+                    //dictionary initialization syntax is used
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            //Object to allow referencing other components in the specification
+                            //Reference early created security scheme 
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Name = "Bearer"
+                        },
+                        //the value of the dictionary is a required list of scope names 
+                        //for the execution only if the security scheme is oauth2 or openIdConnect
+                        new List<string>()
+                    }
+                });
             });
+
         }
     }
 }

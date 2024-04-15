@@ -1,111 +1,223 @@
 {
-   "Routes": [
-      {
-         "UpstreamPathTemplate": "/books",
-         "UpstreamHttpMethod": [ "Get" ],
-         "DownstreamPathTemplate": "/api/books",
-         "DownstreamScheme": "http",
-         "DownstreamHostAndPorts": [
-           {
-             "Host": "localhost",
-             "Port": 5280
-           }
-         ]
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/authors",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamPathTemplate": "/api/authors",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5280
+        }
+      ],
+      "SwaggerKey": "Library"
+    },
+    {
+      "UpstreamPathTemplate": "/authors/{id}",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamPathTemplate": "/api/authors/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5280
+        }
+      ],
+      "SwaggerKey": "Library"
+    },
+    {
+      "UpstreamPathTemplate": "/authors",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "DownstreamPathTemplate": "/api/authors",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5280
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
       },
-      {
-         "UpstreamPathTemplate": "/books/{id}",
-         "UpstreamHttpMethod": [ "Get" ],
-         "DownstreamPathTemplate": "/api/books/{id}",
-         "DownstreamScheme": "http",
-         "DownstreamHostAndPorts": [
-           {
-             "Host": "localhost",
-             "Port": 5280
-           }
-         ]
+      "SwaggerKey": "Library"
+    },
+    {
+      "UpstreamPathTemplate": "/authors/{id}",
+      "UpstreamHttpMethod": [
+        "Put",
+        "Delete"
+      ],
+      "DownstreamPathTemplate": "/api/authors/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5280
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
       },
-      {
-         "UpstreamPathTemplate": "/books/isbn/{isbn}",
-         "UpstreamHttpMethod": [ "Get" ],
-         "DownstreamPathTemplate": "/api/books/isbn/{isbn}",
-         "DownstreamScheme": "http",
-         "DownstreamHostAndPorts": [
-           {
-             "Host": "localhost",
-             "Port": 5280
-           }
-         ]
+      "SwaggerKey": "Library"
+    },
+    {
+      "UpstreamPathTemplate": "/books",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamPathTemplate": "/api/books",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5280
+        }
+      ],
+      "SwaggerKey": "Library"
+    },
+    {
+      "UpstreamPathTemplate": "/books/{id}",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamPathTemplate": "/api/books/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5280
+        }
+      ],
+      "SwaggerKey": "Library"
+    },
+    {
+      "UpstreamPathTemplate": "/books/isbn/{isbn}",
+      "UpstreamHttpMethod": [
+        "Get"
+      ],
+      "DownstreamPathTemplate": "/api/books/isbn/{isbn}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5280
+        }
+      ],
+      "SwaggerKey": "Library"
+    },
+    {
+      "UpstreamPathTemplate": "/books",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "DownstreamPathTemplate": "/api/books",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5280
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
       },
-      {
-         "UpstreamPathTemplate": "/books",
-         "UpstreamHttpMethod": [ "Post" ],
-         "DownstreamPathTemplate": "/api/books",
-         "DownstreamScheme": "http",
-         "DownstreamHostAndPorts": [
-           {
-             "Host": "localhost",
-             "Port": 5280
-           }
-         ],
-         "AuthenticationOptions": {
-            "AuthenticationProviderKey": "Bearer"
-         }
+      "SwaggerKey": "Library"
+    },
+    {
+      "UpstreamPathTemplate": "/books/{id}",
+      "UpstreamHttpMethod": [
+        "Put",
+        "Delete"
+      ],
+      "DownstreamPathTemplate": "/api/books/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5280
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
       },
-      {
-         "UpstreamPathTemplate": "/books/{id}",
-         "UpstreamHttpMethod": [ "Put", "Delete" ],
-         "DownstreamPathTemplate": "/api/books/{id}",
-         "DownstreamScheme": "http",
-         "DownstreamHostAndPorts": [
-           {
-             "Host": "localhost",
-             "Port": 5280
-           }
-         ],
-         "AuthenticationOptions": {
-            "AuthenticationProviderKey": "Bearer"
-         }
-      },
-
-
-      {
-         "UpstreamPathTemplate": "/reg",
-         "UpstreamHttpMethod": [ "Post" ],
-         "DownstreamPathTemplate": "/api/reg",
-         "DownstreamScheme": "http",
-         "DownstreamHostAndPorts": [
-           {
-             "Host": "localhost",
-             "Port": 5238
-           }
-         ]
-      },
-      {
-         "UpstreamPathTemplate": "/auth",
-         "UpstreamHttpMethod": [ "Post" ],
-         "DownstreamPathTemplate": "/api/auth",
-         "DownstreamScheme": "http",
-         "DownstreamHostAndPorts": [
-           {
-             "Host": "localhost",
-             "Port": 5238
-           }
-         ]
-      },
-      {
-         "UpstreamPathTemplate": "/refresh",
-         "UpstreamHttpMethod": [ "Post" ],
-         "DownstreamPathTemplate": "/api/refresh",
-         "DownstreamScheme": "http",
-         "DownstreamHostAndPorts": [
-           {
-             "Host": "localhost",
-             "Port": 5238
-           }
-         ]
-      }
-   ],
-   "GlobalConfiguration": {
-       "BaseUrl": "http://localhost:5141"
-   }
+      "SwaggerKey": "Library"
+    },
+    {
+      "UpstreamPathTemplate": "/reg",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "DownstreamPathTemplate": "/api/reg",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5238
+        }
+      ],
+      "SwaggerKey": "Identity"
+    },
+    {
+      "UpstreamPathTemplate": "/auth",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "DownstreamPathTemplate": "/api/auth",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5238
+        }
+      ],
+      "SwaggerKey": "Identity"
+    },
+    {
+      "UpstreamPathTemplate": "/refresh",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "DownstreamPathTemplate": "/api/refresh",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5238
+        }
+      ],
+      "SwaggerKey": "Identity"
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5141"
+  },
+  "SwaggerEndPoints": [
+    {
+      "Key": "Library",
+      "Config": [
+        {
+          "Name": "Library API",
+          "Version": "v0",
+          "Url": "http://localhost:5280/swagger/v0/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "Identity",
+      "Config": [
+        {
+          "Name": "Identity API",
+          "Version": "v0",
+          "Url": "http://localhost:5238/swagger/v0/swagger.json"
+        }
+      ]
+    }
+  ]
 }
