@@ -3,6 +3,7 @@ using LibraryAPI.LibraryService.Domain.Interfaces.Loggers;
 using LibraryAPI.LibraryService.Domain.Interfaces.Services;
 using LibraryAPI.LibraryService.Shared.DTOs;
 using LibraryAPI.LibraryService.Shared.RequestFeatures;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,16 +38,17 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
             return Ok(book);
         }
 
-        [HttpGet("isbn/{ISBN}")]
+        [HttpGet("isbn/{isbn}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetBookByISBN(string ISBN)
+        public async Task<IActionResult> GetBookByISBN(string isbn)
         {
-            var book = await _services.Books.GetBookByISBNAsync(ISBN);
+            System.Console.WriteLine(HttpContext);
+            var book = await _services.Books.GetBookByISBNAsync(isbn);
 
             if (book == null)
             {
-                return NotFound($"Book with ISBN: {ISBN} not found.");
+                return NotFound($"Book with ISBN: {isbn} not found.");
             }
 
             return Ok(book);
@@ -62,6 +64,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -83,6 +86,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -103,6 +107,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
 
 
         [HttpDelete("{id:guid}")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> DeleteBookById(Guid id)

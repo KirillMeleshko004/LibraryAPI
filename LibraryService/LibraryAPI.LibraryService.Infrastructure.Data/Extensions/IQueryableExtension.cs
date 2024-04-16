@@ -33,7 +33,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Data.Extensions
         {
             if (string.IsNullOrWhiteSpace(queryString)) return books.OrderBy(b => b.Title);
 
-            var orderQuery = CreateOrderQuert<Book>(queryString);
+            var orderQuery = CreateOrderQuery<Book>(queryString);
 
             if (string.IsNullOrWhiteSpace(orderQuery)) return books.OrderBy(b => b.Title);
 
@@ -45,7 +45,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Data.Extensions
         {
             if (string.IsNullOrWhiteSpace(queryString)) return books.OrderBy(b => b.FirstName);
 
-            var orderQuery = CreateOrderQuert<Author>(queryString);
+            var orderQuery = CreateOrderQuery<Author>(queryString);
 
             if (string.IsNullOrWhiteSpace(orderQuery)) return books.OrderBy(b => b.FirstName);
 
@@ -57,7 +57,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Data.Extensions
 
         #region Private methods
 
-        private static string CreateOrderQuert<T>(string queryString)
+        private static string CreateOrderQuery<T>(string queryString)
         {
             var result = new StringBuilder();
 
@@ -81,8 +81,6 @@ namespace LibraryAPI.LibraryService.Infrastructure.Data.Extensions
                     .FirstOrDefault();
 
                 if (propName == null) continue;
-
-                result.Append(propName);
 
                 var direction = token.EndsWith("desc") ? "descending" : "ascending";
 

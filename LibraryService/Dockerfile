@@ -28,5 +28,6 @@ RUN mv ./LibraryAPI.LibraryService.Web/bin/release/net8.0 ./app;
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build source/app ./
+COPY ./Certs ./Certs
 
 ENTRYPOINT ["dotnet", "LibraryAPI.LibraryService.Web.dll"]

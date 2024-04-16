@@ -3,6 +3,7 @@ using LibraryAPI.LibraryService.Domain.Interfaces.Loggers;
 using LibraryAPI.LibraryService.Domain.Interfaces.Services;
 using LibraryAPI.LibraryService.Shared.DTOs;
 using LibraryAPI.LibraryService.Shared.RequestFeatures;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,6 +47,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
       }
 
       [HttpPost]
+      [Authorize]
       [ProducesResponseType(StatusCodes.Status201Created)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -67,6 +69,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
       }
 
       [HttpPut("{id:guid}")]
+      [Authorize]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -86,6 +89,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
       }
 
       [HttpDelete("{id:guid}")]
+      [Authorize]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       public async Task<IActionResult> DeleteAuthor(Guid id)

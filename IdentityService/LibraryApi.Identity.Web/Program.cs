@@ -21,14 +21,9 @@ builder.Services.ConfigureDataProtection();
 
 var app = builder.Build();
 
-if(app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
    app.UseDeveloperExceptionPage();
-   app.UseSwagger();
-   app.UseSwaggerUI(options =>
-   {
-      options.SwaggerEndpoint("/swagger/v0/swagger.json", "Identity API v0");
-   });
 }
 else
 {
@@ -41,5 +36,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+   options.SwaggerEndpoint("/swagger/v0/swagger.json", "Identity API v0");
+});
 
 app.Run();
