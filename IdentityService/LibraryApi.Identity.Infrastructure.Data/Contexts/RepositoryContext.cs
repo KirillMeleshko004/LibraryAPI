@@ -22,9 +22,10 @@ namespace LibraryApi.Identity.Infrastructure.Data.Contexts
       protected override void OnModelCreating(ModelBuilder builder)
       {
          builder.ApplyConfiguration(new RolesConfiguration());
+         builder.ApplyConfiguration(new UsersConfiguration());
 
          base.OnModelCreating(builder);
       }
 
-    }
+   }
 }

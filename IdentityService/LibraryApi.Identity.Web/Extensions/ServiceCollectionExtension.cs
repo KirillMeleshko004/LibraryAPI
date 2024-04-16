@@ -9,10 +9,12 @@ using LibraryApi.Identity.Infrastructure.Data.Contexts;
 using LibraryApi.Identity.Infrastructure.Logger;
 using LibraryApi.Identity.Services;
 using LibraryAPI.Identity.Infrastructure.Presentation;
+using LibraryAPI.Identity.Infrastructure.Presentation.Filters;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
@@ -68,7 +70,7 @@ namespace LibraryApi.Identity.Web.Extensions
          services.TryAddScoped<IServiceManager, ServiceManager>();
       }
 
-      //Configuring API controllers
+      //Configuring API controllers and related services
       public static void ConfigurePresentationControllers(this IServiceCollection services)
       {
          services.AddControllers(options =>
@@ -78,6 +80,14 @@ namespace LibraryApi.Identity.Web.Extensions
             options.RespectBrowserAcceptHeader = true;
             options.ReturnHttpNotAcceptable = true;
          }).AddApplicationPart(typeof(AssemblyReference).Assembly);
+
+         //Supressing default 400 bad request response on invalid model
+         services.Configure<ApiBehaviorOptions>(options =>
+         {
+            options.SuppressModelStateInvalidFilter = true;
+         });
+
+         services.AddScoped<DtoValidationFilter>();
       }
 
       //Configure ASP.NET Data protection keys

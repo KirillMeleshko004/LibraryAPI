@@ -10,11 +10,13 @@ using LibraryAPI.LibraryService.Infrastructure.Data.Contexts;
 using LibraryAPI.LibraryService.Infrastructure.Data.Repos;
 using LibraryAPI.LibraryService.Infrastructure.Logging;
 using LibraryAPI.LibraryService.Infrastructure.Presentation;
+using LibraryAPI.LibraryService.Infrastructure.Presentation.Filters;
 using LibraryAPI.LibraryService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -76,7 +78,7 @@ namespace LibraryAPI.LibraryService.Web.Extensions
             services.AddScoped<IRepositoryManager, RepositoryManager>();
         }
 
-        //Configuring controllers, specify assebly
+        //Configuring API controllers and related services
         public static void ConfigureControllers(this IServiceCollection services)
         {
             services.AddControllers(options =>
@@ -86,6 +88,14 @@ namespace LibraryAPI.LibraryService.Web.Extensions
                 options.RespectBrowserAcceptHeader = true;
                 options.ReturnHttpNotAcceptable = true;
             }).AddApplicationPart(typeof(AssemblyReference).Assembly);
+
+            //Supressing default 400 bad request response on invalid model
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+
+            services.AddScoped<DtoValidationFilter>();
         }
 
         public static void ConfigureSwagger(this IServiceCollection services)

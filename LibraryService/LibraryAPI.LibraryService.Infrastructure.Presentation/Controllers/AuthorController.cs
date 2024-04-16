@@ -1,6 +1,7 @@
 using LibraryAPI.LibraryService.Domain.Core.Results;
 using LibraryAPI.LibraryService.Domain.Interfaces.Loggers;
 using LibraryAPI.LibraryService.Domain.Interfaces.Services;
+using LibraryAPI.LibraryService.Infrastructure.Presentation.Filters;
 using LibraryAPI.LibraryService.Shared.DTOs;
 using LibraryAPI.LibraryService.Shared.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
@@ -66,13 +67,16 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
       /// <param name="authorDto">represents author to create</param>
       /// <returns>A newly created author</returns>
       ///<response code="201">Returns created author</response>
-      ///<response code="400">If authorDto is null or contains invalid fields</response>
+      ///<response code="400">If authorDto is null</response>
       ///<response code="401">If authorize header missing or contains invalid token</response>
+      ///<response code="422">If authorDto contains invalid fields</response>
       [HttpPost]
       [Authorize]
+      [ServiceFilter(typeof(DtoValidationFilter))]
       [ProducesResponseType(StatusCodes.Status201Created)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+      [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
       public async Task<IActionResult> CreateAuthor([FromBody] AuthorForCreationDto authorDto)
       {
 
@@ -97,15 +101,18 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
       /// <param name="authorDto">represents new author's values</param>
       /// <returns>Nothing</returns>
       ///<response code="204">If author updated successfully</response>
-      ///<response code="400">If authorDto is null or contains invalid fields</response>
+      ///<response code="400">If authorDto is null</response>
       ///<response code="401">If authorize header missing or contains invalid token</response>
       ///<response code="404">If author with id not found</response>
+      ///<response code="422">If authorDto contains invalid fields</response>
       [HttpPut("{id:guid}")]
       [Authorize]
+      [ServiceFilter(typeof(DtoValidationFilter))]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
+      [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
       public async Task<IActionResult> UpdateAuthor(Guid id,
          [FromBody] AuthorForUpdateDto authorDto)
       {

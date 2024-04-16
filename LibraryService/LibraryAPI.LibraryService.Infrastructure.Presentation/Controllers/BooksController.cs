@@ -1,6 +1,7 @@
 using LibraryAPI.LibraryService.Domain.Core.Results;
 using LibraryAPI.LibraryService.Domain.Interfaces.Loggers;
 using LibraryAPI.LibraryService.Domain.Interfaces.Services;
+using LibraryAPI.LibraryService.Infrastructure.Presentation.Filters;
 using LibraryAPI.LibraryService.Shared.DTOs;
 using LibraryAPI.LibraryService.Shared.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
@@ -89,15 +90,18 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
         /// <param name="bookForCreation">represents book to create</param>
         /// <returns>A newly book book</returns>
         ///<response code="201">Returns created book</response>
-        ///<response code="400">If bookDto is null or contains invalid fields</response>
+        ///<response code="400">If bookDto is null</response>
         ///<response code="401">If authorize header missing or contains invalid token</response>
         ///<response code="404">If author with id specified in bookDto doesn't exist</response>
+        ///<response code="422">If bookDto contains invalid fields</response>
         [HttpPost]
         [Authorize]
+        [ServiceFilter(typeof(DtoValidationFilter))]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> CreateBook(
             [FromBody] BookForCreationDto bookForCreation)
         {
@@ -121,15 +125,18 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
         /// <param name="bookForUpdate">represents new book's values</param>
         /// <returns>Nothing</returns>
         ///<response code="204">If book updated successfully</response>
-        ///<response code="400">If bookDto is null or contains invalid fields</response>
+        ///<response code="400">If bookDto is null</response>
         ///<response code="401">If authorize header missing or contains invalid token</response>
         ///<response code="404">If book with id not found or author with id specified in bookDto doesn't exist</response>
+        ///<response code="422">If bookDto contains invalid fields</response>
         [HttpPut("{id:guid}")]
         [Authorize]
+        [ServiceFilter(typeof(DtoValidationFilter))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> UpdateBook(Guid id,
             [FromBody] BookForUpdateDto bookForUpdate)
         {

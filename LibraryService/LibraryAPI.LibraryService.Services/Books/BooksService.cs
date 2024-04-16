@@ -57,7 +57,7 @@ namespace LibraryAPI.LibraryService.Services.Books
 
         public async Task<ValueOpResult<BookDto>> CreateBookAsync(BookForCreationDto bookDto)
         {
-            var authorRes = await CheckAuthorExistAsync(bookDto.AuthorId);
+            var authorRes = await CheckAuthorExistAsync((Guid)bookDto.AuthorId!);
 
             if (authorRes.Status == OpStatus.Fail)
                 return OpResult.FailValueResult<BookDto>(authorRes);
@@ -78,7 +78,7 @@ namespace LibraryAPI.LibraryService.Services.Books
         public async Task<OpResult>
             UpdateBookAsync(Guid id, BookForUpdateDto bookDto)
         {
-            var authorRes = await CheckAuthorExistAsync(bookDto.AuthorId);
+            var authorRes = await CheckAuthorExistAsync((Guid)bookDto.AuthorId!);
 
             if (authorRes.Status == OpStatus.Fail) return authorRes;
 
