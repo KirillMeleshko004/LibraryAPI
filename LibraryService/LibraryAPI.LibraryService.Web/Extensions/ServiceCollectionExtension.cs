@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -95,8 +96,14 @@ namespace LibraryAPI.LibraryService.Web.Extensions
                     new OpenApiInfo
                     {
                         Title = "Library API",
-                        Version = "v0"
+                        Version = "v0",
+                        Description = "An ASP.NET Core Web API for managing managing books and authors.",
                     });
+
+                var xmlFileName = $"{typeof(AssemblyReference).Assembly.GetName().Name}.xml";
+                var xmlFilePath = Path.Combine(AppContext.BaseDirectory, xmlFileName);
+                options.IncludeXmlComments(xmlFilePath);
+
                 options.AddSecurityDefinition("Bearer",
                     new OpenApiSecurityScheme
                     {
@@ -136,7 +143,7 @@ namespace LibraryAPI.LibraryService.Web.Extensions
         public static void ConfigureDataProtection(this IServiceCollection services)
         {
             //if OS is windows leave default configuration with DPAPI
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
 
             var keyDirName = Environment.GetEnvironmentVariable("KEY_DIR_NAME")!;
             var x509CertPath = Environment.GetEnvironmentVariable("CERT_PATH")!;
@@ -156,7 +163,7 @@ namespace LibraryAPI.LibraryService.Web.Extensions
 
         public static void ConfigureAuthentication(this IServiceCollection services,
          IConfiguration configuration)
-        {  
+        {
             var jwtOptions = new JwtOptions();
 
             //Supply JwtOptions class with JwtOptions.SectionName values from configuration
@@ -177,18 +184,18 @@ namespace LibraryAPI.LibraryService.Web.Extensions
             })
             .AddJwtBearer(options =>
             {
-            options.TokenValidationParameters = 
-                new TokenValidationParameters
-                {
-                    ValidateAudience = true,
-                    ValidateIssuer = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidateLifetime = true,
+                options.TokenValidationParameters =
+                    new TokenValidationParameters
+                    {
+                        ValidateAudience = true,
+                        ValidateIssuer = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidateLifetime = true,
 
-                    ValidAudience = jwtOptions.ValidAudience,
-                    ValidIssuer = jwtOptions.ValidIssuer,
-                    IssuerSigningKey = key
-                };
+                        ValidAudience = jwtOptions.ValidAudience,
+                        ValidIssuer = jwtOptions.ValidIssuer,
+                        IssuerSigningKey = key
+                    };
             });
         }
     }

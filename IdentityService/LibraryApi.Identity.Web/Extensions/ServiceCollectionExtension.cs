@@ -52,7 +52,7 @@ namespace LibraryApi.Identity.Web.Extensions
 
       //Configure all data store and retrieve options, 
       //like database context and repositories
-      public static void ConfigureData(this IServiceCollection services, 
+      public static void ConfigureData(this IServiceCollection services,
          IConfiguration configuration)
       {
          services.AddDbContext<RepositoryContext>(options =>
@@ -84,9 +84,9 @@ namespace LibraryApi.Identity.Web.Extensions
       public static void ConfigureDataProtection(this IServiceCollection services)
       {
          //if OS is windows leave default configuration with DPAPI
-         if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
+         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
 
-         
+
          var keyDirName = Environment.GetEnvironmentVariable("KEY_DIR_NAME")!;
          var x509CertPath = Environment.GetEnvironmentVariable("CERT_PATH")!;
          var certPassword = Environment.GetEnvironmentVariable("CERT_PASSWORD")!;
@@ -106,7 +106,7 @@ namespace LibraryApi.Identity.Web.Extensions
 
       public static void ConfigureAuthentication(this IServiceCollection services,
          IConfiguration configuration)
-      {  
+      {
          var jwtOptions = new JwtOptions();
 
          //Supply JwtOptions class with JwtOptions.SectionName values from configuration
@@ -128,7 +128,7 @@ namespace LibraryApi.Identity.Web.Extensions
          })
             .AddJwtBearer(options =>
             {
-               options.TokenValidationParameters = 
+               options.TokenValidationParameters =
                   new TokenValidationParameters
                   {
                      ValidateAudience = true,
@@ -172,22 +172,27 @@ namespace LibraryApi.Identity.Web.Extensions
       {
          services.AddSwaggerGen(options =>
          {
-            options.SwaggerDoc("v0", 
+            options.SwaggerDoc("v0",
                new OpenApiInfo
                {
-                  Title = "Identity API v0", 
-                  Version="v0"
-               }); 
+                  Title = "Identity API v0",
+                  Version = "v0"
+               });
+
+            var xmlFileName = $"{typeof(AssemblyReference).Assembly.GetName().Name}.xml";
+            var xmlFilePath = Path.Combine(AppContext.BaseDirectory, xmlFileName);
+            options.IncludeXmlComments(xmlFilePath);
 
             options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme,
-               new OpenApiSecurityScheme{
+               new OpenApiSecurityScheme
+               {
                   Name = "Authorization",
                   In = ParameterLocation.Header,
                   Type = SecuritySchemeType.ApiKey,
                   Scheme = JwtBearerDefaults.AuthenticationScheme,
                   Description = "JWT Authorization header using the Bearer scheme."
                });
-            
+
             //Add an authorization header to each endpoint when the request is sent. 
             options.AddSecurityRequirement(new OpenApiSecurityRequirement()
             {

@@ -22,6 +22,13 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
          _logger = logger;
       }
 
+      /// <summary>
+      /// Retrieve list of authors base on request parameters
+      /// </summary>
+      /// <param name="parameters">Parameters that describes what authors should be retrieved</param>
+      /// <returns>List of authors. Could be empty</returns>
+      ///<response code="200">Returns list of authors</response>
+      ///<response code="400">If some request parameters has invalid values</response>
       [HttpGet]
       [ProducesResponseType(StatusCodes.Status200OK)]
       public async Task<IActionResult> GetAuthors([FromQuery] AuthorParameters parameters)
@@ -31,6 +38,13 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
          return Ok(authors);
       }
 
+      /// <summary>
+      /// Retrieve author based on id
+      /// </summary>
+      /// <param name="id">id of required author</param>
+      /// <returns>Author</returns>
+      ///<response code="200">Returns author</response>
+      ///<response code="404">If author with id not found</response>
       [HttpGet("{id:guid}")]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -46,6 +60,14 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
          return Ok(author);
       }
 
+      /// <summary>
+      /// Creates author
+      /// </summary>
+      /// <param name="authorDto">represents author to create</param>
+      /// <returns>A newly created author</returns>
+      ///<response code="201">Returns created author</response>
+      ///<response code="400">If authorDto is null or contains invalid fields</response>
+      ///<response code="401">If authorize header missing or contains invalid token</response>
       [HttpPost]
       [Authorize]
       [ProducesResponseType(StatusCodes.Status201Created)]
@@ -68,6 +90,16 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
 
       }
 
+      /// <summary>
+      /// Updates existing author
+      /// </summary>
+      /// <param name="id">id of author to update</param>
+      /// <param name="authorDto">represents new author's values</param>
+      /// <returns>Nothing</returns>
+      ///<response code="204">If author updated successfully</response>
+      ///<response code="400">If authorDto is null or contains invalid fields</response>
+      ///<response code="401">If authorize header missing or contains invalid token</response>
+      ///<response code="404">If author with id not found</response>
       [HttpPut("{id:guid}")]
       [Authorize]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -88,6 +120,13 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
          return NoContent();
       }
 
+      /// <summary>
+      /// Deletes a specific author
+      /// </summary>
+      /// <param name="id">id of required author</param>
+      /// <returns>Nothing</returns>
+      ///<response code="204">If author deleted or not exist</response>
+      ///<response code="401">If authorize header missing or contains invalid token</response>
       [HttpDelete("{id:guid}")]
       [Authorize]
       [ProducesResponseType(StatusCodes.Status204NoContent)]

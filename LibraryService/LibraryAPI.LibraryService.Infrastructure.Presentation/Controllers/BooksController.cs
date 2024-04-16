@@ -22,7 +22,13 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
             _logger = logger;
         }
 
-
+        /// <summary>
+        /// Retrieve book based on id
+        /// </summary>
+        /// <param name="id">id of required book</param>
+        /// <returns>Book</returns>
+        ///<response code="200">Returns book</response>
+        ///<response code="404">If book with id not found</response>
         [HttpGet("{id:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -38,6 +44,13 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
             return Ok(book);
         }
 
+        /// <summary>
+        /// Retrieve book based on ISBN
+        /// </summary>
+        /// <param name="isbn">isbn of required book</param>
+        /// <returns>Book</returns>
+        ///<response code="200">Returns book</response>
+        ///<response code="404">If book with isbn not found</response>
         [HttpGet("isbn/{isbn}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -54,6 +67,13 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
             return Ok(book);
         }
 
+        /// <summary>
+        /// Retrieve list of books base on request parameters
+        /// </summary>
+        /// <param name="parameters">Parameters that describes what books should be retrieved</param>
+        /// <returns>List of books. Could be empty</returns>
+        ///<response code="200">Returns list of books</response>
+        ///<response code="400">If some request parameters has invalid values</response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetBooks([FromQuery] BookParameters parameters)
@@ -63,6 +83,15 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
             return Ok(books);
         }
 
+        /// <summary>
+        /// Creates book
+        /// </summary>
+        /// <param name="bookForCreation">represents book to create</param>
+        /// <returns>A newly book book</returns>
+        ///<response code="201">Returns created book</response>
+        ///<response code="400">If bookDto is null or contains invalid fields</response>
+        ///<response code="401">If authorize header missing or contains invalid token</response>
+        ///<response code="404">If author with id specified in bookDto doesn't exist</response>
         [HttpPost]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -85,6 +114,16 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
                 res.Value);
         }
 
+        /// <summary>
+        /// Updates existing book
+        /// </summary>
+        /// <param name="id">id of book to update</param>
+        /// <param name="bookForUpdate">represents new book's values</param>
+        /// <returns>Nothing</returns>
+        ///<response code="204">If book updated successfully</response>
+        ///<response code="400">If bookDto is null or contains invalid fields</response>
+        ///<response code="401">If authorize header missing or contains invalid token</response>
+        ///<response code="404">If book with id not found or author with id specified in bookDto doesn't exist</response>
         [HttpPut("{id:guid}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -105,7 +144,13 @@ namespace LibraryAPI.LibraryService.Infrastructure.Presentation.Controllers
             return NoContent();
         }
 
-
+        /// <summary>
+        ///  Deletes a specific book
+        /// </summary>
+        /// <param name="id">id of required book</param>
+        /// <returns>Nothing</returns>
+        ///<response code="204">If book deleted or not exist</response>
+        ///<response code="401">If authorize header missing or contains invalid token</response>
         [HttpDelete("{id:guid}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

@@ -14,4 +14,9 @@
     <ProjectReference Include="..\LibraryApi.Identity.Domain.Interfaces\LibraryApi.Identity.Domain.Interfaces.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+  
 </Project>
