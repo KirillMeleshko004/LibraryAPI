@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryAPI.LibraryService.Infrastructure.Data.Repos
 {
+   /// <summary>
+   /// Repository to manipulate authors in data storage
+   /// </summary>
    public class AuthorRepository : RepositoryBase<Author>, IAuthorRepository
    {
       public AuthorRepository(RepositoryContext context) : base(context)
@@ -25,6 +28,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Data.Repos
          return await Get(trackChanges)
             .FilterAuthors(parameters)
             .Sort(parameters.OrderBy)
+            .Page(parameters)
             .ToListAsync();
       }
 

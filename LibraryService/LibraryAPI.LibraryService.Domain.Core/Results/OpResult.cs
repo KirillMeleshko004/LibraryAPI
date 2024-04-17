@@ -1,8 +1,10 @@
 namespace LibraryAPI.LibraryService.Domain.Core.Results
 {
+   /// <summary>
+   /// Class represents result of operation
+   /// </summary>
    public class OpResult
    {
-
       public OpStatus Status { get; set; }
       public OpError? Error { get; set; }
 
@@ -13,6 +15,9 @@ namespace LibraryAPI.LibraryService.Domain.Core.Results
             Status = OpStatus.Success
          };
       }
+
+      //Provides method to create operation result
+      #region Result Creators
 
       public static OpResult FailResult(string errorDescription, ErrorType errorType)
       {
@@ -26,7 +31,6 @@ namespace LibraryAPI.LibraryService.Domain.Core.Results
             }
          };
       }
-
 
       public static ValueOpResult<T> SuccessValueResult<T>(T value)
       {
@@ -59,5 +63,8 @@ namespace LibraryAPI.LibraryService.Domain.Core.Results
             Error = failRes.Error
          };
       }
+
+      #endregion
+
    }
 }

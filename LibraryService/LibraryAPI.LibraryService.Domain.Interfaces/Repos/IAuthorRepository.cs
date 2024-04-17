@@ -5,7 +5,7 @@ namespace LibraryAPI.LibraryService.Domain.Interfaces.Repos
 {
     public interface IAuthorRepository
     {
-        
+
         Task<IEnumerable<Author>> GetAuthorsAsync(AuthorParameters parameters, bool trackChanges);
         Task<Author?> GetAuthorByIdAsync(Guid id, bool trackChanges);
 

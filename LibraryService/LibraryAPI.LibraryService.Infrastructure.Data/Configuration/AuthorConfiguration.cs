@@ -28,12 +28,49 @@ namespace LibraryAPI.LibraryService.Infrastructure.Data.Configuration
                .OnDelete(DeleteBehavior.Cascade);
 
 
+         //Set initial data
          builder.HasData(
             new Author
             {
-               Id = new Guid("72EB1467-698E-4566-999F-08DC03C404E3"),
-               FirstName = "Test First Name",
-               LastName = "Test Last Name"
+               Id = new Guid("4dc4b580-7fb5-4c2a-938a-7e464116c7dd"),
+               FirstName = "Lev",
+               LastName = "Tolstoy"
+            },
+            new Author
+            {
+               Id = new Guid("21cb29da-047a-4d85-a581-8ef6cffec67f"),
+               FirstName = "Maxim",
+               LastName = "Gorkiy"
+            },
+            new Author
+            {
+               Id = new Guid("3bc8f089-2d00-4346-af71-d9f9fcdceb20"),
+               FirstName = "Miya",
+               LastName = "Kazuki"
+            },
+            new Author
+            {
+               Id = new Guid("188ec0f1-b4a1-4a86-9bb4-f249c2a1032b"),
+               FirstName = "Fedor",
+               LastName = "Dostoyevskiy"
+            },
+            new Author
+            {
+               Id = new Guid("ec891ac2-f620-415f-9f86-3d15259eb071"),
+               FirstName = "Nikolay",
+               LastName = "Gogol"
+            },
+            new Author
+            {
+               Id = new Guid("4792ce31-a3e8-4df3-b0d7-4ea1c8e40dbd"),
+               FirstName = "William",
+               LastName = "Shakespeare"
+            },
+            new Author
+            {
+               Id = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
+               FirstName = "Vasil",
+               LastName = "Bykov"
             }
          );
       }

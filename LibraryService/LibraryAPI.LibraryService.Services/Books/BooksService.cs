@@ -9,6 +9,9 @@ using LibraryAPI.LibraryService.Shared.RequestFeatures;
 
 namespace LibraryAPI.LibraryService.Services.Books
 {
+    /// <summary>
+    /// Service represent business-logic for books
+    /// </summary>
     public class BooksService : IBooksService
     {
         private readonly IRepositoryManager _repo;

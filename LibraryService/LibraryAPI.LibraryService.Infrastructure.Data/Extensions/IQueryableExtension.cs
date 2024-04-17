@@ -6,18 +6,21 @@ using System.Text;
 
 namespace LibraryAPI.LibraryService.Infrastructure.Data.Extensions
 {
+    /// <summary>
+    /// Class with extension helper methods for IQueryable<T>
+    /// </summary>
     public static class IQueryableExtension
     {
         public static IQueryable<Book> FilterBooks(this IQueryable<Book> books,
             BookParameters parameters)
         {
-            return books.Page<Book>(parameters);
+            return books;
         }
 
         public static IQueryable<Author> FilterAuthors(this IQueryable<Author> authors,
             AuthorParameters parameters)
         {
-            return authors.Page<Author>(parameters);
+            return authors;
         }
 
         public static IQueryable<T> Page<T>(this IQueryable<T> entities,

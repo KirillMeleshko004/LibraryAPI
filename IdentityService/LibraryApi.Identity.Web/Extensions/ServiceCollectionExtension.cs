@@ -23,6 +23,9 @@ using NLog;
 
 namespace LibraryApi.Identity.Web.Extensions
 {
+   /// <summary>
+   /// Class contains exstensions to simplify app configuration and dependency injection
+   /// </summary>
    public static class ServiceCollectionExtension
    {
       //Register and configure logger for application
@@ -154,7 +157,7 @@ namespace LibraryApi.Identity.Web.Extensions
 
       }
 
-
+      //Configure microsoft Identity to work with stored users
       public static void ConfigureIdentity(this IServiceCollection services)
       {
          services.AddIdentity<User, Role>(options =>
@@ -228,5 +231,6 @@ namespace LibraryApi.Identity.Web.Extensions
             });
          });
       }
+
    }
 }

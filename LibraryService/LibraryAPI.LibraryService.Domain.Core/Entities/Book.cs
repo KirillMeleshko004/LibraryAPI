@@ -1,7 +1,8 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace LibraryAPI.LibraryService.Domain.Core.Entities
 {
+    /// <summary>
+    /// Class represents book entity in DB
+    /// </summary>
     public class Book
     {
         public Guid Id { get; set; }
@@ -19,7 +20,7 @@ namespace LibraryAPI.LibraryService.Domain.Core.Entities
         public DateTime? BorrowTime { get; set; }
 
         public DateTime? ReturnTime { get; set; }
-        
+
 
         public Guid AuthorId { get; set; }
         public Author? Author { get; set; }

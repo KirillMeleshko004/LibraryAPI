@@ -21,6 +21,8 @@ builder.Services.ConfigureDataProtection();
 
 var app = builder.Build();
 
+#region Configure app pipeline
+
 if (app.Environment.IsDevelopment())
 {
    app.UseDeveloperExceptionPage();
@@ -42,5 +44,7 @@ app.UseSwaggerUI(options =>
 {
    options.SwaggerEndpoint("/swagger/v0/swagger.json", "Identity API v0");
 });
+
+#endregion
 
 app.Run();

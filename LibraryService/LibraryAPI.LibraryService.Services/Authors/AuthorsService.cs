@@ -9,6 +9,9 @@ using LibraryAPI.LibraryService.Shared.RequestFeatures;
 
 namespace LibraryAPI.LibraryService.Services.Authors
 {
+   /// <summary>
+   /// Service represent business-logic for authors
+   /// </summary>
    public class AuthorsService : IAuthorsService
    {
 
@@ -83,12 +86,15 @@ namespace LibraryAPI.LibraryService.Services.Authors
 
          await _repo.Authors.DeleteAuthorAsync(author);
 
+         await _repo.SaveChangesAsync();
+
          _logger.LogInfo($"Author with id: {author.Id} was deleted.");
       }
 
 
       #region Private methods
 
+      //Retrieves author from repository
       private async Task<ValueOpResult<Author>> GetAuthorByIdAsync(Guid id, bool trackChanges)
       {
          var author = await _repo.Authors.GetAuthorByIdAsync(id, trackChanges);

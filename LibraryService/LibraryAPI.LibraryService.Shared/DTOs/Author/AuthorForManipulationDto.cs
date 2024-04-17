@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LibraryAPI.LibraryService.Shared.DTOs
 {
+   /// <summary>
+   /// Base Dto for authors send from user
+   /// </summary>
    public abstract record AuthorForManipulationDto
    {
 

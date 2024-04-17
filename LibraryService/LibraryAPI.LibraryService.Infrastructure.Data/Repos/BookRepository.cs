@@ -23,6 +23,7 @@ namespace LibraryAPI.LibraryService.Infrastructure.Data.Repos
             return await Get(trackChanges)
                 .FilterBooks(parameters)
                 .Sort(parameters.OrderBy)
+                .Page(parameters)
                 .Include(b => b.Author)
                 .ToListAsync();
         }

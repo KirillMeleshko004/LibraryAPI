@@ -1,0 +1,112 @@
+{
+	"info": {
+		"_postman_id": "00a3ddcf-11a1-451b-a9f2-2a4a8d778409",
+		"name": "IdentityApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30859793"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"meleshkokirill004@gmail.com\",\r\n    \"lastName\": \"Meleshko\",\r\n    \"firstName\": \"Kirill\",\r\n    \"Password\": \"1234567890\",\r\n    \"UserRoles\":\r\n    [\r\n        \"Customer\", \"Admin\", \"Librarian\"\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5238/api/reg",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5238",
+					"path": [
+						"api",
+						"reg"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authorize",
+			"protocolProfileBehavior": {
+				"followRedirects": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"meleshkokirill004@gmail.com\",\r\n    \"Password\": \"1234567890\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5238/api/auth",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5238",
+					"path": [
+						"api",
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RefreshToken",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJsb2NhbCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTIzOCIsImV4cCI6MTcxMzM0NDU2NiwiZW1haWwiOiJjcmF6eS50YXBvay5tZUBnbWFpbC5jb20iLCJSb2xlcyI6WyJMaWJyYXJpYW4iLCJBZG1pbiIsIkN1c3RvbWVyIl0sImlhdCI6MTcxMzM0Mzk2NiwibmJmIjoxNzEzMzQzOTY2fQ.323Lq87-E1imJatG0Q__48E09-mIJeUrzql4FsTNFAU\",\r\n    \"refreshToken\": \"WKKmCPa8dw7168H8xMP/fi7D2P1hCWaMKWcR6hXoJ1E0ipgEvxHW5+4SHG+8Zdkz2RTq39suiyvm9VWZwQHsHQ==\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5238/api/refresh",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5238",
+					"path": [
+						"api",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

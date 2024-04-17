@@ -2,10 +2,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LibraryAPI.LibraryService.Shared.DTOs
 {
+    /// <summary>
+    /// Base Dto for books send from user
+    /// </summary>
+
     public abstract record BookForManipulationDto
     {
         [Required(ErrorMessage = "ISBN field is required")]
-        [RegularExpression(@"ISBN(?:-13)?:?\x20*(?=.{17}$)97(?:8|9)([ -])\d{1,5}\1\d{1,7}\1\d{1,6}\1\d$")]
+        [RegularExpression(@"(^(ISBN|ISBN(-|\s)?10)?:?\s*\d{10}$|(^(ISBN|ISBN(-|\s)?13)?:?\s*\d{13}$))")]
         public string ISBN { get; set; } = null!;
 
         [Required(ErrorMessage = "Title field is required")]
@@ -16,7 +20,7 @@ namespace LibraryAPI.LibraryService.Shared.DTOs
         public Guid? AuthorId { get; set; }
 
         [Required(ErrorMessage = "Genre field is required")]
-        [MaxLength(15, ErrorMessage = "Max genre length is 15.")]
+        [MaxLength(30, ErrorMessage = "Max genre length is 30.")]
         public string Genre { get; set; } = null!;
 
         [Required(ErrorMessage = "Description field is required")]

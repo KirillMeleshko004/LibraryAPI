@@ -1,18 +1,21 @@
 using LibraryApi.Identity.Domain.Core.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Users.Domain.Core.Enum;
 
 namespace LibraryApi.Identity.Infrastructure.Data.Configuration
 {
+   /// <summary>
+   /// Class to configure role entity in database
+   /// </summary>
    public class RolesConfiguration : IEntityTypeConfiguration<Role>
    {
       public void Configure(EntityTypeBuilder<Role> builder)
       {
          var roles = new List<Role>();
 
-         foreach(var role in Enum.GetValues<Roles>())
+         //Retrieving all available roles from enum
+         foreach (var role in Enum.GetValues<Roles>())
          {
             roles.Add(new Role()
             {
@@ -21,7 +24,7 @@ namespace LibraryApi.Identity.Infrastructure.Data.Configuration
                NormalizedName = role.ToString().ToUpper()
             });
          }
-         
+
          builder.HasData(roles);
       }
    }

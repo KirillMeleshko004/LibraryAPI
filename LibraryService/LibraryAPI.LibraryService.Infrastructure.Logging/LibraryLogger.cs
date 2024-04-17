@@ -3,6 +3,9 @@ using NLog;
 
 namespace LibraryAPI.LibraryService.Infrastructure.Logging
 {
+    /// <summary>
+    /// Wrapper class for NLog logger
+    /// </summary>
     public class LibraryLogger : ILibraryLogger
     {
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();

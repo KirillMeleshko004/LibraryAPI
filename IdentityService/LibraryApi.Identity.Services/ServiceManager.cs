@@ -8,8 +8,14 @@ using Microsoft.Extensions.Options;
 
 namespace LibraryApi.Identity.Services
 {
+   /// <summary>
+   /// Class represents single unit of work for services.
+   /// ServiceManager instance created once for each request and ensures
+   /// that all services use same instance of UserManage 
+   /// </summary>
    public class ServiceManager : IServiceManager
    {
+      //Make services Lazy to save resources if service not used during request
       private readonly Lazy<IUsersService> _users;
 
       public IUsersService Users 

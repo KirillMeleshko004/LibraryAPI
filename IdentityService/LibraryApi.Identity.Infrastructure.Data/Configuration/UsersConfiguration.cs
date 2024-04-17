@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LibraryApi.Identity.Infrastructure.Data.Configuration
 {
+   /// <summary>
+   /// Class to configure user entity in database
+   /// </summary>
    public class UsersConfiguration : IEntityTypeConfiguration<User>
    {
       private const int EMAIL_MAX_LENGTH = 40;

@@ -1,0 +1,367 @@
+{
+	"info": {
+		"_postman_id": "517c8924-0948-4d0c-a154-48e365a3aefc",
+		"name": "LibraryAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30859793"
+	},
+	"item": [
+		{
+			"name": "Books",
+			"item": [
+				{
+					"name": "Get Books",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5280/api/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5280",
+							"path": [
+								"api",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Book",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJsb2NhbCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTIzOCIsImV4cCI6MTcxMzM0NDU3MSwiZW1haWwiOiJjcmF6eS50YXBvay5tZUBnbWFpbC5jb20iLCJSb2xlcyI6WyJMaWJyYXJpYW4iLCJBZG1pbiIsIkN1c3RvbWVyIl0sImlhdCI6MTcxMzM0Mzk3MSwibmJmIjoxNzEzMzQzOTcxfQ.dXVulFtxueEme1WCxdIwroMcgdISH7oJInsSYNSlMy0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"isbn\": \"ISBN 9780596520686\",\r\n    \"title\": \"Test Book\",\r\n    \"genre\": \"Test Genre\",\r\n    \"authorId\": \"ac31fda2-411c-4669-8e42-b4b18cc659cb\",\r\n    \"description\": \"Test description 2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5280/api/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5280",
+							"path": [
+								"api",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get book by ISBN",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5280/api/books/isbn/ISBN 13: 9785050000149",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5280",
+							"path": [
+								"api",
+								"books",
+								"isbn",
+								"ISBN 13: 9785050000149"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Book by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5280/api/books/6328fcf9-5846-4f7c-960c-da5ea5c32f22",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5280",
+							"path": [
+								"api",
+								"books",
+								"6328fcf9-5846-4f7c-960c-da5ea5c32f22"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Book",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJsb2NhbCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTIzOCIsImV4cCI6MTcxMzM0NDU3MSwiZW1haWwiOiJjcmF6eS50YXBvay5tZUBnbWFpbC5jb20iLCJSb2xlcyI6WyJMaWJyYXJpYW4iLCJBZG1pbiIsIkN1c3RvbWVyIl0sImlhdCI6MTcxMzM0Mzk3MSwibmJmIjoxNzEzMzQzOTcxfQ.dXVulFtxueEme1WCxdIwroMcgdISH7oJInsSYNSlMy0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"isbn\": \"ISBN 13: 9785050000149\",\r\n    \"title\": \"Crime and Punishment Updated\",\r\n    \"authorId\": \"188ec0f1-b4a1-4a86-9bb4-f249c2a1032b\",\r\n    \"genre\": \"Novel\",\r\n    \"description\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius rhoncus nisl, nec egestas lacus pellentesque vitae. Donec eleifend urna at nunc tincidunt facilisis. Nam consectetur odio erat sed.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5280/api/books/6328fcf9-5846-4f7c-960c-da5ea5c32f22",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5280",
+							"path": [
+								"api",
+								"books",
+								"6328fcf9-5846-4f7c-960c-da5ea5c32f22"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Book",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJsb2NhbCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTIzOCIsImV4cCI6MTcxMzM0NDU3MSwiZW1haWwiOiJjcmF6eS50YXBvay5tZUBnbWFpbC5jb20iLCJSb2xlcyI6WyJMaWJyYXJpYW4iLCJBZG1pbiIsIkN1c3RvbWVyIl0sImlhdCI6MTcxMzM0Mzk3MSwibmJmIjoxNzEzMzQzOTcxfQ.dXVulFtxueEme1WCxdIwroMcgdISH7oJInsSYNSlMy0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5280/api/books/6328fcf9-5846-4f7c-960c-da5ea5c32f22",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5280",
+							"path": [
+								"api",
+								"books",
+								"6328fcf9-5846-4f7c-960c-da5ea5c32f22"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authors",
+			"item": [
+				{
+					"name": "Get authors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5280/api/authors?orderby=lastName desc, firstName&pageNumber=1&pageSize=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5280",
+							"path": [
+								"api",
+								"authors"
+							],
+							"query": [
+								{
+									"key": "orderby",
+									"value": "lastName desc, firstName"
+								},
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create author",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJsb2NhbCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTIzOCIsImV4cCI6MTcxMzM0NDU3MSwiZW1haWwiOiJjcmF6eS50YXBvay5tZUBnbWFpbC5jb20iLCJSb2xlcyI6WyJMaWJyYXJpYW4iLCJBZG1pbiIsIkN1c3RvbWVyIl0sImlhdCI6MTcxMzM0Mzk3MSwibmJmIjoxNzEzMzQzOTcxfQ.dXVulFtxueEme1WCxdIwroMcgdISH7oJInsSYNSlMy0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Test First Name\",\r\n    \"lastName\": \"Test Last Name\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5280/api/authors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5280",
+							"path": [
+								"api",
+								"authors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update author",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJsb2NhbCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTIzOCIsImV4cCI6MTcxMzM0NDU3MSwiZW1haWwiOiJjcmF6eS50YXBvay5tZUBnbWFpbC5jb20iLCJSb2xlcyI6WyJMaWJyYXJpYW4iLCJBZG1pbiIsIkN1c3RvbWVyIl0sImlhdCI6MTcxMzM0Mzk3MSwibmJmIjoxNzEzMzQzOTcxfQ.dXVulFtxueEme1WCxdIwroMcgdISH7oJInsSYNSlMy0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Leva\",\r\n    \"lastName\": \"Tolstoy\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5280/api/authors/4dc4b580-7fb5-4c2a-938a-7e464116c7dd",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5280",
+							"path": [
+								"api",
+								"authors",
+								"4dc4b580-7fb5-4c2a-938a-7e464116c7dd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get author by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5280/api/authors/4dc4b580-7fb5-4c2a-938a-7e464116c7dd",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5280",
+							"path": [
+								"api",
+								"authors",
+								"4dc4b580-7fb5-4c2a-938a-7e464116c7dd"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete author",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJsb2NhbCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTIzOCIsImV4cCI6MTcxMzM0NDU3MSwiZW1haWwiOiJjcmF6eS50YXBvay5tZUBnbWFpbC5jb20iLCJSb2xlcyI6WyJMaWJyYXJpYW4iLCJBZG1pbiIsIkN1c3RvbWVyIl0sImlhdCI6MTcxMzM0Mzk3MSwibmJmIjoxNzEzMzQzOTcxfQ.dXVulFtxueEme1WCxdIwroMcgdISH7oJInsSYNSlMy0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5280/api/authors/4dc4b580-7fb5-4c2a-938a-7e464116c7dd",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5280",
+							"path": [
+								"api",
+								"authors",
+								"4dc4b580-7fb5-4c2a-938a-7e464116c7dd"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

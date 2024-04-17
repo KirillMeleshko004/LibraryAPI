@@ -13,6 +13,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace LibraryApi.Identity.Services
 {
+   /// <summary>
+   /// Service represent business-logic for users
+   /// </summary>
     public class UsersService : IUsersService
     {
       

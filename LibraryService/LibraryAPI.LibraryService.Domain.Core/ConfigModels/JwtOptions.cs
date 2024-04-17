@@ -1,8 +1,8 @@
 namespace LibraryAPI.LibraryService.Domain.Core.ConfigModels
 {
+   //Options class to represent JWTOptions configuration segment
    public class JwtOptions
    {
-
       public static string SectionName { get; } = "JwtSettings";
 
 
