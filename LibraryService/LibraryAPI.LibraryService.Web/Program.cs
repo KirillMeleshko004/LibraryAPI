@@ -1,6 +1,7 @@
 using LibraryAPI.LibraryService.Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.ClearProviders().AddProvider(new NLog.Extensions.Logging.NLogLoggerProvider());
 
 #region Configure services
 

@@ -1,9 +1,9 @@
-namespace LibraryAPI.LibraryService.Shared.DTOs
+namespace Library.Domain.Entities
 {
    /// <summary>
-   /// Author DTO that should be send to client
+   /// Class represents author entity
    /// </summary>
-   public record AuthorDto
+   public class Author
    {
       public Guid Id { get; set; }
 
@@ -11,5 +11,7 @@ namespace LibraryAPI.LibraryService.Shared.DTOs
       public string LastName { get; set; } = null!;
       public DateOnly DateOfBirth { get; set; }
       public string Country { get; set; } = null!;
+
+      public IEnumerable<Book>? Books { get; set; }
    }
 }

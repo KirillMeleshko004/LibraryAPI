@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace LibraryAPI.LibraryService.Shared.DTOs
+namespace Library.UseCases.Authors.DTOs
 {
    /// <summary>
    /// Base Dto for authors send from user

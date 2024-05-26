@@ -1,4 +1,4 @@
-namespace LibraryAPI.LibraryService.Shared.DTOs
+namespace Library.UseCases.Authors.DTOs
 {
    /// <summary>
    /// Author DTO that should be send to client
