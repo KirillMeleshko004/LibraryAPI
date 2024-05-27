@@ -4,36 +4,39 @@ using Library.UseCases.Common.Interfaces;
 using Library.Shared.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using static Library.UseCases.Common.Messages.LoggingMessages;
+using static Library.UseCases.Common.Messages.ResponseMessages;
+
 
 namespace Library.UseCases.Books.Queries
 {
    public class GetBooksByIdHandler : IRequestHandler<GetBookByIdQuery, Result<BookDto>>
    {
-      private readonly IBookRepository _books;
+      private readonly IRepositoryManager _repo;
       private readonly IMapper _mapper;
       private readonly ILogger _logger;
 
-      public GetBooksByIdHandler(IBookRepository books, IMapper mapper, ILogger logger)
+      public GetBooksByIdHandler(IRepositoryManager repo, IMapper mapper, ILogger logger)
       {
-         _books = books;
+         _repo = repo;
          _mapper = mapper;
          _logger = logger;
       }
 
       public async Task<Result<BookDto>> Handle(GetBookByIdQuery request, 
-      CancellationToken cancellationToken)
+         CancellationToken cancellationToken)
       {
-         var book = await _books.GetBookByIdAsync(request.Id);
+         var book = await _repo.Books.GetBookByIdAsync(request.Id, cancellationToken);
 
          if(book == null)
          {
-            _logger.LogWarning("Book with id: {Id} was not found.", request.Id);
-            return Result<BookDto>.NotFound($"Book with id: {request.Id} was not found.");
+            _logger.LogWarning(BookNotFoundLog, request.Id);
+            return Result<BookDto>.NotFound(string.Format(BookNotFound, request.Id));
          }
 
-         var bookDto = _mapper.Map<BookDto>(book);
+         var bookToReturn = _mapper.Map<BookDto>(book);
 
-         return Result<BookDto>.Success(bookDto);
+         return Result<BookDto>.Success(bookToReturn);
       }
    }
 }

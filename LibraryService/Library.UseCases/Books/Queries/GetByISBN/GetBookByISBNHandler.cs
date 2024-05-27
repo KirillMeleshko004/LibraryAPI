@@ -4,18 +4,20 @@ using Library.UseCases.Common.Interfaces;
 using Library.Shared.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using static Library.UseCases.Common.Messages.LoggingMessages;
+using static Library.UseCases.Common.Messages.ResponseMessages;
 
 namespace Library.UseCases.Books.Queries
 {
    public class GetBookByISBNHandler : IRequestHandler<GetBookByISBNQuery, Result<BookDto>>
    {
-      private readonly IBookRepository _books;
+      private readonly IRepositoryManager _repo;
       private readonly IMapper _mapper;
       private readonly ILogger _logger;
 
-      public GetBookByISBNHandler(IBookRepository books, IMapper mapper, ILogger logger)
+      public GetBookByISBNHandler(IRepositoryManager repo, IMapper mapper, ILogger logger)
       {
-         _books = books;
+         _repo = repo;
          _mapper = mapper;
          _logger = logger;
       }
@@ -23,12 +25,12 @@ namespace Library.UseCases.Books.Queries
       public async Task<Result<BookDto>> Handle(GetBookByISBNQuery request, 
          CancellationToken cancellationToken)
       {
-         var book = await _books.GetBookByISBNAsync(request.ISBN);
+         var book = await _repo.Books.GetBookByISBNAsync(request.ISBN, cancellationToken);
 
          if(book == null)
          {
-            _logger.LogWarning("Book with ISBN: {ISBN} was not found.", request.ISBN);
-            return Result<BookDto>.NotFound($"Book with ISBN: {request.ISBN} was not found.");
+            _logger.LogWarning(BookNotFoundISBNLog, request.ISBN);
+            return Result<BookDto>.NotFound(string.Format(BookNotFoundISBN, request.ISBN));
          }
 
          var bookDto = _mapper.Map<BookDto>(book);

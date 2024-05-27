@@ -5,21 +5,20 @@ using Library.UseCases.Common.Interfaces;
 using Library.Shared.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using static Library.UseCases.Common.Messages.LoggingMessages;
+using static Library.UseCases.Common.Messages.ResponseMessages;
 
 namespace Library.UseCases.Books.Commands
 {
    public class CreateBookHandler : IRequestHandler<CreateBookCommand, Result<BookDto>>
-   { 
-      private readonly IBookRepository _books;
-      private readonly IAuthorRepository _authors;
+   {
+      private readonly IRepositoryManager _repo;
       private readonly IMapper _mapper;
       private readonly ILogger _logger;
 
-      public CreateBookHandler(IBookRepository books, IAuthorRepository authors,
-         IMapper mapper, ILogger logger)
+      public CreateBookHandler(IRepositoryManager repo, IMapper mapper, ILogger logger)
       {
-         _books = books;
-         _authors = authors;
+         _repo = repo;
          _mapper = mapper;
          _logger = logger;
       }
@@ -27,26 +26,25 @@ namespace Library.UseCases.Books.Commands
       public async Task<Result<BookDto>> Handle(CreateBookCommand request, 
          CancellationToken cancellationToken)
       {  
-         var author = await _authors.GetAuthorByIdAsync(request.AuthorId);
+         var author = await _repo.Authors
+            .GetAuthorByIdAsync(request.AuthorId, cancellationToken);
 
          if(author == null)
          {
-            _logger.LogWarning("Author with id: {Id} was not found during book creation.", 
-               request.AuthorId);
+            _logger.LogWarning(AuthorNotFoundBookCreationLog, request.AuthorId);
                
             return Result<BookDto>
-               .NotFound($"Author with id: {request.AuthorId} was not found during book creation.");
+               .NotFound(string.Format(AuthorNotFoundBookCreation, request.AuthorId));
          }
 
          var book = _mapper.Map<Book>(request.BookDto);
 
-         await _books.AddBookAsync(book);
+         await _repo.Books.AddBookAsync(book, cancellationToken);
+         await _repo.SaveChangesAsync();
 
-         _logger.LogInformation("Book with id: {Id} was created.", book.Id);
+         _logger.LogInformation(BookCreatedLog, book.Id);
 
-         //Need to test, if it's needed
-         var bookToReturn = _mapper.Map<BookDto>(
-               await _books.GetBookByIdAsync(book.Id));
+         var bookToReturn = _mapper.Map<BookDto>(book);
 
          return Result<BookDto>.Success(bookToReturn);         
       }
