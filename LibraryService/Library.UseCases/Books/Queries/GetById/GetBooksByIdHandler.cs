@@ -14,9 +14,10 @@ namespace Library.UseCases.Books.Queries
    {
       private readonly IRepositoryManager _repo;
       private readonly IMapper _mapper;
-      private readonly ILogger _logger;
+      private readonly ILogger<GetBooksByIdHandler> _logger;
 
-      public GetBooksByIdHandler(IRepositoryManager repo, IMapper mapper, ILogger logger)
+      public GetBooksByIdHandler(IRepositoryManager repo, IMapper mapper, 
+         ILogger<GetBooksByIdHandler> logger)
       {
          _repo = repo;
          _mapper = mapper;

@@ -9,7 +9,7 @@ namespace Library.Infrastructure
    /// </summary>
    public static class InfrastructureServiceExtension
    {
-      public static IServiceCollection AddInfrastructureServices(
+      public static IServiceCollection ConfigureInfrastructureServices(
          this IServiceCollection services)
       {
          services.ConfigureRepositorties();

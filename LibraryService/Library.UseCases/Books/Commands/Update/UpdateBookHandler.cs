@@ -13,9 +13,10 @@ namespace Library.UseCases.Books.Commands
    {
       private readonly IRepositoryManager _repo;
       private readonly IMapper _mapper;
-      private readonly ILogger _logger;
+      private readonly ILogger<UpdateBookHandler> _logger;
 
-      public UpdateBookHandler(IRepositoryManager repo, IMapper mapper, ILogger logger)
+      public UpdateBookHandler(IRepositoryManager repo, IMapper mapper, 
+         ILogger<UpdateBookHandler> logger)
       {
          _repo = repo;
          _mapper = mapper;

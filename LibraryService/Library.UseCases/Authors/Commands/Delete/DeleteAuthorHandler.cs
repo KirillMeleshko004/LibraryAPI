@@ -9,9 +9,9 @@ namespace Library.UseCases.Authors.Commands
    public class DeleteAuthorHandler : IRequestHandler<DeleteAuthorCommand, Result>
    {
       private readonly IRepositoryManager _repo;
-      private readonly ILogger _logger;
+      private readonly ILogger<DeleteAuthorHandler> _logger;
 
-      public DeleteAuthorHandler(IRepositoryManager repo, ILogger logger)
+      public DeleteAuthorHandler(IRepositoryManager repo, ILogger<DeleteAuthorHandler> logger)
       {
          _repo = repo;
          _logger = logger;

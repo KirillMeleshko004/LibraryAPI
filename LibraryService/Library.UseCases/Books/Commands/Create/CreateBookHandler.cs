@@ -14,9 +14,10 @@ namespace Library.UseCases.Books.Commands
    {
       private readonly IRepositoryManager _repo;
       private readonly IMapper _mapper;
-      private readonly ILogger _logger;
+      private readonly ILogger<CreateBookHandler> _logger;
 
-      public CreateBookHandler(IRepositoryManager repo, IMapper mapper, ILogger logger)
+      public CreateBookHandler(IRepositoryManager repo, IMapper mapper, 
+         ILogger<CreateBookHandler> logger)
       {
          _repo = repo;
          _mapper = mapper;

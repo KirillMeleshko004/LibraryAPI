@@ -13,9 +13,10 @@ namespace Library.UseCases.Authors.Queries
    {
       private readonly IRepositoryManager _repo;
       private readonly IMapper _mapper;
-      private readonly ILogger _logger;
+      private readonly ILogger<GetAuthorByIdHandler> _logger;
 
-      public GetAuthorByIdHandler(IRepositoryManager repo, IMapper mapper, ILogger logger)
+      public GetAuthorByIdHandler(IRepositoryManager repo, IMapper mapper, 
+         ILogger<GetAuthorByIdHandler> logger)
       {
          _repo = repo;
          _mapper = mapper;

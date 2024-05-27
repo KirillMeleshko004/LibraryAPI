@@ -9,9 +9,9 @@ namespace Library.UseCases.Books.Commands
    public class DeleteBookHandler : IRequestHandler<DeleteBookCommand, Result>
    {
       private readonly IRepositoryManager _repo;
-      private readonly ILogger _logger;
+      private readonly ILogger<DeleteBookHandler> _logger;
 
-      public DeleteBookHandler(IRepositoryManager repo, ILogger logger)
+      public DeleteBookHandler(IRepositoryManager repo, ILogger<DeleteBookHandler> logger)
       {
          _repo = repo;
          _logger = logger;

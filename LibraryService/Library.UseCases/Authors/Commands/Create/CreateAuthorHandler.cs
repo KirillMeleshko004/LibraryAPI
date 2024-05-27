@@ -13,9 +13,10 @@ namespace Library.UseCases.Authors.Commands
    {
       private readonly IRepositoryManager _repo;
       private readonly IMapper _mapper;
-      private readonly ILogger _logger;
+      private readonly ILogger<CreateAuthorHandler> _logger;
 
-      public CreateAuthorHandler(IRepositoryManager repo, IMapper mapper, ILogger logger)
+      public CreateAuthorHandler(IRepositoryManager repo, IMapper mapper, 
+         ILogger<CreateAuthorHandler> logger)
       {
          _repo = repo;
          _mapper = mapper;
