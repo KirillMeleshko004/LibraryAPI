@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Library.Api.Configuration;
+using Library.Api.Utility;
 using Library.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
@@ -71,6 +72,10 @@ namespace Library.Api.Extensions
             //return http 406 Not Acceptable when Accept header contains unsupported format
             options.RespectBrowserAcceptHeader = true;
             options.ReturnHttpNotAcceptable = true;
+         })
+         .AddJsonOptions(options =>
+         {
+            options.JsonSerializerOptions.Converters.Insert(0, new DateOnlyJsonConverter());
          })
          .AddApplicationPart(typeof(Library.Controllers.AssemblyReference).Assembly);
 

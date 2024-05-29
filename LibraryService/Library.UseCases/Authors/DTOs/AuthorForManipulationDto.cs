@@ -17,7 +17,7 @@ namespace Library.UseCases.Authors.DTOs
       public string LastName { get; set; } = null!;
    
       [Required(ErrorMessage = "DateOfBirth field is required")]
-      public DateOnly DateOfBirth { get; set; }
+      public DateOnly? DateOfBirth { get; set; }
 
       [Required(ErrorMessage = "Country field is required")]
       [MaxLength(62, ErrorMessage = "Max country length is 62.")]
