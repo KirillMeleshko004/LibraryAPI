@@ -30,4 +30,4 @@ WORKDIR /app
 COPY --from=build source/app ./
 COPY ./Certs ./Certs
 
-ENTRYPOINT ["dotnet", "LibraryAPI.LibraryService.Web.dll"]
+ENTRYPOINT ["dotnet", "Library.Api.dll"]

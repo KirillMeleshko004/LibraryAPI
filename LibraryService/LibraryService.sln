@@ -3,22 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryAPI.LibraryService.Domain.Core", "LibraryAPI.LibraryService.Domain.Core\LibraryAPI.LibraryService.Domain.Core.csproj", "{73CE1897-162C-4D02-B234-64B2BA537875}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryAPI.LibraryService.Domain.Interfaces", "LibraryAPI.LibraryService.Domain.Interfaces\LibraryAPI.LibraryService.Domain.Interfaces.csproj", "{F638C100-E5C1-4EC8-AA47-723BC60A9BAF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryAPI.LibraryService.Infrastructure.Data", "LibraryAPI.LibraryService.Infrastructure.Data\LibraryAPI.LibraryService.Infrastructure.Data.csproj", "{70F335B0-8B80-4240-9262-4C682553C099}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryAPI.LibraryService.Infrastructure.Logging", "LibraryAPI.LibraryService.Infrastructure.Logging\LibraryAPI.LibraryService.Infrastructure.Logging.csproj", "{8F0514E1-C6FF-478F-8EFA-B78B8A06CD4F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryAPI.LibraryService.Infrastructure.Presentation", "LibraryAPI.LibraryService.Infrastructure.Presentation\LibraryAPI.LibraryService.Infrastructure.Presentation.csproj", "{08EB6135-EB47-43CD-A164-F371415AF07D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryAPI.LibraryService.Services", "LibraryAPI.LibraryService.Services\LibraryAPI.LibraryService.Services.csproj", "{626886CF-A442-4883-A03C-34FACF5B5A9F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryAPI.LibraryService.Shared", "LibraryAPI.LibraryService.Shared\LibraryAPI.LibraryService.Shared.csproj", "{EB40FE02-169A-4D2E-91E8-549CA9EA4FF8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryAPI.LibraryService.Web", "LibraryAPI.LibraryService.Web\LibraryAPI.LibraryService.Web.csproj", "{3D6000A0-9F08-4E84-90D0-9EAA73E9A885}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Domain", "Library.Domain\Library.Domain.csproj", "{710662C8-CDBE-45F9-BC49-5717F027F7B5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.UseCases", "Library.UseCases\Library.UseCases.csproj", "{D73BBA6B-0B16-4C47-81FD-25E1F94138D1}"
@@ -40,38 +24,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{73CE1897-162C-4D02-B234-64B2BA537875}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73CE1897-162C-4D02-B234-64B2BA537875}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{73CE1897-162C-4D02-B234-64B2BA537875}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73CE1897-162C-4D02-B234-64B2BA537875}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F638C100-E5C1-4EC8-AA47-723BC60A9BAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F638C100-E5C1-4EC8-AA47-723BC60A9BAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F638C100-E5C1-4EC8-AA47-723BC60A9BAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F638C100-E5C1-4EC8-AA47-723BC60A9BAF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{70F335B0-8B80-4240-9262-4C682553C099}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{70F335B0-8B80-4240-9262-4C682553C099}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{70F335B0-8B80-4240-9262-4C682553C099}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{70F335B0-8B80-4240-9262-4C682553C099}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8F0514E1-C6FF-478F-8EFA-B78B8A06CD4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8F0514E1-C6FF-478F-8EFA-B78B8A06CD4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8F0514E1-C6FF-478F-8EFA-B78B8A06CD4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8F0514E1-C6FF-478F-8EFA-B78B8A06CD4F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{08EB6135-EB47-43CD-A164-F371415AF07D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{08EB6135-EB47-43CD-A164-F371415AF07D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{08EB6135-EB47-43CD-A164-F371415AF07D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{08EB6135-EB47-43CD-A164-F371415AF07D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{626886CF-A442-4883-A03C-34FACF5B5A9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{626886CF-A442-4883-A03C-34FACF5B5A9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{626886CF-A442-4883-A03C-34FACF5B5A9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{626886CF-A442-4883-A03C-34FACF5B5A9F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EB40FE02-169A-4D2E-91E8-549CA9EA4FF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB40FE02-169A-4D2E-91E8-549CA9EA4FF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB40FE02-169A-4D2E-91E8-549CA9EA4FF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB40FE02-169A-4D2E-91E8-549CA9EA4FF8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3D6000A0-9F08-4E84-90D0-9EAA73E9A885}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3D6000A0-9F08-4E84-90D0-9EAA73E9A885}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3D6000A0-9F08-4E84-90D0-9EAA73E9A885}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3D6000A0-9F08-4E84-90D0-9EAA73E9A885}.Release|Any CPU.Build.0 = Release|Any CPU
 		{710662C8-CDBE-45F9-BC49-5717F027F7B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{710662C8-CDBE-45F9-BC49-5717F027F7B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{710662C8-CDBE-45F9-BC49-5717F027F7B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
