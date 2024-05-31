@@ -74,7 +74,7 @@ namespace Library.Api.Controllers
       ///<response code="401">If authorize header missing or contains invalid token</response>
       ///<response code="422">If authorDto contains invalid fields</response>
       [HttpPost]
-      // [Authorize]
+      [Authorize]
       [DtoValidationFilter(names: "authorDto")]
       [ProducesResponseType(StatusCodes.Status201Created)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -101,7 +101,7 @@ namespace Library.Api.Controllers
       ///<response code="404">If author with id not found</response>
       ///<response code="422">If authorDto contains invalid fields</response>
       [HttpPut("{id:guid}")]
-      // [Authorize]
+      [Authorize]
       [DtoValidationFilter(names: "authorDto")]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -129,7 +129,7 @@ namespace Library.Api.Controllers
       ///<response code="204">If author deleted or not exist</response>
       ///<response code="401">If authorize header missing or contains invalid token</response>
       [HttpDelete("{id:guid}")]
-      // [Authorize]
+      [Authorize]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       public async Task<IActionResult> DeleteAuthor(Guid id)

@@ -96,7 +96,7 @@ namespace Library.Api.Controllers
       ///<response code="404">If author with id specified in bookDto doesn't exist</response>
       ///<response code="422">If bookDto contains invalid fields</response>
       [HttpPost]
-      // [Authorize]
+      [Authorize]
       [DtoValidationFilter(names: "bookForCreation")]
       [ProducesResponseType(StatusCodes.Status201Created)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -130,7 +130,7 @@ namespace Library.Api.Controllers
       ///<response code="404">If book with id not found or author with id specified in bookDto doesn't exist</response>
       ///<response code="422">If bookDto contains invalid fields</response>
       [HttpPut("{id:guid}")]
-      // [Authorize]
+      [Authorize]
       [DtoValidationFilter(names: "bookForUpdate")]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -159,7 +159,7 @@ namespace Library.Api.Controllers
       ///<response code="204">If book deleted or not exist</response>
       ///<response code="401">If authorize header missing or contains invalid token</response>
       [HttpDelete("{id:guid}")]
-      // [Authorize]
+      [Authorize]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       public async Task<IActionResult> DeleteBookById(Guid id)
