@@ -1,16 +1,18 @@
 using AutoMapper;
 using Identity.Domain.Entities;
 using Identity.Shared.Results;
-using Identity.UseCases.Common.Configuration;
-using Identity.UseCases.Common.Helpers;
-using Identity.UseCases.Tokens.Dtos;
+using Identity.UseCases.Common.Messages;
+using Identity.UseCases.Common.Tokens;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
 namespace Identity.UseCases.Users.Commands
 {
-   public class AuthorizeUserHandler : IRequestHandler<AuthorizeUserCommand, Result<TokenDto>>
+   /// <summary>
+   /// Handler for AuthorizeUserHandler
+   /// </summary>
+   public class AuthorizeUserHandler : IRequestHandler<AuthorizeUserCommand, Result<Token>>
    {
 
       private readonly UserManager<User> _userManager;
@@ -23,7 +25,7 @@ namespace Identity.UseCases.Users.Commands
          _tokenIssuer = tokenIssuer;
          _logger = logger;
       }
-      public async Task<Result<TokenDto>> Handle(AuthorizeUserCommand request, 
+      public async Task<Result<Token>> Handle(AuthorizeUserCommand request, 
          CancellationToken cancellationToken)
       {
          var user = await _userManager.FindByEmailAsync(request.UserDto.Email);
@@ -33,14 +35,14 @@ namespace Identity.UseCases.Users.Commands
 
          if(!res) 
          {
-            _logger.LogWarning(
-               "Authentication failed. Wrong user name or password."
+            _logger.LogInformation(
+               LoggingMessages.AuthorizationFailedLog
             );
 
-            return Result<TokenDto>.Unauthorized();
+            return Result<Token>.Unauthorized(ResponseMessages.AuthorizationFailed);
          }
 
-         return  Result<TokenDto>.Success(
+         return  Result<Token>.Success(
             await _tokenIssuer.CreateTokenAsync(user!, extendLifetime: true));
       }
    }

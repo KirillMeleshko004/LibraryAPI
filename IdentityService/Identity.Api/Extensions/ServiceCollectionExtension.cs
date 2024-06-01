@@ -5,7 +5,7 @@ using Identity.Domain.Entities;
 using Identity.UseCases;
 using Identity.UseCases.Common.Configuration;
 using Identity.UseCases.Common.Exceptions;
-using Identity.UseCases.Common.Helpers;
+using Identity.UseCases.Common.Tokens;
 using LibraryApi.Identity.Infrastructure.Data.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;

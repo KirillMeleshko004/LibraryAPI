@@ -1,10 +1,15 @@
 using Identity.Shared.Results;
-using Identity.UseCases.Tokens.Dtos;
+using Identity.UseCases.Common.Tokens;
 using Identity.UseCases.Users.Dtos;
 using MediatR;
 
 namespace Identity.UseCases.Users.Commands
 {
+   /// <summary>
+   /// Command for user authorization
+   /// </summary>
+   /// <param name="UserDto"></param>
+   /// <returns>Result with token. Possible Result.Status: Ok, Unauthorized</returns>
    public record AuthorizeUserCommand(UserForAuthorizationDto UserDto) : 
-      IRequest<Result<TokenDto>> {}
+      IRequest<Result<Token>> {}
 }

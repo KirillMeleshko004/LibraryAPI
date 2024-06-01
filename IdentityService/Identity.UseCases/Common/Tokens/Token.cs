@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Identity.UseCases.Tokens.Dtos
+namespace Identity.UseCases.Common.Tokens
 {
-   public record TokenDto
+   public record Token
    {
 
       [Required(ErrorMessage = "AccessToken is required field.")]

@@ -2,16 +2,17 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Identity.Domain.Entities;
+using Identity.Shared.Results;
 using Identity.UseCases.Common.Configuration;
 using Identity.UseCases.Common.Exceptions;
-using Identity.UseCases.Tokens.Dtos;
+using Identity.UseCases.Common.Messages;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Identity.UseCases.Common.Helpers
+namespace Identity.UseCases.Common.Tokens
 {
    public class TokenIssuer
    {
@@ -27,7 +28,7 @@ namespace Identity.UseCases.Common.Helpers
          _logger = logger;
       }
 
-      internal async Task<TokenDto> CreateTokenAsync(User user, bool extendLifetime)
+      internal async Task<Token> CreateTokenAsync(User user, bool extendLifetime)
       {
          //Receive list of claims for user
          var claims = await GetClaimsAsync(user);
@@ -45,15 +46,20 @@ namespace Identity.UseCases.Common.Helpers
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
          }
 
-         return new TokenDto { AccessToken = accessToken, RefreshToken = refreshToken };
+         await _userManager.UpdateAsync(user);
+
+         return new Token { AccessToken = accessToken, RefreshToken = refreshToken };
       }
 
       //Issue new TokenDto object. If expired token invalid returns null
-      internal async Task<TokenDto?> RefreshTokenAsync(TokenDto expiredToken)
+      internal async Task<Token?> RefreshTokenAsync(Token expiredToken)
       {
          var jwt = await GetTokenFromExpiredAsync(expiredToken.AccessToken);
          
-         if(jwt == null) return null;
+         if(jwt == null) 
+         {
+            return null;
+         }
 
          var email = jwt.GetClaim(JwtRegisteredClaimNames.Email).Value.ToString();
 
@@ -61,11 +67,12 @@ namespace Identity.UseCases.Common.Helpers
 
          var user = await _userManager.FindByEmailAsync(email);
 
-         if(user == null) return null;
+         if(user == null) 
+         {
+            return null;
+         }
 
          var token = await CreateTokenAsync(user, false);
-
-         await _userManager.UpdateAsync(user);
 
          return token;
       }
@@ -90,7 +97,6 @@ namespace Identity.UseCases.Common.Helpers
          
          return claims;
       }
-      
 
       //Returns token descriptor to issue token based on it
       private SecurityTokenDescriptor GetTokenDescriptor(IEnumerable<Claim> claims, 
@@ -158,10 +164,8 @@ namespace Identity.UseCases.Common.Helpers
 
          if(!res.IsValid) 
          {
-            _logger.LogWarning(
-                  $"Expired token validation failed. Reason: {res.Exception.Message}."
-               );
-
+            _logger.LogWarning(LoggingMessages.ExpiredValidationFailedLog, 
+               res.Exception.Message);
             return null;
          }
 
@@ -171,6 +175,11 @@ namespace Identity.UseCases.Common.Helpers
       private async Task<bool> IsRefreshTokenValid(string refreshToken, string email)
       {
          var token = (await _userManager.FindByEmailAsync(email))?.RefreshToken;
+
+         if(token == null)
+         {
+            _logger.LogInformation(LoggingMessages.RefreshTokenExpiredLog);
+         }
 
          return refreshToken.Equals(token);
       }

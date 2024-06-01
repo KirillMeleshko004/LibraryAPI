@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Identity.Controllers.Filters
 {
+   /// <summary>
+   /// Filter to validate action dtos. Needed to pass dto to validate names in ctor
+   /// </summary>
    public class DtoValidationFilterAttribute(params string[] names) : ActionFilterAttribute
    {
       private readonly string[] _argumentNames = names;

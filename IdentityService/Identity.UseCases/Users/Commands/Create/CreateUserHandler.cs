@@ -1,15 +1,17 @@
 using AutoMapper;
 using Identity.Domain.Entities;
-using Identity.UseCases.Common.Configuration;
-using Identity.UseCases.Users.Dtos;
+using Identity.UseCases.Common.Messages;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
 namespace Identity.UseCases.Users.Commands
 {
+   /// <summary>
+   /// Handler for CreateUserCommand
+   /// </summary>
    public class CreateUserHandler :
-      IRequestHandler<CreateUserCommand, (IdentityResult, UserDto?)>
+      IRequestHandler<CreateUserCommand, IdentityResult>
    {
       private readonly UserManager<User> _userManager;
       private readonly IMapper _mapper;
@@ -23,7 +25,7 @@ namespace Identity.UseCases.Users.Commands
          _logger = logger;
       }
 
-      public async Task<(IdentityResult, UserDto?)> Handle(CreateUserCommand request, 
+      public async Task<IdentityResult> Handle(CreateUserCommand request, 
          CancellationToken cancellationToken)
       {
          var user = _mapper.Map<User>(request.UserDto);
@@ -39,10 +41,13 @@ namespace Identity.UseCases.Users.Commands
          {
             await _userManager.AddToRolesAsync(user, request.UserDto.UserRoles);
          }
+         else
+         {
+            _logger.LogInformation(LoggingMessages.UserCreationFailedLog,
+               res.Errors);
+         }
 
-         var userToReturn = _mapper.Map<UserDto>(user);
-
-         return (res, userToReturn);
+         return res;
       }
    }
 }

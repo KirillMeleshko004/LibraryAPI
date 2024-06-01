@@ -1,5 +1,6 @@
 using Identity.Controllers.Filters;
 using Identity.Shared.Results;
+using Identity.UseCases.Common.Tokens;
 using Identity.UseCases.Users.Commands;
 using Identity.UseCases.Users.Dtos;
 using MediatR;
@@ -36,10 +37,10 @@ namespace Identity.Controllers
       {
          var res = await _sender.Send(new CreateUserCommand(userDto));
 
-         if (!res.result.Succeeded)
+         if (!res.Succeeded)
          {
             string error = string.Empty;
-            foreach (var err in res.result.Errors)
+            foreach (var err in res.Errors)
             {
                error += $"{err.Code}. {err.Description}\n";
             }
@@ -68,34 +69,33 @@ namespace Identity.Controllers
       {
          var result = await _sender.Send(new AuthorizeUserCommand(userDto));
 
-         if (result.Status != ResultStatus.Ok) return Unauthorized();
+         if (result.Status != ResultStatus.Ok) return Unauthorized(result.Errors);
 
          return Ok(result.Value);
       }
 
-      // /// <summary>
-      // /// Refresh expired access token
-      // /// </summary>
-      // /// <param name="expiredToken">Expired access and active refresh token</param>
-      // /// <returns>New access and refresh tokens. Refresh token lifetime don't prolongate</returns>
-      // ///<response code="200">Returns new access and refresh tokens</response>
-      // ///<response code="400">If tokenDto is null</response>
-      // ///<response code="401">If refresh token expired or invalid</response>
-      // ///<response code="422">If tokenDto contains invalid field</response>
-      // [HttpPost("refresh")]
-      // [DtoValidationFilter("expiredToken")]
-      // [ProducesResponseType(StatusCodes.Status200OK)]
-      // [ProducesResponseType(StatusCodes.Status400BadRequest)]
-      // [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-      // [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-      // public async Task<IActionResult> RefreshToken([FromBody] TokenDto expiredToken)
-      // {
-         
-      //    var token = await _services.Users.RefreshTokenAsync(expiredToken);
+      /// <summary>
+      /// Refresh expired access token
+      /// </summary>
+      /// <param name="expiredToken">Expired access and active refresh token</param>
+      /// <returns>New access and refresh tokens. Refresh token lifetime don't prolongate</returns>
+      ///<response code="200">Returns new access and refresh tokens</response>
+      ///<response code="400">If tokenDto is null</response>
+      ///<response code="401">If refresh token expired or invalid</response>
+      ///<response code="422">If tokenDto contains invalid field</response>
+      [HttpPost("refresh")]
+      [DtoValidationFilter("expiredToken")]
+      [ProducesResponseType(StatusCodes.Status200OK)]
+      [ProducesResponseType(StatusCodes.Status400BadRequest)]
+      [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+      [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+      public async Task<IActionResult> RefreshToken([FromBody] Token expiredToken)
+      {
+         var result = await _sender.Send(new RefreshTokenCommand(expiredToken));
 
-      //    if (token == null) return Unauthorized();
+         if (result.Status != ResultStatus.Ok) return Unauthorized(result.Errors);
 
-      //    return Ok(token);
-      // }
+         return Ok(result.Value);
+      }
    }
 }

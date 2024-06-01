@@ -1,5 +1,6 @@
 namespace Library.UseCases.Common.Messages
 {
+   
    public static class ResponseMessages
    {
       public static string AuthorNotFound => "Author with id: {0} was not found.";

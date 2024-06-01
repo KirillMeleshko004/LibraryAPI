@@ -8,8 +8,6 @@ namespace Identity.UseCases.Common.Mapping
    {
       public UserProfile()
       {
-         CreateMap<User, UserDto>();
-         
          CreateMap<UserForCreationDto, User>();
          CreateMap<UserForAuthorizationDto, User>();
       }
