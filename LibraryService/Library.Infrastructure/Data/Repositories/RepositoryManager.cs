@@ -6,6 +6,7 @@ namespace Library.Infrastructure.Data
    {
       private readonly Lazy<IBookRepository> _books;
       private readonly Lazy<IAuthorRepository> _authors;
+      private readonly Lazy<IReaderRepository> _readers;
 
       private readonly RepositoryContext _context;
       public IBookRepository Books
@@ -24,6 +25,14 @@ namespace Library.Infrastructure.Data
          }
       }
 
+      public IReaderRepository Readers
+      {
+         get
+         {
+            return _readers.Value;
+         }
+      }
+
       public RepositoryManager(RepositoryContext context)
       {
          _context = context;
@@ -34,6 +43,10 @@ namespace Library.Infrastructure.Data
 
          _authors = new Lazy<IAuthorRepository>(
             () => new AuthorsRepository(context)
+         );
+
+         _readers = new Lazy<IReaderRepository>(
+            () => new ReaderRepository(context)
          );
       }
 

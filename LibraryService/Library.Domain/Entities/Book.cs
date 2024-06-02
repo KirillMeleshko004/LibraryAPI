@@ -11,18 +11,22 @@ namespace Library.Domain.Entities
 
         public string Title { get; set; } = null!;
 
-
         public string? Description { get; set; }
 
         public string? Genre { get; set; }
 
-        public DateTime? BorrowTime { get; set; }
-
-        public DateTime? ReturnTime { get; set; }
-
-
         public string AuthorName { get; set; } = null!;
+
         public Guid AuthorId { get; set; }
         public Author? Author { get; set; }
+
+
+        public bool IsAvailable { get; set; } = true;
+
+        public string? CurrentReaderEmail { get; set; }
+        public Reader? CurrentReader { get; set; }
+
+        public DateTime? BorrowTime { get; set; }
+        public DateTime? ReturnTime { get; set; }
     }
 }

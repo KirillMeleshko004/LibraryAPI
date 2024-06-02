@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Library.Controllers.Filters;
 using Library.Shared.Results;
 using Library.UseCases.Books.Commands;
@@ -168,5 +169,56 @@ namespace Library.Api.Controllers
 
          return NoContent();
       }
+
+      /// <summary>
+      /// Creates book
+      /// </summary>
+      /// <param name="id">represents book to create</param>
+      /// <returns>A newly book book</returns>
+      ///<response code="201">Returns created book</response>
+      ///<response code="400">If bookDto is null</response>
+      ///<response code="401">If authorize header missing or contains invalid token</response>
+      ///<response code="404">If author with id specified in bookDto doesn't exist</response>
+      ///<response code="422">If bookDto contains invalid fields</response>
+      [HttpPost("{id:guid}/borrow")]
+      [Authorize]
+      [ProducesResponseType(StatusCodes.Status201Created)]
+      [ProducesResponseType(StatusCodes.Status400BadRequest)]
+      [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+      [ProducesResponseType(StatusCodes.Status404NotFound)]
+      [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+      public async Task<IActionResult> BorrowBook(Guid id)
+      {
+         var email = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
+
+         var result = await _sender.Send(
+            new BorrowBookCommand(email, id));
+
+         if (result.Status != ResultStatus.Ok)
+         {
+            return NotFound(result.Errors);
+         }
+
+         return NoContent();
+      }
+
+      /// <summary>
+      /// Retrieve list of books base on request parameters
+      /// </summary>
+      /// <returns>List of books. Could be empty</returns>
+      ///<response code="200">Returns list of books</response>
+      ///<response code="400">If some request parameters has invalid values</response>
+      [HttpGet("myBooks")]
+      [Authorize]
+      [ProducesResponseType(StatusCodes.Status200OK)]
+      public async Task<IActionResult> GetBooksForReader()
+      {
+         var email = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
+
+         var result = await _sender.Send(new ListBooksForReaderQuery(email));
+
+         return Ok(result.Value);
+      }
+
    }
 }

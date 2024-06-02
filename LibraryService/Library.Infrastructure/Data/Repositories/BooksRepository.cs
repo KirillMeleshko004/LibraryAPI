@@ -1,3 +1,4 @@
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using Library.Domain.Entities;
 using Library.Infrastructure.Data.Extensions;
@@ -53,6 +54,16 @@ namespace Library.Infrastructure.Data
 
          return await query
             .ToListAsync(cancellationToken);
+      }
+
+      public async Task<IEnumerable<Book>> GetBookByReaderAsync(string readerEmail,
+         CancellationToken cancellationToken, Expression<Func<Book, object>>? include = null)
+      {
+         var books = await Get()
+            .Where(b => b.CurrentReaderEmail!.Equals(readerEmail))
+            .ToListAsync();
+
+         return books;
       }
 
       public async Task<Book?> GetBookByIdAsync(Guid id,

@@ -17,6 +17,7 @@ namespace Library.UseCases.Books.DTOs
         public string? Genre { get; set; }
         public string? Description { get; set; }
 
+        public bool IsAvailable { get; set; }
         public DateTime? BorrowTime { get; set; }
         public DateTime? ReturnTime { get; set; }
     }

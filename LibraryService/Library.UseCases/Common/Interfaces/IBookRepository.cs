@@ -14,11 +14,14 @@ namespace Library.UseCases.Common.Interfaces
          Guid authorId,
          CancellationToken cancellationToken,
          Expression<Func<Book, object>>? include = null);
-
-      Task<Book?> GetBookByIdAsync(Guid id, 
+      Task<IEnumerable<Book>> GetBookByReaderAsync(string readerEmail,
          CancellationToken cancellationToken,
          Expression<Func<Book, object>>? include = null);
-      Task<Book?> GetBookByISBNAsync(string ISBN, 
+
+      Task<Book?> GetBookByIdAsync(Guid id,
+         CancellationToken cancellationToken,
+         Expression<Func<Book, object>>? include = null);
+      Task<Book?> GetBookByISBNAsync(string ISBN,
          CancellationToken cancellationToken,
          Expression<Func<Book, object>>? include = null);
 
