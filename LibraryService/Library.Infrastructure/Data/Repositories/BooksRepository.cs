@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Library.Domain.Entities;
 using Library.Infrastructure.Data.Extensions;
 using Library.UseCases.Common.Interfaces;
@@ -11,30 +12,75 @@ namespace Library.Infrastructure.Data
    /// </summary>
    public class BooksRepository : RepositoryBase<Book>, IBookRepository
    {
-      public BooksRepository(RepositoryContext context) : base(context) {}
+      public BooksRepository(RepositoryContext context) : base(context) { }
 
-      public async Task<IEnumerable<Book>> GetBooksAsync(BookParameters parameters,
-         CancellationToken cancellationToken)
+      public async Task<IEnumerable<Book>> GetBooksAsync(
+         BookParameters parameters,
+         CancellationToken cancellationToken,
+         Expression<Func<Book, object>>? include)
       {
-         return await Get()
+         var query = Get()
             .FilterBooks(parameters)
+            .SearchByName(parameters.SearchTerm)
             .Sort(parameters.OrderBy)
-            .Page(parameters)
-            .Include(b => b.Author)
+            .Page(parameters);
+
+         if (include != null)
+         {
+            query = query.Include(include);
+         }
+
+         return await query
             .ToListAsync(cancellationToken);
       }
-      public async Task<Book?> GetBookByIdAsync(Guid id,
-         CancellationToken cancellationToken)
+
+      public async Task<IEnumerable<Book>> GetBookByAuthorAsync(
+         BookParameters parameters,
+         Guid authorId,
+         CancellationToken cancellationToken,
+         Expression<Func<Book, object>>? include)
       {
-         return await Get(b => b.Id.Equals(id))
-            .Include(b => b.Author)
+         var query = Get()
+            .Where(b => b.AuthorId.Equals(authorId))
+            .FilterBooks(parameters)
+            .Sort(parameters.OrderBy)
+            .Page(parameters);
+
+         if (include != null)
+         {
+            query = query.Include(include);
+         }
+
+         return await query
+            .ToListAsync(cancellationToken);
+      }
+
+      public async Task<Book?> GetBookByIdAsync(Guid id,
+         CancellationToken cancellationToken,
+         Expression<Func<Book, object>>? include)
+      {
+         var query = Get(b => b.Id.Equals(id));
+
+         if (include != null)
+         {
+            query = query.Include(include);
+         }
+
+         return await query
             .SingleOrDefaultAsync(cancellationToken);
       }
       public async Task<Book?> GetBookByISBNAsync(string ISBN,
-         CancellationToken cancellationToken)
+         CancellationToken cancellationToken,
+         Expression<Func<Book, object>>? include)
       {
-         return await Get(b => b.ISBN.Equals(ISBN))
-            .Include(b => b.Author)
+         var query = Get(b => b.ISBN.Equals(ISBN));
+
+         if (include != null)
+         {
+            query = query.Include(include);
+         }
+
+         return await query
             .SingleOrDefaultAsync(cancellationToken);
       }
 

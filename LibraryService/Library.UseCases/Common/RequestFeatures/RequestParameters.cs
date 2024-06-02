@@ -32,5 +32,8 @@ namespace Library.UseCases.Common.RequestFeatures
 
         [MaxLength(100, ErrorMessage = "Order string max length is 100")]
         public string? OrderBy { get; set; }
+
+        [MaxLength(50, ErrorMessage = "Search term max length is 50")]
+        public string? SearchTerm { get; set; }
     }
 }

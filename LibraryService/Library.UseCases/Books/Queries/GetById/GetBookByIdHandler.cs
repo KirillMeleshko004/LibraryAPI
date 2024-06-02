@@ -10,26 +10,27 @@ using static Library.UseCases.Common.Messages.ResponseMessages;
 
 namespace Library.UseCases.Books.Queries
 {
-   public class GetBooksByIdHandler : IRequestHandler<GetBookByIdQuery, Result<BookDto>>
+   public class GetBookByIdHandler : IRequestHandler<GetBookByIdQuery, Result<BookDto>>
    {
       private readonly IRepositoryManager _repo;
       private readonly IMapper _mapper;
-      private readonly ILogger<GetBooksByIdHandler> _logger;
+      private readonly ILogger<GetBookByIdHandler> _logger;
 
-      public GetBooksByIdHandler(IRepositoryManager repo, IMapper mapper, 
-         ILogger<GetBooksByIdHandler> logger)
+      public GetBookByIdHandler(IRepositoryManager repo, IMapper mapper,
+         ILogger<GetBookByIdHandler> logger)
       {
          _repo = repo;
          _mapper = mapper;
          _logger = logger;
       }
 
-      public async Task<Result<BookDto>> Handle(GetBookByIdQuery request, 
+      public async Task<Result<BookDto>> Handle(GetBookByIdQuery request,
          CancellationToken cancellationToken)
       {
-         var book = await _repo.Books.GetBookByIdAsync(request.Id, cancellationToken);
+         var book = await _repo.Books.GetBookByIdAsync(request.Id, 
+            cancellationToken, b => b.Author!);
 
-         if(book == null)
+         if (book == null)
          {
             _logger.LogWarning(BookNotFoundLog, request.Id);
             return Result<BookDto>.NotFound(string.Format(BookNotFound, request.Id));

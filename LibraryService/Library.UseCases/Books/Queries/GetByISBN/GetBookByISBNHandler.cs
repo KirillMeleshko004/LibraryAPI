@@ -26,7 +26,8 @@ namespace Library.UseCases.Books.Queries
       public async Task<Result<BookDto>> Handle(GetBookByISBNQuery request, 
          CancellationToken cancellationToken)
       {
-         var book = await _repo.Books.GetBookByISBNAsync(request.ISBN, cancellationToken);
+         var book = await _repo.Books.GetBookByISBNAsync(request.ISBN, 
+            cancellationToken, b => b.Author!);
 
          if(book == null)
          {

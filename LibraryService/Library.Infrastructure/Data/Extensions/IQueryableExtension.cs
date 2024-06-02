@@ -1,6 +1,7 @@
 using Library.Domain.Entities;
 using Library.UseCases.Common.RequestFeatures;
 using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
@@ -14,6 +15,16 @@ namespace Library.Infrastructure.Data.Extensions
       public static IQueryable<Book> FilterBooks(this IQueryable<Book> books,
          BookParameters parameters)
       {
+         if (parameters.Authors != null && parameters.Authors.Length > 0)
+         {
+            books = books.Where(b => parameters.Authors.Contains(b.AuthorName));
+         }
+
+         if (parameters.Genres != null && parameters.Genres.Length > 0)
+         {
+            books = books.Where(b => parameters.Genres.Contains(b.Genre));
+         }
+
          return books;
       }
 
@@ -36,7 +47,7 @@ namespace Library.Infrastructure.Data.Extensions
       {
          var orderQuery = CreateOrderQuery<Book>(queryString);
 
-         if (string.IsNullOrWhiteSpace(queryString) || string.IsNullOrWhiteSpace(orderQuery)) 
+         if (string.IsNullOrWhiteSpace(queryString) || string.IsNullOrWhiteSpace(orderQuery))
             return books.OrderBy(b => b.Title);
 
          return books.OrderBy(orderQuery);
@@ -47,17 +58,35 @@ namespace Library.Infrastructure.Data.Extensions
       {
          var orderQuery = CreateOrderQuery<Author>(queryString);
 
-         if (string.IsNullOrWhiteSpace(queryString) || string.IsNullOrWhiteSpace(orderQuery)) 
+         if (string.IsNullOrWhiteSpace(queryString) || string.IsNullOrWhiteSpace(orderQuery))
             return books.OrderBy(b => b.FirstName);
 
          return books.OrderBy(orderQuery);
+      }
+
+      public static IQueryable<Book> SearchByName(this IQueryable<Book> books,
+         string? searchTerm)
+      {
+         if (string.IsNullOrWhiteSpace(searchTerm)) return books;
+
+         //Convert toLower there since ef core can not translate 
+         //string.Contains with StringComparison to query
+         var lowerTerm = searchTerm.Trim().ToLower();
+
+#pragma warning disable CA1862 // Use the 'StringComparison' method overloads to perform case-insensitive string comparisons
+
+         return books.Where(b => b.Title.ToLower()
+            .Contains(lowerTerm));
+
+#pragma warning restore CA1862 // Use the 'StringComparison' method overloads to perform case-insensitive string comparisons
+
       }
 
       #region Private methods
 
       private static string CreateOrderQuery<T>(string? queryString)
       {
-         if(string.IsNullOrWhiteSpace(queryString)) return string.Empty;
+         if (string.IsNullOrWhiteSpace(queryString)) return string.Empty;
 
          var result = new StringBuilder();
 

@@ -25,7 +25,8 @@ namespace Library.UseCases.Books.Queries
       public async Task<Result<IEnumerable<BookDto>>> Handle(ListBooksQuery request, 
          CancellationToken cancellationToken)
       {
-         var books = await _repo.Books.GetBooksAsync(request.Parameters, cancellationToken);
+         var books = await _repo.Books.GetBooksAsync(request.Parameters,
+            cancellationToken);
 
          var booksToReturn = _mapper.Map<IEnumerable<BookDto>>(books);
 

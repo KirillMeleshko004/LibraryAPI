@@ -10,7 +10,9 @@ namespace Library.UseCases.Books.DTOs
         public Guid Id { get; set; }
         public string ISBN { get; set; } = null!;
         public string Title { get; set; } = null!;
-        public AuthorDto Author { get; set; } = null!;
+        public string AuthorName { get; set; } = null!;
+        public Guid AuthorId { get; set; }
+        public AuthorDto? Author { get; set; }
 
         public string? Genre { get; set; }
         public string? Description { get; set; }

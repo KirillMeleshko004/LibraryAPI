@@ -3,6 +3,7 @@ using Library.Shared.Results;
 using Library.UseCases.Authors.Commands;
 using Library.UseCases.Authors.DTOs;
 using Library.UseCases.Authors.Queries;
+using Library.UseCases.Books.Queries;
 using Library.UseCases.Common.RequestFeatures;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -36,7 +37,7 @@ namespace Library.Api.Controllers
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       public async Task<IActionResult> GetAuthors([FromQuery] AuthorParameters parameters)
-      {   
+      {
          var result = await _sender.Send(new ListAuthorsQuery(parameters));
 
          return Ok(result.Value);
@@ -137,6 +138,33 @@ namespace Library.Api.Controllers
          var result = await _sender.Send(new DeleteAuthorCommand(id));
 
          return NoContent();
+      }
+
+      /// <summary>
+      /// Retrieve list of books based on author id and request parameters
+      /// </summary>
+      /// <param name="id">Id of autrhor</param>
+      /// <param name="parameters">Parameters that describes what books should be retrieved</param>
+      /// <returns>List of books by author. Could be empty</returns>
+      ///<response code="200">Returns list of books</response>
+      ///<response code="400">If some request parameters has invalid values</response>
+      ///<response code="404">If author with id not found</response>
+      [HttpGet("{id:guid}/books")]
+      [DtoValidationFilter(names: "parameters")]
+      [ProducesResponseType(StatusCodes.Status200OK)]
+      [ProducesResponseType(StatusCodes.Status400BadRequest)]
+      [ProducesResponseType(StatusCodes.Status404NotFound)]
+      public async Task<IActionResult> GetAuthors(Guid id,
+         [FromQuery] BookParameters parameters)
+      {
+         var result = await _sender.Send(new ListBooksByAuthorQuery(parameters, id));
+
+         if (result.Status == ResultStatus.NotFound)
+         {
+            return NotFound(result.Errors);
+         }
+
+         return Ok(result.Value);
       }
    }
 }

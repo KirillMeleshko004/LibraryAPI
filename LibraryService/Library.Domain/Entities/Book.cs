@@ -21,6 +21,7 @@ namespace Library.Domain.Entities
         public DateTime? ReturnTime { get; set; }
 
 
+        public string AuthorName { get; set; } = null!;
         public Guid AuthorId { get; set; }
         public Author? Author { get; set; }
     }
