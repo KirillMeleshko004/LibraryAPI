@@ -74,14 +74,23 @@ namespace Library.Api.Controllers
       /// Retrieve list of books base on request parameters
       /// </summary>
       /// <param name="parameters">Parameters that describes what books should be retrieved</param>
-      /// <returns>List of books. Could be empty</returns>
+      /// <returns>List of books</returns>
       ///<response code="200">Returns list of books</response>
       ///<response code="400">If some request parameters has invalid values</response>
+      ///<response code="404">If none of books match request</response>
       [HttpGet]
+      [ArgumentValidationFilter(names: "parameters")]
       [ProducesResponseType(StatusCodes.Status200OK)]
+      [ProducesResponseType(StatusCodes.Status400BadRequest)]
+      [ProducesResponseType(StatusCodes.Status404NotFound)]
       public async Task<IActionResult> GetBooks([FromQuery] BookParameters parameters)
       {
          var result = await _sender.Send(new ListBooksQuery(parameters));
+
+         if (result.Status == ResultStatus.NotFound)
+         {
+            return NotFound(result.Errors);
+         }
 
          return Ok(result.Value);
       }
@@ -94,15 +103,14 @@ namespace Library.Api.Controllers
       ///<response code="201">Returns created book</response>
       ///<response code="400">If bookDto is null</response>
       ///<response code="401">If authorize header missing or contains invalid token</response>
-      ///<response code="404">If author with id specified in bookDto doesn't exist</response>
       ///<response code="422">If bookDto contains invalid fields</response>
       [HttpPost]
       [Authorize]
-      [DtoValidationFilter(names: "bookForCreation")]
+      [NullArgumentValidationFilter(names: "bookForCreation")]
+      [ArgumentValidationFilter(names: "bookForCreation")]
       [ProducesResponseType(StatusCodes.Status201Created)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-      [ProducesResponseType(StatusCodes.Status404NotFound)]
       [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
       public async Task<IActionResult> CreateBook(
          [FromBody] BookForCreationDto bookForCreation)
@@ -110,9 +118,9 @@ namespace Library.Api.Controllers
          var result = await _sender.Send(
             new CreateBookCommand(bookForCreation, bookForCreation.AuthorId));
 
-         if (result.Status == ResultStatus.NotFound)
+         if (result.Status == ResultStatus.InvalidData)
          {
-            return NotFound(result.Errors);
+            return UnprocessableEntity(result.Errors);
          }
 
          return CreatedAtAction(nameof(GetBookById),
@@ -128,11 +136,12 @@ namespace Library.Api.Controllers
       ///<response code="204">If book updated successfully</response>
       ///<response code="400">If bookDto is null</response>
       ///<response code="401">If authorize header missing or contains invalid token</response>
-      ///<response code="404">If book with id not found or author with id specified in bookDto doesn't exist</response>
+      ///<response code="404">If book with id not found</response>
       ///<response code="422">If bookDto contains invalid fields</response>
       [HttpPut("{id:guid}")]
       [Authorize]
-      [DtoValidationFilter(names: "bookForUpdate")]
+      [NullArgumentValidationFilter(names: "bookForCreation")]
+      [ArgumentValidationFilter(names: "bookForUpdate")]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -147,6 +156,11 @@ namespace Library.Api.Controllers
          if (result.Status == ResultStatus.NotFound)
          {
             return NotFound(result.Errors);
+         }
+
+         if (result.Status == ResultStatus.InvalidData)
+         {
+            return UnprocessableEntity(result.Errors);
          }
 
          return NoContent();
@@ -171,30 +185,29 @@ namespace Library.Api.Controllers
       }
 
       /// <summary>
-      /// Creates book
+      /// Borrows specific book
       /// </summary>
-      /// <param name="id">represents book to create</param>
-      /// <returns>A newly book book</returns>
-      ///<response code="201">Returns created book</response>
-      ///<response code="400">If bookDto is null</response>
+      /// <param name="id">Id of book to borrow</param>
+      /// <returns>Nothing</returns>
+      ///<response code="204">If book borrowed successfully</response>
       ///<response code="401">If authorize header missing or contains invalid token</response>
-      ///<response code="404">If author with id specified in bookDto doesn't exist</response>
-      ///<response code="422">If bookDto contains invalid fields</response>
+      ///<response code="403">If email claim is incorrect or empty</response>
+      ///<response code="404">If book to borrow not found</response>
       [HttpPost("{id:guid}/borrow")]
       [Authorize]
-      [ProducesResponseType(StatusCodes.Status201Created)]
-      [ProducesResponseType(StatusCodes.Status400BadRequest)]
+      [EmailExtractionFilter("email")]
+      [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+      [ProducesResponseType(StatusCodes.Status403Forbidden)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
-      [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
       public async Task<IActionResult> BorrowBook(Guid id)
       {
-         var email = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
+         string email = (HttpContext.Items["email"] as string)!;
 
          var result = await _sender.Send(
             new BorrowBookCommand(email, id));
 
-         if (result.Status != ResultStatus.Ok)
+         if (result.Status == ResultStatus.NotFound)
          {
             return NotFound(result.Errors);
          }
@@ -203,19 +216,66 @@ namespace Library.Api.Controllers
       }
 
       /// <summary>
-      /// Retrieve list of books base on request parameters
+      /// Returns specific book
       /// </summary>
-      /// <returns>List of books. Could be empty</returns>
+      /// <param name="id">Id of book to return</param>
+      /// <returns>Nothing</returns>
+      ///<response code="204">If book borrowed successfully</response>
+      ///<response code="401">If authorize header missing or contains invalid token</response>
+      ///<response code="403">If email claim is incorrect or empty</response>
+      ///<response code="404">If book to return not found OR if reader not found</response>
+      ///<response code="422">If reader attemts to return book he don't have</response>
+      [HttpPost("{id:guid}/return")]
+      [Authorize]
+      [EmailExtractionFilter("email")]
+      [ProducesResponseType(StatusCodes.Status204NoContent)]
+      [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+      [ProducesResponseType(StatusCodes.Status403Forbidden)]
+      [ProducesResponseType(StatusCodes.Status404NotFound)]
+      [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+      public async Task<IActionResult> ReturnBook(Guid id)
+      {
+         string email = (HttpContext.Items["email"] as string)!;
+
+         var result = await _sender.Send(
+            new ReturnBookCommand(email, id));
+
+         if (result.Status == ResultStatus.NotFound)
+         {
+            return NotFound(result.Errors);
+         }
+
+         if (result.Status == ResultStatus.InvalidData)
+         {
+            return UnprocessableEntity(result.Errors);
+         }
+
+         return NoContent();
+      }
+
+      /// <summary>
+      /// Retrieve list of books that reader borrowed
+      /// </summary>
+      /// <returns>List of books</returns>
       ///<response code="200">Returns list of books</response>
       ///<response code="400">If some request parameters has invalid values</response>
+      ///<response code="404">If reader hasn't borrowed any books</response>
       [HttpGet("myBooks")]
       [Authorize]
+      [EmailExtractionFilter("email")]
       [ProducesResponseType(StatusCodes.Status200OK)]
+      [ProducesResponseType(StatusCodes.Status400BadRequest)]
+      [ProducesResponseType(StatusCodes.Status404NotFound)]
       public async Task<IActionResult> GetBooksForReader()
       {
-         var email = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.Email).Value;
+         string email = (HttpContext.Items["email"] as string)!;
 
          var result = await _sender.Send(new ListBooksForReaderQuery(email));
+
+         if (result.Status == ResultStatus.NotFound)
+         {
+            return NotFound(result.Errors);
+         }
 
          return Ok(result.Value);
       }

@@ -33,12 +33,20 @@ namespace Library.Api.Controllers
       /// <returns>List of authors. Could be empty</returns>
       ///<response code="200">Returns list of authors</response>
       ///<response code="400">If some request parameters has invalid values</response>
+      ///<response code="404">If none of authors match request</response>
       [HttpGet]
+      [ArgumentValidationFilter(names: "parameters")]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
+      [ProducesResponseType(StatusCodes.Status404NotFound)]
       public async Task<IActionResult> GetAuthors([FromQuery] AuthorParameters parameters)
       {
          var result = await _sender.Send(new ListAuthorsQuery(parameters));
+
+         if (result.Status == ResultStatus.NotFound)
+         {
+            return NotFound(result.Errors);
+         }
 
          return Ok(result.Value);
       }
@@ -76,7 +84,8 @@ namespace Library.Api.Controllers
       ///<response code="422">If authorDto contains invalid fields</response>
       [HttpPost]
       [Authorize]
-      [DtoValidationFilter(names: "authorDto")]
+      [NullArgumentValidationFilter(names: "authorDto")]
+      [ArgumentValidationFilter(names: "authorDto")]
       [ProducesResponseType(StatusCodes.Status201Created)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -103,7 +112,8 @@ namespace Library.Api.Controllers
       ///<response code="422">If authorDto contains invalid fields</response>
       [HttpPut("{id:guid}")]
       [Authorize]
-      [DtoValidationFilter(names: "authorDto")]
+      [NullArgumentValidationFilter(names: "authorDto")]
+      [ArgumentValidationFilter(names: "authorDto")]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -148,13 +158,13 @@ namespace Library.Api.Controllers
       /// <returns>List of books by author. Could be empty</returns>
       ///<response code="200">Returns list of books</response>
       ///<response code="400">If some request parameters has invalid values</response>
-      ///<response code="404">If author with id not found</response>
+      ///<response code="404">If author with id not found OR he has no books</response>
       [HttpGet("{id:guid}/books")]
-      [DtoValidationFilter(names: "parameters")]
+      [ArgumentValidationFilter(names: "parameters")]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
-      public async Task<IActionResult> GetAuthors(Guid id,
+      public async Task<IActionResult> GetBooksForAuthor(Guid id,
          [FromQuery] BookParameters parameters)
       {
          var result = await _sender.Send(new ListBooksByAuthorQuery(parameters, id));

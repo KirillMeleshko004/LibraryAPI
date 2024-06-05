@@ -10,16 +10,17 @@ namespace Library.Infrastructure.Data
       public void Configure(EntityTypeBuilder<Reader> builder)
       {
          builder.HasKey(r => r.Id);
-         builder.HasAlternateKey(r => r.Email);
-
-         builder.HasMany<Book>()
-            .WithOne()
-            .HasForeignKey(b => b.CurrentReaderEmail)
-            .HasPrincipalKey(r => r.Email);
+         builder.HasIndex(r => r.Email)
+            .IsUnique();
 
          builder.Property(r => r.Email)
             .HasMaxLength(EMAIL_MAX_LENGTH)
             .IsRequired();
+
+         builder.HasMany<Book>()
+            .WithOne()
+            .HasForeignKey(b => b.CurrentReaderId)
+            .OnDelete(DeleteBehavior.SetNull);
       }
    }
 }

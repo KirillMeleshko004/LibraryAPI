@@ -1,10 +1,10 @@
 using AutoMapper;
 using Library.Shared.Results;
 using Library.UseCases.Authors.DTOs;
-using Library.UseCases.Books.DTOs;
 using Library.UseCases.Common.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using static Library.UseCases.Common.Messages.ResponseMessages;
 
 namespace Library.UseCases.Authors.Queries
 {
@@ -16,7 +16,7 @@ namespace Library.UseCases.Authors.Queries
       private readonly IMapper _mapper;
       private readonly ILogger<ListAuthorsHandler> _logger;
 
-      public ListAuthorsHandler(IRepositoryManager repo, IMapper mapper, 
+      public ListAuthorsHandler(IRepositoryManager repo, IMapper mapper,
          ILogger<ListAuthorsHandler> logger)
       {
          _repo = repo;
@@ -24,11 +24,16 @@ namespace Library.UseCases.Authors.Queries
          _logger = logger;
       }
 
-      public async Task<Result<IEnumerable<AuthorDto>>> Handle(ListAuthorsQuery request, 
+      public async Task<Result<IEnumerable<AuthorDto>>> Handle(ListAuthorsQuery request,
          CancellationToken cancellationToken)
       {
          var authors = await _repo.Authors
             .GetAuthorsAsync(request.Parameters, cancellationToken);
+
+         if (!authors.Any())
+         {
+            return Result<IEnumerable<AuthorDto>>.NotFound(AuthorsNotFound);
+         }
 
          var authorsToReturn = _mapper.Map<IEnumerable<AuthorDto>>(authors);
 

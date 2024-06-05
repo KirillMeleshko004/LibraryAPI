@@ -14,7 +14,7 @@ namespace Library.UseCases.Common.Interfaces
          Guid authorId,
          CancellationToken cancellationToken,
          Expression<Func<Book, object>>? include = null);
-      Task<IEnumerable<Book>> GetBookByReaderAsync(string readerEmail,
+      Task<IEnumerable<Book>> GetBookByReaderAsync(Guid readerId,
          CancellationToken cancellationToken,
          Expression<Func<Book, object>>? include = null);
 

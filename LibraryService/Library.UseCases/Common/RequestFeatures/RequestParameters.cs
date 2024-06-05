@@ -13,6 +13,7 @@ namespace Library.UseCases.Common.RequestFeatures
         [Range(1, Int32.MaxValue, ErrorMessage = "Page number must be not negative")]
         public int PageNumber { get; set; } = 1;
 
+
         //Default page size
         private int _pageSize = 10;
 

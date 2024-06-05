@@ -23,7 +23,7 @@ namespace Library.Domain.Entities
 
         public bool IsAvailable { get; set; } = true;
 
-        public string? CurrentReaderEmail { get; set; }
+        public Guid? CurrentReaderId { get; set; }
         public Reader? CurrentReader { get; set; }
 
         public DateTime? BorrowTime { get; set; }

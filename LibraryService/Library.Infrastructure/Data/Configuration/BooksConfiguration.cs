@@ -36,6 +36,7 @@ namespace Library.Infrastructure.Data
          builder.Property(b => b.Genre)
                .HasMaxLength(GENRE_MAX_LENGTH);
 
+
          //Set initial data
          builder.HasData(
             new Book

@@ -4,5 +4,8 @@ using MediatR;
 
 namespace Library.UseCases.Authors.Queries
 {
-   public record GetAuthorByIdQuery(Guid Id) : IRequest<Result<AuthorDto>> {}
+   /// <summary>
+   /// Query for author retrieval by id. Possible response statuses: Ok, NotFound.
+   /// </summary>
+   public record GetAuthorByIdQuery(Guid Id) : IRequest<Result<AuthorDto>> { }
 }

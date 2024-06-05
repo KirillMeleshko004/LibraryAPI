@@ -41,6 +41,11 @@ namespace Library.UseCases.Books.Queries
             request.AuthorId,
             cancellationToken);
 
+         if (!books.Any())
+         {
+            return Result<IEnumerable<BookDto>>.NotFound(BooksNotFound);
+         }
+
          var booksToReturn = _mapper.Map<IEnumerable<BookDto>>(books);
 
          return Result<IEnumerable<BookDto>>.Success(booksToReturn);

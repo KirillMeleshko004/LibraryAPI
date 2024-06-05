@@ -8,6 +8,7 @@ namespace Library.Shared.Results
       Ok,
       NotFound,
       InvalidData,
+      Forbidden,
       Error,
    }
 }

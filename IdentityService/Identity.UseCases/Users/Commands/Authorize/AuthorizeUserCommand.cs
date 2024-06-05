@@ -8,7 +8,6 @@ namespace Identity.UseCases.Users.Commands
    /// <summary>
    /// Command for user authorization
    /// </summary>
-   /// <param name="UserDto"></param>
    /// <returns>Result with token. Possible Result.Status: Ok, Unauthorized</returns>
    public record AuthorizeUserCommand(UserForAuthorizationDto UserDto) : 
       IRequest<Result<Token>> {}

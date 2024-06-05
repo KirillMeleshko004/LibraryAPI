@@ -4,6 +4,7 @@ using Library.UseCases.Books.DTOs;
 using Library.UseCases.Common.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using static Library.UseCases.Common.Messages.ResponseMessages;
 
 namespace Library.UseCases.Books.Queries
 {
@@ -25,8 +26,21 @@ namespace Library.UseCases.Books.Queries
       public async Task<Result<IEnumerable<BookDto>>> Handle(ListBooksForReaderQuery request,
          CancellationToken cancellationToken)
       {
+         var reader = await _repo.Readers
+            .GetReaderByEmailAsync(request.ReaderEmail, cancellationToken);
+
+         if (reader == null)
+         {
+            return Result<IEnumerable<BookDto>>.NotFound(ReaderNotFound);
+         }
+
          var books = await _repo.Books
-            .GetBookByReaderAsync(request.ReaderEmail, cancellationToken);
+            .GetBookByReaderAsync(reader.Id, cancellationToken);
+
+         if (!books.Any())
+         {
+            return Result<IEnumerable<BookDto>>.NotFound(BooksNotFound);
+         }
 
          var booksToReturn = _mapper.Map<IEnumerable<BookDto>>(books);
 

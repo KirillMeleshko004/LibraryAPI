@@ -15,7 +15,7 @@ namespace Library.UseCases.Books.Commands
       private readonly IMapper _mapper;
       private readonly ILogger<UpdateBookHandler> _logger;
 
-      public UpdateBookHandler(IRepositoryManager repo, IMapper mapper, 
+      public UpdateBookHandler(IRepositoryManager repo, IMapper mapper,
          ILogger<UpdateBookHandler> logger)
       {
          _repo = repo;
@@ -23,12 +23,12 @@ namespace Library.UseCases.Books.Commands
          _logger = logger;
       }
 
-      public async Task<Result<BookDto>> Handle(UpdateBookCommand request, 
+      public async Task<Result<BookDto>> Handle(UpdateBookCommand request,
          CancellationToken cancellationToken)
       {
          var book = await _repo.Books.GetBookByIdAsync(request.BookId, cancellationToken);
 
-         if(book == null)
+         if (book == null)
          {
             _logger.LogWarning(BookNotFoundLog, request.BookId);
             return Result<BookDto>.NotFound(string.Format(BookNotFound, request.BookId));
@@ -37,15 +37,16 @@ namespace Library.UseCases.Books.Commands
          var newAuthorId = request.BookDto.AuthorId;
          var author = await _repo.Authors.GetAuthorByIdAsync(newAuthorId, cancellationToken);
 
-         if(author == null)
+         if (author == null)
          {
-            _logger.LogWarning(AuthorNotFoundBookUpdateLog, newAuthorId);
+            _logger.LogWarning(IncorrectAuthorIdLog, newAuthorId);
             return Result<BookDto>
-               .NotFound(string.Format(AuthorNotFoundBookUpdate, newAuthorId));
+               .InvalidData(string.Format(IncorrectAuthorId, newAuthorId));
          }
 
          _mapper.Map(request.BookDto, book);
-         //Needed to test
+         book.AuthorName = $"{author.FirstName} {author.LastName}";
+
          await _repo.Books.UpdateBookAsync(book, cancellationToken);
          await _repo.SaveChangesAsync();
 

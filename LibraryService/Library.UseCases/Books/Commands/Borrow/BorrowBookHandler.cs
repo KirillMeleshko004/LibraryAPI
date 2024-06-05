@@ -11,14 +11,11 @@ namespace Library.UseCases.Books.Commands
    public class BorrowBookHandler : IRequestHandler<BorrowBookCommand, Result>
    {
       private readonly IRepositoryManager _repo;
-      private readonly IMapper _mapper;
       private readonly ILogger<BorrowBookHandler> _logger;
 
-      public BorrowBookHandler(IRepositoryManager repo, IMapper mapper,
-         ILogger<BorrowBookHandler> logger)
+      public BorrowBookHandler(IRepositoryManager repo, ILogger<BorrowBookHandler> logger)
       {
          _repo = repo;
-         _mapper = mapper;
          _logger = logger;
       }
 
@@ -36,7 +33,7 @@ namespace Library.UseCases.Books.Commands
 
          if (book.IsAvailable == false)
          {
-            return Result.Error("Book is not availible");
+            return Result.NotFound(string.Format(BookNotAvailable, request.BookId));
          }
 
          var reader = await _repo.Readers
@@ -51,7 +48,7 @@ namespace Library.UseCases.Books.Commands
          }
 
          book.IsAvailable = false;
-         book.CurrentReaderEmail = reader!.Email;
+         book.CurrentReaderId = reader!.Id;
          book.BorrowTime = DateTime.Now;
          book.ReturnTime = DateTime.Now.AddDays(30);
 

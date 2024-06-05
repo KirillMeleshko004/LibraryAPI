@@ -16,7 +16,7 @@ namespace Library.UseCases.Books.Commands
       private readonly IMapper _mapper;
       private readonly ILogger<CreateBookHandler> _logger;
 
-      public CreateBookHandler(IRepositoryManager repo, IMapper mapper, 
+      public CreateBookHandler(IRepositoryManager repo, IMapper mapper,
          ILogger<CreateBookHandler> logger)
       {
          _repo = repo;
@@ -24,21 +24,22 @@ namespace Library.UseCases.Books.Commands
          _logger = logger;
       }
 
-      public async Task<Result<BookDto>> Handle(CreateBookCommand request, 
+      public async Task<Result<BookDto>> Handle(CreateBookCommand request,
          CancellationToken cancellationToken)
-      {  
+      {
          var author = await _repo.Authors
             .GetAuthorByIdAsync(request.AuthorId, cancellationToken);
 
-         if(author == null)
+         if (author == null)
          {
             _logger.LogWarning(AuthorNotFoundBookCreationLog, request.AuthorId);
-               
+
             return Result<BookDto>
-               .NotFound(string.Format(AuthorNotFoundBookCreation, request.AuthorId));
+               .InvalidData(string.Format(AuthorNotFoundBookCreation, request.AuthorId));
          }
 
          var book = _mapper.Map<Book>(request.BookDto);
+        book.AuthorName = $"{author.FirstName} {author.LastName}";
 
          await _repo.Books.AddBookAsync(book, cancellationToken);
          await _repo.SaveChangesAsync();
@@ -47,7 +48,7 @@ namespace Library.UseCases.Books.Commands
 
          var bookToReturn = _mapper.Map<BookDto>(book);
 
-         return Result<BookDto>.Success(bookToReturn);         
+         return Result<BookDto>.Success(bookToReturn);
       }
    }
 }

@@ -4,6 +4,10 @@ using MediatR;
 
 namespace Library.UseCases.Authors.Commands
 {
-   public record CreateAuthorCommand(AuthorForCreationDto AuthorDto) : 
-      IRequest<Result<AuthorDto>> {}
+   /// <summary>
+   /// Command for author creation. Possible response statuses: Ok.
+   /// </summary>
+   public record CreateAuthorCommand(AuthorForCreationDto AuthorDto) :
+      IRequest<Result<AuthorDto>>
+   { }
 }

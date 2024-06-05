@@ -4,6 +4,7 @@ using Library.UseCases.Books.DTOs;
 using Library.UseCases.Common.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using static Library.UseCases.Common.Messages.ResponseMessages;
 
 namespace Library.UseCases.Books.Queries
 {
@@ -14,7 +15,7 @@ namespace Library.UseCases.Books.Queries
       private readonly IMapper _mapper;
       private readonly ILogger<ListBooksHandler> _logger;
 
-      public ListBooksHandler(IRepositoryManager repo, IMapper mapper, 
+      public ListBooksHandler(IRepositoryManager repo, IMapper mapper,
          ILogger<ListBooksHandler> logger)
       {
          _repo = repo;
@@ -22,11 +23,16 @@ namespace Library.UseCases.Books.Queries
          _logger = logger;
       }
 
-      public async Task<Result<IEnumerable<BookDto>>> Handle(ListBooksQuery request, 
+      public async Task<Result<IEnumerable<BookDto>>> Handle(ListBooksQuery request,
          CancellationToken cancellationToken)
       {
          var books = await _repo.Books.GetBooksAsync(request.Parameters,
             cancellationToken);
+
+         if (!books.Any())
+         {
+            return Result<IEnumerable<BookDto>>.NotFound(BooksNotFound);
+         }
 
          var booksToReturn = _mapper.Map<IEnumerable<BookDto>>(books);
 

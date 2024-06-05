@@ -56,11 +56,11 @@ namespace Library.Infrastructure.Data
             .ToListAsync(cancellationToken);
       }
 
-      public async Task<IEnumerable<Book>> GetBookByReaderAsync(string readerEmail,
+      public async Task<IEnumerable<Book>> GetBookByReaderAsync(Guid readerId,
          CancellationToken cancellationToken, Expression<Func<Book, object>>? include = null)
       {
          var books = await Get()
-            .Where(b => b.CurrentReaderEmail!.Equals(readerEmail))
+            .Where(b => b.CurrentReaderId.Equals(readerId))
             .ToListAsync();
 
          return books;
