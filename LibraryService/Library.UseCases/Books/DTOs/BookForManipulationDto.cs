@@ -29,5 +29,8 @@ namespace Library.UseCases.Books.DTOs
 
         public DateTime? BorrowTime { get; set; }
         public DateTime? ReturnTime { get; set; }
+
+        public string? ImageName { get; set; }
+        public Stream? Image { get; set; }
     }
 }

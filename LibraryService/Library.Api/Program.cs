@@ -1,6 +1,9 @@
 
 using Library.Api.Extensions;
+using Library.Api.Middlewares;
 using Library.Infrastructure;
+using Library.Infrastructure.Images;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +18,7 @@ builder.Services.ConfigureSwagger();
 builder.Services.ConfigureDataProtection();
 builder.Services.ConfigureAuthentication(builder.Configuration);
 
-builder.Services.ConfigureApplicationServices();
+builder.Services.ConfigureApplicationServices(builder.Configuration);
 builder.Services.ConfigureInfrastructureServices();
 
 #endregion
@@ -31,6 +34,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
+   app.UseMiddleware<ExceptionMiddleware>();
    app.UseHsts();
 }
 
@@ -40,6 +44,23 @@ app.UseAuthorization();
 
 //Add endpoints for controllers
 app.MapControllers();
+
+
+var imageOptions = new ImageOptions();
+builder.Configuration.Bind(ImageOptions.SectionName, imageOptions);
+var cacheMaxAgeOneWeek = (60 * 60 * 24 * 7).ToString();
+app.UseStaticFiles(new StaticFileOptions()
+{
+   RequestPath = "/images",
+   FileProvider = new PhysicalFileProvider(Path.Combine(
+      Directory.GetCurrentDirectory(),
+      imageOptions.StorePath)),
+   OnPrepareResponse = ctx =>
+   {
+      ctx.Context.Response.Headers.Append(
+         "Cache-Control", $"public, max-age={cacheMaxAgeOneWeek}");
+   }
+});
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>

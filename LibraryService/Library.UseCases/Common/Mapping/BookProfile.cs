@@ -9,11 +9,12 @@ namespace Library.UseCases.Common.Mapping
     {
         public BookProfile()
         {
+            CreateMap<Book, BookDto>()
+                .ForMember(dto => dto.BookImage,
+                    opt => opt.MapFrom(book => Path.GetFileName(book.ImagePath)));
 
-            CreateMap<Book, BookDto>().ReverseMap();
             CreateMap<BookForCreationDto, Book>();
             CreateMap<BookForUpdateDto, Book>();
-
         }
     }
 

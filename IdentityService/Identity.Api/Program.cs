@@ -1,4 +1,5 @@
 using Identity.Api.Extensions;
+using Identity.Api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +13,7 @@ builder.Services.ConfigureSwagger();
 builder.Services.ConfigureApplicationServices();
 
 //Configure Identity !!!BEFORE!!! Authentication
-//Another order may cause Identity default authentication schema override JWT scema
+//Another order may cause Identity default authentication schema override JWT schema
 builder.Services.ConfigureIdentity();
 builder.Services.ConfigureAuthentication(builder.Configuration);
 
@@ -29,6 +30,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
+   app.UseMiddleware<ExceptionMiddleware>();
    app.UseHsts();
 }
 

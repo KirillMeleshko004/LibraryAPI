@@ -1,4 +1,4 @@
-namespace Library.Api.Configuration
+namespace Library.Api.Common
 {
    //Options class to represent JWTOptions configuration segment
    public class JwtOptions

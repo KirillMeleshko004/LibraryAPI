@@ -9,14 +9,17 @@ namespace Library.UseCases.Books.Commands
    public class DeleteBookHandler : IRequestHandler<DeleteBookCommand, Result>
    {
       private readonly IRepositoryManager _repo;
+      private readonly IImageService _images;
       private readonly ILogger<DeleteBookHandler> _logger;
 
-      public DeleteBookHandler(IRepositoryManager repo, ILogger<DeleteBookHandler> logger)
+      public DeleteBookHandler(IRepositoryManager repo, IImageService images,
+         ILogger<DeleteBookHandler> logger)
       {
          _repo = repo;
+         _images = images;
          _logger = logger;
       }
-      public async Task<Result> Handle(DeleteBookCommand request, 
+      public async Task<Result> Handle(DeleteBookCommand request,
          CancellationToken cancellationToken)
       {
          var book = await _repo.Books.GetBookByIdAsync(request.Id, cancellationToken);
@@ -25,7 +28,12 @@ namespace Library.UseCases.Books.Commands
          if (book == null) return Result.Success();
 
          await _repo.Books.DeleteBookAsync(book, cancellationToken);
+         if (!string.IsNullOrWhiteSpace(book.ImagePath))
+         {
+            await _images.DeleteImageAsync(book.ImagePath!);
+         }
          await _repo.SaveChangesAsync();
+
 
          _logger.LogInformation(BookDeletedLog, book.Id);
 

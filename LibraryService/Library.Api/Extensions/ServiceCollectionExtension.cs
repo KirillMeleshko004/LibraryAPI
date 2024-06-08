@@ -1,9 +1,11 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using Library.Api.Configuration;
+using Library.Api.Common;
 using Library.Api.Utility;
 using Library.Infrastructure.Data;
+using Library.Infrastructure.Images;
+using Library.UseCases.Common.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
@@ -45,13 +47,16 @@ namespace Library.Api.Extensions
       }
 
       //Configure application services and their dependencies
-      public static void ConfigureApplicationServices(this IServiceCollection services)
+      public static void ConfigureApplicationServices(this IServiceCollection services,
+         IConfiguration configuration)
       {
          //pass assembly with mapping profiles
          services.AddAutoMapper(typeof(UseCases.AssemblyReference).Assembly);
 
-         services.AddMediatR(config => 
+         services.AddMediatR(config =>
             config.RegisterServicesFromAssemblies(typeof(UseCases.AssemblyReference).Assembly));
+
+         services.Configure<ImageOptions>(configuration.GetSection(ImageOptions.SectionName));
       }
 
       public static void ConfigureEF(this IServiceCollection services,

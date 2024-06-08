@@ -1,4 +1,6 @@
+using AutoMapper;
 using Library.Infrastructure.Data;
+using Library.Infrastructure.Images;
 using Library.UseCases.Common.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +15,7 @@ namespace Library.Infrastructure
          this IServiceCollection services)
       {
          services.ConfigureRepositorties();
+         services.AddScoped<IImageService, ImageService>();
 
          return services;
       }

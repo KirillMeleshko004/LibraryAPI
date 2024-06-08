@@ -108,12 +108,13 @@ namespace Library.Api.Controllers
       [Authorize]
       [NullArgumentValidationFilter(names: "bookForCreation")]
       [ArgumentValidationFilter(names: "bookForCreation")]
+      [BookImageExtractionFilter]
       [ProducesResponseType(StatusCodes.Status201Created)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
       public async Task<IActionResult> CreateBook(
-         [FromBody] BookForCreationDto bookForCreation)
+         [FromForm] BookForCreationDto bookForCreation)
       {
          var result = await _sender.Send(
             new CreateBookCommand(bookForCreation, bookForCreation.AuthorId));

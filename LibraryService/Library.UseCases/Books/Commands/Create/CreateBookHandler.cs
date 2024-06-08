@@ -14,13 +14,15 @@ namespace Library.UseCases.Books.Commands
    {
       private readonly IRepositoryManager _repo;
       private readonly IMapper _mapper;
+      private readonly IImageService _images;
       private readonly ILogger<CreateBookHandler> _logger;
 
       public CreateBookHandler(IRepositoryManager repo, IMapper mapper,
-         ILogger<CreateBookHandler> logger)
+         IImageService images, ILogger<CreateBookHandler> logger)
       {
          _repo = repo;
          _mapper = mapper;
+         _images = images;
          _logger = logger;
       }
 
@@ -39,7 +41,13 @@ namespace Library.UseCases.Books.Commands
          }
 
          var book = _mapper.Map<Book>(request.BookDto);
-        book.AuthorName = $"{author.FirstName} {author.LastName}";
+         book.AuthorName = $"{author.FirstName} {author.LastName}";
+
+         if (request.BookDto.Image != null && request.BookDto.ImageName != null)
+         {
+            book.ImagePath = await _images.SaveImageAsync(request.BookDto.Image,
+               request.BookDto.ImageName);
+         }
 
          await _repo.Books.AddBookAsync(book, cancellationToken);
          await _repo.SaveChangesAsync();

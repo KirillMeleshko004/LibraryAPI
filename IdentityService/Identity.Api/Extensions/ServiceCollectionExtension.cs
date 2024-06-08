@@ -2,7 +2,6 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Identity.Domain.Entities;
-using Identity.UseCases;
 using Identity.UseCases.Common.Configuration;
 using Identity.UseCases.Common.Exceptions;
 using Identity.UseCases.Common.Tokens;
