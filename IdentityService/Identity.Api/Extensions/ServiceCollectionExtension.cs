@@ -1,10 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using Identity.Api.Controllers;
 using Identity.Domain.Entities;
-using Identity.UseCases.Common.Configuration;
-using Identity.UseCases.Common.Exceptions;
 using Identity.Infrastructure.Data.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
@@ -12,10 +9,12 @@ using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using OpenIddict.Abstractions;
+using Identity.UseCases.Common.Configuration;
+using Identity.Api.Common.Configuration;
+using Identity.Api.HostedServices;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace Identity.Api.Extensions
 {
@@ -25,18 +24,18 @@ namespace Identity.Api.Extensions
    public static class ServiceCollectionExtension
    {
       //Register and configure logger for application
-      public static void ConfigureLogger(this IServiceCollection services)
+      public static IServiceCollection ConfigureLogger(this IServiceCollection services)
       {
-         services.AddSerilog(configuration =>
+         return services.AddSerilog(configuration =>
          {
             configuration.WriteTo.Console();
          });
       }
 
       //Adding Cors policies to application
-      public static void ConfigureCors(this IServiceCollection services)
+      public static IServiceCollection ConfigureCors(this IServiceCollection services)
       {
-         services.AddCors(options =>
+         return services.AddCors(options =>
          {
             options.AddPolicy("Default", builder =>
             {
@@ -49,10 +48,10 @@ namespace Identity.Api.Extensions
 
       //Configure all data store and retrieve options, 
       //like database context and repositories
-      public static void ConfigureData(this IServiceCollection services,
+      public static IServiceCollection ConfigureData(this IServiceCollection services,
          IConfiguration configuration)
       {
-         services.AddDbContext<RepositoryContext>(options =>
+         return services.AddDbContext<RepositoryContext>(options =>
          {
             options.UseSqlServer(configuration.GetConnectionString("DefaultDb"));
 
@@ -60,19 +59,8 @@ namespace Identity.Api.Extensions
          });
       }
 
-      //Configure ServiceManager (UoW) and other consumed services, like mapper
-      public static void ConfigureApplicationServices(this IServiceCollection services)
-      {
-         services.AddAutoMapper(typeof(UseCases.AssemblyReference).Assembly);
-
-         services.AddMediatR(config =>
-            config.RegisterServicesFromAssemblies(
-               typeof(UseCases.AssemblyReference).Assembly));
-
-      }
-
       //Configuring API controllers and related services
-      public static void ConfigurePresentationControllers(this IServiceCollection services)
+      public static IServiceCollection ConfigurePresentationControllers(this IServiceCollection services)
       {
          services.AddControllers(options =>
          {
@@ -87,13 +75,15 @@ namespace Identity.Api.Extensions
          {
             options.SuppressModelStateInvalidFilter = true;
          });
+
+         return services;
       }
 
       //Configure ASP.NET Data protection keys
-      public static void ConfigureDataProtection(this IServiceCollection services)
+      public static IServiceCollection ConfigureDataProtection(this IServiceCollection services)
       {
          //if OS is windows leave default configuration with DPAPI
-         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
+         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return services;
 
 
          var keyDirName = Environment.GetEnvironmentVariable("KEY_DIR_NAME")!;
@@ -111,50 +101,13 @@ namespace Identity.Api.Extensions
             //Adding keys encryption with X509 certificate
             //Using X509 since DPAPI unavailible for linux
             .ProtectKeysWithCertificate(new X509Certificate2(x509CertPath, certPassword));
+
+         return services;
       }
 
-      public static void ConfigureAuthentication(this IServiceCollection services,
-         IConfiguration configuration)
-      {
-         var jwtOptions = new JwtOptions();
-
-         //Supply JwtOptions class with JwtOptions.SectionName values from configuration
-         configuration.Bind(JwtOptions.SectionName, jwtOptions);
-
-         //Temporary store secret key as enviromental variable
-         var secretKey = Environment.GetEnvironmentVariable(JwtOptions.SECRET_ENV) ??
-            throw new SecretKeyNotSetException();
-
-         SecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-
-         services.AddAuthorization();
-         services.AddAuthentication(options =>
-         {
-            //override default scemas
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-         })
-            .AddJwtBearer(options =>
-            {
-               options.TokenValidationParameters =
-                  new TokenValidationParameters
-                  {
-                     ValidateAudience = true,
-                     ValidateIssuer = true,
-                     ValidateIssuerSigningKey = true,
-                     ValidateLifetime = true,
-
-                     ValidAudience = jwtOptions.ValidAudience,
-                     ValidIssuer = jwtOptions.ValidIssuer,
-                     IssuerSigningKey = key
-                  };
-            });
-
-      }
 
       //Configure microsoft Identity to work with stored users
-      public static void ConfigureIdentity(this IServiceCollection services)
+      public static IServiceCollection ConfigureIdentity(this IServiceCollection services)
       {
          services.AddIdentity<User, Role>(options =>
          {
@@ -165,14 +118,26 @@ namespace Identity.Api.Extensions
             options.Password.RequiredLength = 10;
 
             options.User.RequireUniqueEmail = true;
+
+            options.ClaimsIdentity.UserNameClaimType = Claims.Name;
+            options.ClaimsIdentity.UserIdClaimType = Claims.Subject;
+            options.ClaimsIdentity.RoleClaimType = Claims.Role;
          })
          .AddEntityFrameworkStores<RepositoryContext>();
 
+         return services;
       }
 
-      public static void ConfigureOpenIdDict(this IServiceCollection services)
+      public static IServiceCollection ConfigureOpenIdDict(this IServiceCollection services,
+         IConfiguration configuration)
       {
-         services.AddHostedService<Library>();
+         services.AddHostedService<ClientsConfiguration>();
+
+
+         var jwt = new JwtOptions();
+         configuration.GetSection(JwtOptions.Jwt).Bind(jwt);
+         var scopes = new ScopesOptions();
+         configuration.GetSection(ScopesOptions.Scopes).Bind(scopes);
 
          services.AddOpenIddict()
             .AddCore(options =>
@@ -182,27 +147,30 @@ namespace Identity.Api.Extensions
             })
             .AddServer(options =>
             {
-               options.SetAuthorizationEndpointUris("api/connect/authorize")
-                  .SetTokenEndpointUris("api/connect/token", "api/connect/refresh");
+               options.SetTokenEndpointUris("api/connect/token", "api/refresh/token");
 
                options.AllowPasswordFlow()
-                  .AllowRefreshTokenFlow();
-
-               options.RegisterScopes("library.user", "library.admin",
-                     OpenIddictConstants.Scopes.Email,
-                     OpenIddictConstants.Scopes.Profile);
-
-               options.UseAspNetCore()
-                  .EnableAuthorizationEndpointPassthrough()
-                  .EnableTokenEndpointPassthrough();
-
+                   .AllowRefreshTokenFlow();
 
                options.AddDevelopmentEncryptionCertificate()
-                  .AddDevelopmentSigningCertificate()
-                  .DisableAccessTokenEncryption();
+                   .AddDevelopmentSigningCertificate()
+                   .DisableAccessTokenEncryption();
+
+               options.RegisterScopes(scopes.ValidScopes.ToArray());
+
+               options.UseAspNetCore()
+                   .EnableAuthorizationEndpointPassthrough()
+                   .EnableTokenEndpointPassthrough()
+                   .DisableTransportSecurityRequirement();
             })
             .AddValidation(options =>
             {
+               options.Configure(conf =>
+               {
+                  conf.TokenValidationParameters.ValidIssuers = jwt.ValidIssuers;
+               });
+               options.AddAudiences(jwt.ValidAudiences.ToArray());
+
                options.UseAspNetCore();
                options.UseLocalServer();
             });
@@ -213,16 +181,22 @@ namespace Identity.Api.Extensions
             options.DefaultChallengeScheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
             options.DefaultScheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
          });
+
+         return services;
       }
 
       //Register TOption instances in DI container (Microsft options pattern)
-      public static void ConfigureOptions(this IServiceCollection services,
+      public static IServiceCollection ConfigureOptions(this IServiceCollection services,
          IConfiguration configuration)
       {
-         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.Jwt))
+            .Configure<ClientsOptions>(configuration.GetSection(ClientsOptions.Clients))
+            .Configure<ScopesOptions>(configuration.GetSection(ScopesOptions.Scopes));
+
+         return services;
       }
 
-      public static void ConfigureSwagger(this IServiceCollection services)
+      public static IServiceCollection ConfigureSwagger(this IServiceCollection services)
       {
          services.AddSwaggerGen(options =>
          {
@@ -272,6 +246,8 @@ namespace Identity.Api.Extensions
                }
             });
          });
+
+         return services;
       }
 
    }

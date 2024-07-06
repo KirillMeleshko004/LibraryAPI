@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using Identity.Domain.Entities;
-using Identity.Shared.Results;
+using Identity.UseCases.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -10,7 +10,7 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 namespace Identity.UseCases.Users.Queries
 {
     public class GetUserClaimsHandler :
-        IRequestHandler<GetUserClaimsQuery, Result<ClaimsIdentity>>
+        IRequestHandler<GetUserClaimsQuery, ClaimsIdentity>
     {
         private readonly UserManager<User> _userManager;
 
@@ -19,14 +19,14 @@ namespace Identity.UseCases.Users.Queries
             _userManager = userManager;
         }
 
-        public async Task<Result<ClaimsIdentity>> Handle(
-            GetUserClaimsQuery request, CancellationToken cancellationToken)
+        public async Task<ClaimsIdentity> Handle(GetUserClaimsQuery request,
+            CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByNameAsync(request.UserName);
 
             if (user == null)
             {
-                return Result<ClaimsIdentity>.NotFound();
+                throw new UnauthorizedException("Invalid username/password pair");
             }
 
             var identity = new ClaimsIdentity(
@@ -51,7 +51,7 @@ namespace Identity.UseCases.Users.Queries
             identity.SetScopes(request.Scopes);
             identity.SetDestinations(DestinationsSelector);
 
-            return Result<ClaimsIdentity>.Success(identity);
+            return identity;
         }
 
         private static IEnumerable<string> DestinationsSelector(Claim claim)

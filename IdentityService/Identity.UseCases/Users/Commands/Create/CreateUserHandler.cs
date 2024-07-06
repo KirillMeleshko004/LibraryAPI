@@ -1,7 +1,9 @@
 using System.Security.Claims;
+using System.Text;
 using AutoMapper;
 using Identity.Domain.Entities;
 using Identity.UseCases.Common.Messages;
+using Identity.UseCases.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -12,7 +14,7 @@ namespace Identity.UseCases.Users.Commands
    /// Handler for CreateUserCommand
    /// </summary>
    public class CreateUserHandler :
-      IRequestHandler<CreateUserCommand, IdentityResult>
+      IRequestHandler<CreateUserCommand>
    {
       private readonly UserManager<User> _userManager;
       private readonly IMapper _mapper;
@@ -26,7 +28,7 @@ namespace Identity.UseCases.Users.Commands
          _logger = logger;
       }
 
-      public async Task<IdentityResult> Handle(CreateUserCommand request,
+      public async Task Handle(CreateUserCommand request,
          CancellationToken cancellationToken)
       {
          var user = _mapper.Map<User>(request.UserDto);
@@ -46,9 +48,15 @@ namespace Identity.UseCases.Users.Commands
          {
             _logger.LogInformation(LoggingMessages.UserCreationFailedLog,
                res.Errors);
-         }
 
-         return res;
+            var message = new StringBuilder();
+            foreach (var error in res.Errors)
+            {
+               message.Append(error);
+            }
+
+            throw new UnprocessableEntityException(message.ToString());
+         }
       }
    }
 }

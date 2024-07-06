@@ -1,7 +1,7 @@
 using AutoMapper;
 using Identity.Domain.Entities;
-using Identity.Shared.Results;
 using Identity.UseCases.Common.Messages;
+using Identity.UseCases.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -11,7 +11,7 @@ namespace Identity.UseCases.Users.Commands
    /// <summary>
    /// Handler for AuthorizeUserHandler
    /// </summary>
-   public class AuthorizeUserHandler : IRequestHandler<AuthorizeUserCommand, Result>
+   public class AuthorizeUserHandler : IRequestHandler<AuthorizeUserCommand>
    {
 
       private readonly UserManager<User> _userManager;
@@ -22,7 +22,8 @@ namespace Identity.UseCases.Users.Commands
          _userManager = userManager;
          _logger = logger;
       }
-      public async Task<Result> Handle(AuthorizeUserCommand request,
+
+      public async Task Handle(AuthorizeUserCommand request,
          CancellationToken cancellationToken)
       {
          var user = await _userManager.FindByNameAsync(request.UserDto.UserName);
@@ -36,10 +37,8 @@ namespace Identity.UseCases.Users.Commands
                LoggingMessages.AuthorizationFailedLog
             );
 
-            return Result.Unauthorized(ResponseMessages.AuthorizationFailed);
+            throw new UnauthorizedException("Invalid username/password pair.");
          }
-
-         return Result.Success();
       }
    }
 }

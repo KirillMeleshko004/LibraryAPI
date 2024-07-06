@@ -1,5 +1,5 @@
 using Identity.Api.Extensions;
-using Identity.Api.Middlewares;
+using Identity.UseCases;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,14 +10,11 @@ builder.Services.ConfigureData(builder.Configuration);
 builder.Services.ConfigurePresentationControllers();
 builder.Services.ConfigureSwagger();
 
-builder.Services.ConfigureApplicationServices();
+builder.Services.ConfigureUseCases();
 
-builder.Services.ConfigureOpenIdDict();
+builder.Services.ConfigureOpenIdDict(builder.Configuration);
 
-//Configure Identity !!!BEFORE!!! Authentication
-//Another order may cause Identity default authentication schema override JWT schema
 builder.Services.ConfigureIdentity();
-builder.Services.ConfigureAuthentication(builder.Configuration);
 
 builder.Services.ConfigureOptions(builder.Configuration);
 builder.Services.ConfigureDataProtection();
@@ -26,15 +23,15 @@ var app = builder.Build();
 
 #region Configure app pipeline
 
-if (app.Environment.IsDevelopment())
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+app.ConfigureExceptionHandler(logger);
+
+if (app.Environment.IsProduction())
 {
-   app.UseDeveloperExceptionPage();
-}
-else
-{
-   app.UseMiddleware<ExceptionMiddleware>();
    app.UseHsts();
 }
+
+app.UseHttpsRedirection();
 
 app.UseCors("Default");
 

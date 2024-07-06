@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Identity.Api.Common
+namespace Identity.Api.Common.Models
 {
    /// <summary>
    /// Exception info to send to client

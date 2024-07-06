@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Domain", "Identity
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.UseCases", "Identity.UseCases\Identity.UseCases.csproj", "{B2067272-F0CC-4CAE-A38F-E64F2FF20902}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Shared", "Identity.Shared\Identity.Shared.csproj", "{310C555B-6ED1-4929-B94D-D49A816CDF64}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Infrastructure", "Identity.Infrastructure\Identity.Infrastructure.csproj", "{EC97D79E-2342-4D7C-A1AF-FF171DE6632C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Api", "Identity.Api\Identity.Api.csproj", "{3338CCCE-FDCE-4726-A504-E5FF6D4AFE52}"
@@ -32,10 +30,6 @@ Global
 		{B2067272-F0CC-4CAE-A38F-E64F2FF20902}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2067272-F0CC-4CAE-A38F-E64F2FF20902}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2067272-F0CC-4CAE-A38F-E64F2FF20902}.Release|Any CPU.Build.0 = Release|Any CPU
-		{310C555B-6ED1-4929-B94D-D49A816CDF64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{310C555B-6ED1-4929-B94D-D49A816CDF64}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{310C555B-6ED1-4929-B94D-D49A816CDF64}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{310C555B-6ED1-4929-B94D-D49A816CDF64}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EC97D79E-2342-4D7C-A1AF-FF171DE6632C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EC97D79E-2342-4D7C-A1AF-FF171DE6632C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC97D79E-2342-4D7C-A1AF-FF171DE6632C}.Release|Any CPU.ActiveCfg = Release|Any CPU

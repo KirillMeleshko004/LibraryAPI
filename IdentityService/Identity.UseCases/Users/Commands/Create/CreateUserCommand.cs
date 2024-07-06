@@ -1,6 +1,5 @@
 using Identity.UseCases.Users.Dtos;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
 namespace Identity.UseCases.Users.Commands
 {
@@ -8,6 +7,7 @@ namespace Identity.UseCases.Users.Commands
    /// Command for user creation
    /// </summary>
    /// <returns>Identity Result</returns>
-   public record CreateUserCommand(UserForCreationDto UserDto) : 
-      IRequest<IdentityResult>{}
+   public record CreateUserCommand(UserForCreationDto UserDto) :
+      IRequest
+   { }
 }
