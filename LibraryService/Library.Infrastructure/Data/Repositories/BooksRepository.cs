@@ -61,7 +61,7 @@ namespace Library.Infrastructure.Data
       {
          var books = await Get()
             .Where(b => b.CurrentReaderId.Equals(readerId))
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
          return books;
       }

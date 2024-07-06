@@ -12,6 +12,8 @@ builder.Services.ConfigureSwagger();
 
 builder.Services.ConfigureApplicationServices();
 
+builder.Services.ConfigureOpenIdDict();
+
 //Configure Identity !!!BEFORE!!! Authentication
 //Another order may cause Identity default authentication schema override JWT schema
 builder.Services.ConfigureIdentity();

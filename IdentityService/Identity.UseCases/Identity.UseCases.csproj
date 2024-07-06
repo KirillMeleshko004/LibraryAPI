@@ -10,6 +10,7 @@
     <PackageReference Include="MediatR" Version="12.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="7.6.0" />
+    <PackageReference Include="OpenIddict.Abstractions" Version="5.7.0" />
   </ItemGroup>
 
   <PropertyGroup>

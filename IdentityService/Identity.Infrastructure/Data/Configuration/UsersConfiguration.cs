@@ -2,7 +2,7 @@ using Identity.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace LibraryApi.Identity.Infrastructure.Data.Configuration
+namespace Identity.Infrastructure.Data.Configuration
 {
    /// <summary>
    /// Class to configure user entity in database

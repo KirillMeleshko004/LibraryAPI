@@ -143,6 +143,7 @@ namespace Library.Api.Controllers
       [Authorize]
       [NullArgumentValidationFilter(names: "bookForCreation")]
       [ArgumentValidationFilter(names: "bookForUpdate")]
+      [BookImageExtractionFilter]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]

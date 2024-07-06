@@ -12,13 +12,15 @@ namespace Library.UseCases.Books.Commands
    public class UpdateBookHandler : IRequestHandler<UpdateBookCommand, Result<BookDto>>
    {
       private readonly IRepositoryManager _repo;
+      private readonly IImageService _images;
       private readonly IMapper _mapper;
       private readonly ILogger<UpdateBookHandler> _logger;
 
-      public UpdateBookHandler(IRepositoryManager repo, IMapper mapper,
-         ILogger<UpdateBookHandler> logger)
+      public UpdateBookHandler(IRepositoryManager repo, IImageService images,
+         IMapper mapper, ILogger<UpdateBookHandler> logger)
       {
          _repo = repo;
+         _images = images;
          _mapper = mapper;
          _logger = logger;
       }
@@ -46,6 +48,11 @@ namespace Library.UseCases.Books.Commands
 
          _mapper.Map(request.BookDto, book);
          book.AuthorName = $"{author.FirstName} {author.LastName}";
+         if (request.BookDto.Image != null && request.BookDto.ImageName != null)
+         {
+            book.ImagePath = await _images.SaveImageAsync(request.BookDto.Image,
+               request.BookDto.ImageName);
+         }
 
          await _repo.Books.UpdateBookAsync(book, cancellationToken);
          await _repo.SaveChangesAsync();

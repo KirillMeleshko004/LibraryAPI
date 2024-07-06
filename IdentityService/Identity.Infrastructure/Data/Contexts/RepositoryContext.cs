@@ -1,9 +1,9 @@
 using Identity.Domain.Entities;
-using LibraryApi.Identity.Infrastructure.Data.Configuration;
+using Identity.Infrastructure.Data.Configuration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace LibraryApi.Identity.Infrastructure.Data.Contexts
+namespace Identity.Infrastructure.Data.Contexts
 {
    public class RepositoryContext : IdentityDbContext<User, Role, Guid>
    {

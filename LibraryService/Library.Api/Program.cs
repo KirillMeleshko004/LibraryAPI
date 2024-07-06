@@ -1,4 +1,5 @@
 
+using Azure.Core;
 using Library.Api.Extensions;
 using Library.Api.Middlewares;
 using Library.Infrastructure;
@@ -48,7 +49,6 @@ app.MapControllers();
 
 var imageOptions = new ImageOptions();
 builder.Configuration.Bind(ImageOptions.SectionName, imageOptions);
-var cacheMaxAgeOneWeek = (60 * 60 * 24 * 7).ToString();
 app.UseStaticFiles(new StaticFileOptions()
 {
    RequestPath = "/images",
@@ -58,7 +58,8 @@ app.UseStaticFiles(new StaticFileOptions()
    OnPrepareResponse = ctx =>
    {
       ctx.Context.Response.Headers.Append(
-         "Cache-Control", $"public, max-age={cacheMaxAgeOneWeek}");
+         "Cache-Control", $"public, max-age={builder.Configuration
+            .GetValue<string>("Cache:MaxAge")}");
    }
 });
 

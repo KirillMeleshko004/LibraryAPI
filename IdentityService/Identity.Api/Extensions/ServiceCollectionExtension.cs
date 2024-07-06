@@ -1,11 +1,11 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using Identity.Api.Controllers;
 using Identity.Domain.Entities;
 using Identity.UseCases.Common.Configuration;
 using Identity.UseCases.Common.Exceptions;
-using Identity.UseCases.Common.Tokens;
-using LibraryApi.Identity.Infrastructure.Data.Contexts;
+using Identity.Infrastructure.Data.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using OpenIddict.Abstractions;
 
 namespace Identity.Api.Extensions
 {
@@ -54,6 +55,8 @@ namespace Identity.Api.Extensions
          services.AddDbContext<RepositoryContext>(options =>
          {
             options.UseSqlServer(configuration.GetConnectionString("DefaultDb"));
+
+            options.UseOpenIddict();
          });
       }
 
@@ -61,12 +64,11 @@ namespace Identity.Api.Extensions
       public static void ConfigureApplicationServices(this IServiceCollection services)
       {
          services.AddAutoMapper(typeof(UseCases.AssemblyReference).Assembly);
-         
-         services.AddMediatR(config => 
+
+         services.AddMediatR(config =>
             config.RegisterServicesFromAssemblies(
                typeof(UseCases.AssemblyReference).Assembly));
 
-         services.AddTransient<TokenIssuer>();
       }
 
       //Configuring API controllers and related services
@@ -78,7 +80,7 @@ namespace Identity.Api.Extensions
             //unsupported format
             options.RespectBrowserAcceptHeader = true;
             options.ReturnHttpNotAcceptable = true;
-         }).AddApplicationPart(typeof(Controllers.AssemblyReference).Assembly);
+         }).AddApplicationPart(typeof(AuthorizationController).Assembly);
 
          //Supressing default 400 bad request response on invalid model
          services.Configure<ApiBehaviorOptions>(options =>
@@ -168,6 +170,51 @@ namespace Identity.Api.Extensions
 
       }
 
+      public static void ConfigureOpenIdDict(this IServiceCollection services)
+      {
+         services.AddHostedService<Library>();
+
+         services.AddOpenIddict()
+            .AddCore(options =>
+            {
+               options.UseEntityFrameworkCore()
+                  .UseDbContext<RepositoryContext>();
+            })
+            .AddServer(options =>
+            {
+               options.SetAuthorizationEndpointUris("api/connect/authorize")
+                  .SetTokenEndpointUris("api/connect/token", "api/connect/refresh");
+
+               options.AllowPasswordFlow()
+                  .AllowRefreshTokenFlow();
+
+               options.RegisterScopes("library.user", "library.admin",
+                     OpenIddictConstants.Scopes.Email,
+                     OpenIddictConstants.Scopes.Profile);
+
+               options.UseAspNetCore()
+                  .EnableAuthorizationEndpointPassthrough()
+                  .EnableTokenEndpointPassthrough();
+
+
+               options.AddDevelopmentEncryptionCertificate()
+                  .AddDevelopmentSigningCertificate()
+                  .DisableAccessTokenEncryption();
+            })
+            .AddValidation(options =>
+            {
+               options.UseAspNetCore();
+               options.UseLocalServer();
+            });
+
+         services.AddAuthentication(options =>
+         {
+            options.DefaultAuthenticateScheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+            options.DefaultScheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+         });
+      }
+
       //Register TOption instances in DI container (Microsft options pattern)
       public static void ConfigureOptions(this IServiceCollection services,
          IConfiguration configuration)
@@ -186,7 +233,7 @@ namespace Identity.Api.Extensions
                   Version = "v0"
                });
 
-            var xmlFileName = $"{typeof(Controllers.AssemblyReference)
+            var xmlFileName = $"{typeof(Identity.Controllers.AssemblyReference)
                .Assembly.GetName().Name}.xml";
             var xmlFilePath = Path.Combine(AppContext.BaseDirectory, xmlFileName);
             options.IncludeXmlComments(xmlFilePath);

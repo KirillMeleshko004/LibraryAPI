@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using Library.UseCases.Common.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

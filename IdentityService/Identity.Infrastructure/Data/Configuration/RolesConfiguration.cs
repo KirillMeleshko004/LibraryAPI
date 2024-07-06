@@ -3,7 +3,7 @@ using Identity.Domain.Enum;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace LibraryApi.Identity.Infrastructure.Data.Configuration
+namespace Identity.Infrastructure.Data.Configuration
 {
    /// <summary>
    /// Class to configure role entity in database

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using AutoMapper;
 using Identity.Domain.Entities;
 using Identity.UseCases.Common.Messages;
@@ -25,19 +26,19 @@ namespace Identity.UseCases.Users.Commands
          _logger = logger;
       }
 
-      public async Task<IdentityResult> Handle(CreateUserCommand request, 
+      public async Task<IdentityResult> Handle(CreateUserCommand request,
          CancellationToken cancellationToken)
       {
          var user = _mapper.Map<User>(request.UserDto);
 
-         if(string.IsNullOrWhiteSpace(user.UserName))
+         if (string.IsNullOrWhiteSpace(user.UserName))
          {
             user.UserName = user.Email;
          }
-         
+
          var res = await _userManager.CreateAsync(user, request.UserDto.Password);
 
-         if(res.Succeeded)
+         if (res.Succeeded)
          {
             await _userManager.AddToRolesAsync(user, request.UserDto.UserRoles);
          }
