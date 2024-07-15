@@ -15,6 +15,7 @@ using Identity.UseCases.Common.Configuration;
 using Identity.Api.Common.Configuration;
 using Identity.Api.HostedServices;
 using static OpenIddict.Abstractions.OpenIddictConstants;
+using System.Security.Cryptography;
 
 namespace Identity.Api.Extensions
 {
@@ -131,6 +132,8 @@ namespace Identity.Api.Extensions
       public static IServiceCollection ConfigureOpenIdDict(this IServiceCollection services,
          IConfiguration configuration)
       {
+
+
          services.AddHostedService<ClientsConfiguration>();
 
 
@@ -150,11 +153,15 @@ namespace Identity.Api.Extensions
                options.SetTokenEndpointUris("api/connect/token", "api/refresh/token");
 
                options.AllowPasswordFlow()
-                   .AllowRefreshTokenFlow();
+                  .AllowRefreshTokenFlow();
 
-               options.AddDevelopmentEncryptionCertificate()
-                   .AddDevelopmentSigningCertificate()
-                   .DisableAccessTokenEncryption();
+               //TODO
+               //Move certs to different folder
+               options.AddEncryptionCertificate(
+                  new X509Certificate2(File.ReadAllBytes("../../CertCreator/Certs/encryption-certificate.pfx")));
+               options.AddSigningCertificate(
+                  new X509Certificate2(File.ReadAllBytes("../../CertCreator/Certs/signing-certificate.pfx")));
+               // .DisableAccessTokenEncryption();
 
                options.RegisterScopes(scopes.ValidScopes.ToArray());
 

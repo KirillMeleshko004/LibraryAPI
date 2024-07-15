@@ -1,10 +1,12 @@
 
+using System.Security.Cryptography.X509Certificates;
 using Azure.Core;
 using Library.Api.Extensions;
 using Library.Api.Middlewares;
 using Library.Infrastructure;
 using Library.Infrastructure.Images;
 using Microsoft.Extensions.FileProviders;
+using OpenIddict.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +19,10 @@ builder.Services.ConfigureLogging();
 builder.Services.ConfigureControllers();
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureDataProtection();
-builder.Services.ConfigureAuthentication(builder.Configuration);
 
 builder.Services.ConfigureApplicationServices(builder.Configuration);
 builder.Services.ConfigureInfrastructureServices();
+builder.Services.ConfigureOpenIdDict(builder.Configuration);
 
 #endregion
 

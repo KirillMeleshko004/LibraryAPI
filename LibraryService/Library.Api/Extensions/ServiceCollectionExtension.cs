@@ -166,42 +166,33 @@ namespace Library.Api.Extensions
             .ProtectKeysWithCertificate(new X509Certificate2(x509CertPath, certPassword));
       }
 
-      public static void ConfigureAuthentication(this IServiceCollection services,
-      IConfiguration configuration)
+
+      public static IServiceCollection ConfigureOpenIdDict(this IServiceCollection services,
+         IConfiguration configuration)
       {
-         var jwtOptions = new JwtOptions();
+         services.AddOpenIddict()
+            .AddValidation(options =>
+            {
+               //TODO
+               //Move certs to different folder
+               options.AddEncryptionCertificate(
+                  new X509Certificate2(File.ReadAllBytes("../../CertCreator/Certs/encryption-certificate.pfx")));
+               options.AddSigningCertificate(
+                  new X509Certificate2(File.ReadAllBytes("../../CertCreator/Certs/signing-certificate.pfx")));
+               options.SetIssuer("https://localhost:7213");
+               options.UseSystemNetHttp();
+               options.UseAspNetCore();
+            });
 
-         //Supply JwtOptions class with JwtOptions.SectionName values from configuration
-         configuration.Bind(JwtOptions.SectionName, jwtOptions);
+         services
+            .AddAuthentication(options =>
+            {
+               options.DefaultAuthenticateScheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+               options.DefaultChallengeScheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+               options.DefaultScheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+            });
 
-         //Temporary store secret key as enviromental variable
-         var secretKey = Environment.GetEnvironmentVariable("LIBRARY_SECRET") ??
-            throw new Exception("key not set");
-
-         SecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
-
-         services.AddAuthentication(options =>
-         {
-            //override default scemas
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-         })
-         .AddJwtBearer(options =>
-         {
-            options.TokenValidationParameters =
-               new TokenValidationParameters
-               {
-                  ValidateAudience = true,
-                  ValidateIssuer = true,
-                  ValidateIssuerSigningKey = true,
-                  ValidateLifetime = true,
-
-                  ValidAudience = jwtOptions.ValidAudience,
-                  ValidIssuer = jwtOptions.ValidIssuer,
-                  IssuerSigningKey = key
-               };
-         });
+         return services;
       }
    }
 }
