@@ -1,6 +1,4 @@
-using System.Security.Claims;
 using Library.Controllers.Filters;
-using Library.Shared.Results;
 using Library.UseCases.Books.Commands;
 using Library.UseCases.Books.DTOs;
 using Library.UseCases.Books.Queries;
@@ -40,12 +38,7 @@ namespace Library.Api.Controllers
       {
          var result = await _sender.Send(new GetBookByIdQuery(id));
 
-         if (result.Status == ResultStatus.NotFound)
-         {
-            return NotFound(result.Errors);
-         }
-
-         return Ok(result.Value);
+         return Ok(result);
       }
 
       /// <summary>
@@ -62,12 +55,7 @@ namespace Library.Api.Controllers
       {
          var result = await _sender.Send(new GetBookByISBNQuery(isbn));
 
-         if (result.Status == ResultStatus.NotFound)
-         {
-            return NotFound(result.Errors);
-         }
-
-         return Ok(result.Value);
+         return Ok(result);
       }
 
       /// <summary>
@@ -87,12 +75,7 @@ namespace Library.Api.Controllers
       {
          var result = await _sender.Send(new ListBooksQuery(parameters));
 
-         if (result.Status == ResultStatus.NotFound)
-         {
-            return NotFound(result.Errors);
-         }
-
-         return Ok(result.Value);
+         return Ok(result);
       }
 
       /// <summary>
@@ -119,13 +102,8 @@ namespace Library.Api.Controllers
          var result = await _sender.Send(
             new CreateBookCommand(bookForCreation, bookForCreation.AuthorId));
 
-         if (result.Status == ResultStatus.InvalidData)
-         {
-            return UnprocessableEntity(result.Errors);
-         }
-
          return CreatedAtAction(nameof(GetBookById),
-            new { id = result.Value!.Id }, result.Value);
+            new { id = result.Id }, result);
       }
 
       /// <summary>
@@ -152,18 +130,7 @@ namespace Library.Api.Controllers
       public async Task<IActionResult> UpdateBook(Guid id,
          [FromBody] BookForUpdateDto bookForUpdate)
       {
-         var result = await _sender.Send(
-            new UpdateBookCommand(id, bookForUpdate));
-
-         if (result.Status == ResultStatus.NotFound)
-         {
-            return NotFound(result.Errors);
-         }
-
-         if (result.Status == ResultStatus.InvalidData)
-         {
-            return UnprocessableEntity(result.Errors);
-         }
+         await _sender.Send(new UpdateBookCommand(id, bookForUpdate));
 
          return NoContent();
       }
@@ -181,7 +148,7 @@ namespace Library.Api.Controllers
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       public async Task<IActionResult> DeleteBookById(Guid id)
       {
-         var result = await _sender.Send(new DeleteBookCommand(id));
+         await _sender.Send(new DeleteBookCommand(id));
 
          return NoContent();
       }
@@ -206,13 +173,8 @@ namespace Library.Api.Controllers
       {
          string email = (HttpContext.Items["email"] as string)!;
 
-         var result = await _sender.Send(
+         await _sender.Send(
             new BorrowBookCommand(email, id));
-
-         if (result.Status == ResultStatus.NotFound)
-         {
-            return NotFound(result.Errors);
-         }
 
          return NoContent();
       }
@@ -239,18 +201,8 @@ namespace Library.Api.Controllers
       {
          string email = (HttpContext.Items["email"] as string)!;
 
-         var result = await _sender.Send(
+         await _sender.Send(
             new ReturnBookCommand(email, id));
-
-         if (result.Status == ResultStatus.NotFound)
-         {
-            return NotFound(result.Errors);
-         }
-
-         if (result.Status == ResultStatus.InvalidData)
-         {
-            return UnprocessableEntity(result.Errors);
-         }
 
          return NoContent();
       }
@@ -274,12 +226,7 @@ namespace Library.Api.Controllers
 
          var result = await _sender.Send(new ListBooksForReaderQuery(email));
 
-         if (result.Status == ResultStatus.NotFound)
-         {
-            return NotFound(result.Errors);
-         }
-
-         return Ok(result.Value);
+         return Ok(result);
       }
 
    }

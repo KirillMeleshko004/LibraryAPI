@@ -2,7 +2,7 @@ using AutoMapper;
 using Library.Domain.Entities;
 using Library.UseCases.Books.DTOs;
 using Library.UseCases.Common.Interfaces;
-using Library.Shared.Results;
+using Library.UseCases.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using static Library.UseCases.Common.Messages.LoggingMessages;
@@ -10,7 +10,7 @@ using static Library.UseCases.Common.Messages.ResponseMessages;
 
 namespace Library.UseCases.Books.Commands
 {
-   public class CreateBookHandler : IRequestHandler<CreateBookCommand, Result<BookDto>>
+   public class CreateBookHandler : IRequestHandler<CreateBookCommand, BookDto>
    {
       private readonly IRepositoryManager _repo;
       private readonly IMapper _mapper;
@@ -26,7 +26,7 @@ namespace Library.UseCases.Books.Commands
          _logger = logger;
       }
 
-      public async Task<Result<BookDto>> Handle(CreateBookCommand request,
+      public async Task<BookDto> Handle(CreateBookCommand request,
          CancellationToken cancellationToken)
       {
          var author = await _repo.Authors
@@ -36,8 +36,8 @@ namespace Library.UseCases.Books.Commands
          {
             _logger.LogWarning(AuthorNotFoundBookCreationLog, request.AuthorId);
 
-            return Result<BookDto>
-               .InvalidData(string.Format(AuthorNotFoundBookCreation, request.AuthorId));
+            throw new UnprocessableEntityException(
+               string.Format(AuthorNotFoundBookCreation, request.AuthorId));
          }
 
          var book = _mapper.Map<Book>(request.BookDto);
@@ -56,7 +56,7 @@ namespace Library.UseCases.Books.Commands
 
          var bookToReturn = _mapper.Map<BookDto>(book);
 
-         return Result<BookDto>.Success(bookToReturn);
+         return bookToReturn;
       }
    }
 }

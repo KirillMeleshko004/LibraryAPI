@@ -1,6 +1,5 @@
-using AutoMapper;
-using Library.Shared.Results;
 using Library.UseCases.Common.Interfaces;
+using Library.UseCases.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using static Library.UseCases.Common.Messages.LoggingMessages;
@@ -8,7 +7,7 @@ using static Library.UseCases.Common.Messages.ResponseMessages;
 
 namespace Library.UseCases.Books.Commands
 {
-   public class BorrowBookHandler : IRequestHandler<BorrowBookCommand, Result>
+   public class BorrowBookHandler : IRequestHandler<BorrowBookCommand>
    {
       private readonly IRepositoryManager _repo;
       private readonly ILogger<BorrowBookHandler> _logger;
@@ -19,8 +18,7 @@ namespace Library.UseCases.Books.Commands
          _logger = logger;
       }
 
-      public async Task<Result> Handle(BorrowBookCommand request,
-         CancellationToken cancellationToken)
+      public async Task Handle(BorrowBookCommand request, CancellationToken cancellationToken)
       {
          var book = await _repo.Books
             .GetBookByIdAsync(request.BookId, cancellationToken);
@@ -28,12 +26,12 @@ namespace Library.UseCases.Books.Commands
          if (book == null)
          {
             _logger.LogWarning(BookNotFoundLog, request.BookId);
-            return Result.NotFound(string.Format(BookNotFound, request.BookId));
+            throw new NotFoundException(string.Format(BookNotFound, request.BookId));
          }
 
          if (book.IsAvailable == false)
          {
-            return Result.NotFound(string.Format(BookNotAvailable, request.BookId));
+            throw new UnavailableException(string.Format(BookNotAvailable, request.BookId));
          }
 
          var reader = await _repo.Readers
@@ -53,8 +51,6 @@ namespace Library.UseCases.Books.Commands
          book.ReturnTime = DateTime.Now.AddDays(30);
 
          await _repo.SaveChangesAsync();
-
-         return Result.Success();
       }
    }
 }

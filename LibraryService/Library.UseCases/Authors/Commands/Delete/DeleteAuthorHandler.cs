@@ -1,4 +1,3 @@
-using Library.Shared.Results;
 using Library.UseCases.Common.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -6,7 +5,7 @@ using static Library.UseCases.Common.Messages.LoggingMessages;
 
 namespace Library.UseCases.Authors.Commands
 {
-   public class DeleteAuthorHandler : IRequestHandler<DeleteAuthorCommand, Result>
+   public class DeleteAuthorHandler : IRequestHandler<DeleteAuthorCommand>
    {
       private readonly IRepositoryManager _repo;
       private readonly ILogger<DeleteAuthorHandler> _logger;
@@ -17,19 +16,17 @@ namespace Library.UseCases.Authors.Commands
          _logger = logger;
       }
 
-      public async Task<Result> Handle(DeleteAuthorCommand request, 
+      public async Task Handle(DeleteAuthorCommand request,
          CancellationToken cancellationToken)
       {
          var author = await _repo.Authors.GetAuthorByIdAsync(request.Id, cancellationToken);
 
-         if(author == null) return Result.Success();
+         if (author == null) return;
 
          await _repo.Authors.DeleteAuthorAsync(author, cancellationToken);
          await _repo.SaveChangesAsync();
-         
-         _logger.LogInformation(AuthorDeletedLog, author.Id);
 
-         return Result.Success();
+         _logger.LogInformation(AuthorDeletedLog, author.Id);
       }
    }
 }

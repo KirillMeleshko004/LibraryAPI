@@ -1,6 +1,5 @@
 using AutoMapper;
 using Library.Domain.Entities;
-using Library.Shared.Results;
 using Library.UseCases.Authors.DTOs;
 using Library.UseCases.Common.Interfaces;
 using MediatR;
@@ -9,13 +8,13 @@ using static Library.UseCases.Common.Messages.LoggingMessages;
 
 namespace Library.UseCases.Authors.Commands
 {
-   public class CreateAuthorHandler : IRequestHandler<CreateAuthorCommand, Result<AuthorDto>>
+   public class CreateAuthorHandler : IRequestHandler<CreateAuthorCommand, AuthorDto>
    {
       private readonly IRepositoryManager _repo;
       private readonly IMapper _mapper;
       private readonly ILogger<CreateAuthorHandler> _logger;
 
-      public CreateAuthorHandler(IRepositoryManager repo, IMapper mapper, 
+      public CreateAuthorHandler(IRepositoryManager repo, IMapper mapper,
          ILogger<CreateAuthorHandler> logger)
       {
          _repo = repo;
@@ -23,7 +22,7 @@ namespace Library.UseCases.Authors.Commands
          _logger = logger;
       }
 
-      public async Task<Result<AuthorDto>> Handle(CreateAuthorCommand request, 
+      public async Task<AuthorDto> Handle(CreateAuthorCommand request,
          CancellationToken cancellationToken)
       {
          var author = _mapper.Map<Author>(request.AuthorDto);
@@ -32,10 +31,10 @@ namespace Library.UseCases.Authors.Commands
          await _repo.SaveChangesAsync();
 
          var authorToReturn = _mapper.Map<AuthorDto>(author);
-         
+
          _logger.LogInformation(AuthorCreatedLog, author.Id);
 
-         return Result<AuthorDto>.Success(authorToReturn);
+         return authorToReturn;
       }
    }
 }

@@ -1,7 +1,7 @@
 using AutoMapper;
-using Library.Shared.Results;
 using Library.UseCases.Books.DTOs;
 using Library.UseCases.Common.Interfaces;
+using Library.UseCases.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using static Library.UseCases.Common.Messages.ResponseMessages;
@@ -9,7 +9,7 @@ using static Library.UseCases.Common.Messages.ResponseMessages;
 namespace Library.UseCases.Books.Queries
 {
    public class ListBooksForReaderHandler :
-      IRequestHandler<ListBooksForReaderQuery, Result<IEnumerable<BookDto>>>
+      IRequestHandler<ListBooksForReaderQuery, IEnumerable<BookDto>>
    {
       private readonly IRepositoryManager _repo;
       private readonly IMapper _mapper;
@@ -23,7 +23,7 @@ namespace Library.UseCases.Books.Queries
          _logger = logger;
       }
 
-      public async Task<Result<IEnumerable<BookDto>>> Handle(ListBooksForReaderQuery request,
+      public async Task<IEnumerable<BookDto>> Handle(ListBooksForReaderQuery request,
          CancellationToken cancellationToken)
       {
          var reader = await _repo.Readers
@@ -31,20 +31,15 @@ namespace Library.UseCases.Books.Queries
 
          if (reader == null)
          {
-            return Result<IEnumerable<BookDto>>.NotFound(ReaderNotFound);
+            throw new NotFoundException(ReaderNotFound);
          }
 
          var books = await _repo.Books
             .GetBookByReaderAsync(reader.Id, cancellationToken);
 
-         if (!books.Any())
-         {
-            return Result<IEnumerable<BookDto>>.NotFound(BooksNotFound);
-         }
-
          var booksToReturn = _mapper.Map<IEnumerable<BookDto>>(books);
 
-         return Result<IEnumerable<BookDto>>.Success(booksToReturn);
+         return booksToReturn;
       }
    }
 }

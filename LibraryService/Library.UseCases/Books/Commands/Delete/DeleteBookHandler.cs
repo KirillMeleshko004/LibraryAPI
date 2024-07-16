@@ -1,12 +1,11 @@
 using Library.UseCases.Common.Interfaces;
-using Library.Shared.Results;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using static Library.UseCases.Common.Messages.LoggingMessages;
 
 namespace Library.UseCases.Books.Commands
 {
-   public class DeleteBookHandler : IRequestHandler<DeleteBookCommand, Result>
+   public class DeleteBookHandler : IRequestHandler<DeleteBookCommand>
    {
       private readonly IRepositoryManager _repo;
       private readonly IImageService _images;
@@ -19,13 +18,13 @@ namespace Library.UseCases.Books.Commands
          _images = images;
          _logger = logger;
       }
-      public async Task<Result> Handle(DeleteBookCommand request,
+      public async Task Handle(DeleteBookCommand request,
          CancellationToken cancellationToken)
       {
          var book = await _repo.Books.GetBookByIdAsync(request.Id, cancellationToken);
 
          //If book not exist or already deleted
-         if (book == null) return Result.Success();
+         if (book == null) return;
 
          await _repo.Books.DeleteBookAsync(book, cancellationToken);
          if (!string.IsNullOrWhiteSpace(book.ImagePath))
@@ -36,8 +35,6 @@ namespace Library.UseCases.Books.Commands
 
 
          _logger.LogInformation(BookDeletedLog, book.Id);
-
-         return Result.Success();
       }
    }
 }

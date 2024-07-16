@@ -1,14 +1,14 @@
-using Library.Shared.Results;
 using Library.UseCases.Common.Interfaces;
 using Library.UseCases.Common.Messages;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using static Library.UseCases.Common.Messages.ResponseMessages;
 using static Library.UseCases.Common.Messages.LoggingMessages;
+using Library.UseCases.Exceptions;
 
 namespace Library.UseCases.Books.Commands
 {
-   public class ReturnBookHandler : IRequestHandler<ReturnBookCommand, Result>
+   public class ReturnBookHandler : IRequestHandler<ReturnBookCommand>
    {
       private readonly IRepositoryManager _repo;
       private readonly ILogger<ReturnBookHandler> _logger;
@@ -19,7 +19,7 @@ namespace Library.UseCases.Books.Commands
          _logger = logger;
       }
 
-      public async Task<Result> Handle(ReturnBookCommand request,
+      public async Task Handle(ReturnBookCommand request,
          CancellationToken cancellationToken)
       {
          var reader = await _repo.Readers
@@ -28,14 +28,14 @@ namespace Library.UseCases.Books.Commands
          if (reader == null)
          {
             _logger.LogInformation(ReaderNotFoundLog, request.ReaderEmail);
-            return Result.NotFound(ReaderNotFound);
+            throw new UnauthorizedException("Invalid reader");
          }
 
          var book = await _repo.Books.GetBookByIdAsync(request.BookId, cancellationToken);
 
          if (book == null)
          {
-            return Result.NotFound(
+            throw new NotFoundException(
                string.Format(ResponseMessages.BookNotFound, request.BookId));
          }
 
@@ -43,7 +43,8 @@ namespace Library.UseCases.Books.Commands
          {
             _logger.LogInformation(ReaderDontHaveBookLog,
                request.ReaderEmail, request.BookId);
-            return Result.InvalidData(ReaderDontHaveBook);
+
+            throw new ForbidException(ReaderDontHaveBook);
          }
 
          book.IsAvailable = true;
@@ -52,8 +53,6 @@ namespace Library.UseCases.Books.Commands
          book.ReturnTime = null;
 
          await _repo.SaveChangesAsync();
-
-         return Result.Success();
       }
    }
 }

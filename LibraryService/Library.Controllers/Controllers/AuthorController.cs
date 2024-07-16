@@ -1,5 +1,4 @@
 using Library.Controllers.Filters;
-using Library.Shared.Results;
 using Library.UseCases.Authors.Commands;
 using Library.UseCases.Authors.DTOs;
 using Library.UseCases.Authors.Queries;
@@ -43,12 +42,7 @@ namespace Library.Api.Controllers
       {
          var result = await _sender.Send(new ListAuthorsQuery(parameters));
 
-         if (result.Status == ResultStatus.NotFound)
-         {
-            return NotFound(result.Errors);
-         }
-
-         return Ok(result.Value);
+         return Ok(result);
       }
 
       /// <summary>
@@ -65,12 +59,7 @@ namespace Library.Api.Controllers
       {
          var result = await _sender.Send(new GetAuthorByIdQuery(id));
 
-         if (result.Status == ResultStatus.NotFound)
-         {
-            return NotFound(result.Errors);
-         }
-
-         return Ok(result.Value);
+         return Ok(result);
       }
 
       /// <summary>
@@ -96,7 +85,7 @@ namespace Library.Api.Controllers
          var result = await _sender.Send(new CreateAuthorCommand(authorDto));
 
          return CreatedAtAction(nameof(GetAuthorById),
-            new { id = result.Value!.Id }, result.Value);
+            new { id = result.Id }, result);
       }
 
       /// <summary>
@@ -122,12 +111,7 @@ namespace Library.Api.Controllers
       public async Task<IActionResult> UpdateAuthor(Guid id,
          [FromBody] AuthorForUpdateDto authorDto)
       {
-         var result = await _sender.Send(new UpdateAuthorCommand(id, authorDto));
-
-         if (result.Status == ResultStatus.NotFound)
-         {
-            return NotFound(result.Errors);
-         }
+         await _sender.Send(new UpdateAuthorCommand(id, authorDto));
 
          return NoContent();
       }
@@ -145,7 +129,7 @@ namespace Library.Api.Controllers
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       public async Task<IActionResult> DeleteAuthor(Guid id)
       {
-         var result = await _sender.Send(new DeleteAuthorCommand(id));
+         await _sender.Send(new DeleteAuthorCommand(id));
 
          return NoContent();
       }
@@ -169,12 +153,7 @@ namespace Library.Api.Controllers
       {
          var result = await _sender.Send(new ListBooksByAuthorQuery(parameters, id));
 
-         if (result.Status == ResultStatus.NotFound)
-         {
-            return NotFound(result.Errors);
-         }
-
-         return Ok(result.Value);
+         return Ok(result);
       }
    }
 }

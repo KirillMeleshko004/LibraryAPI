@@ -1,5 +1,4 @@
 using AutoMapper;
-using Library.Shared.Results;
 using Library.UseCases.Authors.DTOs;
 using Library.UseCases.Common.Interfaces;
 using MediatR;
@@ -9,7 +8,7 @@ using static Library.UseCases.Common.Messages.ResponseMessages;
 namespace Library.UseCases.Authors.Queries
 {
    public class ListAuthorsHandler :
-      IRequestHandler<ListAuthorsQuery, Result<IEnumerable<AuthorDto>>>
+      IRequestHandler<ListAuthorsQuery, IEnumerable<AuthorDto>>
    {
 
       private readonly IRepositoryManager _repo;
@@ -24,20 +23,15 @@ namespace Library.UseCases.Authors.Queries
          _logger = logger;
       }
 
-      public async Task<Result<IEnumerable<AuthorDto>>> Handle(ListAuthorsQuery request,
+      public async Task<IEnumerable<AuthorDto>> Handle(ListAuthorsQuery request,
          CancellationToken cancellationToken)
       {
          var authors = await _repo.Authors
             .GetAuthorsAsync(request.Parameters, cancellationToken);
 
-         if (!authors.Any())
-         {
-            return Result<IEnumerable<AuthorDto>>.NotFound(AuthorsNotFound);
-         }
-
          var authorsToReturn = _mapper.Map<IEnumerable<AuthorDto>>(authors);
 
-         return Result<IEnumerable<AuthorDto>>.Success(authorsToReturn);
+         return authorsToReturn;
       }
    }
 }
