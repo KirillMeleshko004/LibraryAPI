@@ -11,7 +11,6 @@ namespace Identity.Infrastructure.Data.Contexts
       public RepositoryContext(DbContextOptions<RepositoryContext> options) :
          base(options)
       {
-         Database.EnsureCreated();
       }
 
       protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

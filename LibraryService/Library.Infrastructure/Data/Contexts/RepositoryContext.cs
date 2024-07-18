@@ -24,7 +24,6 @@ namespace Library.Infrastructure.Data
       public RepositoryContext(DbContextOptions<RepositoryContext> options)
          : base(options)
       {
-         Database.EnsureCreated();
       }
    }
 }

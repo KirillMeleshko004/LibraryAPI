@@ -1,18 +1,16 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using Library.Api.Common;
+using Library.Api.AuthorizationRequirements.Handlers;
+using Library.Api.AuthorizationRequirements.Requirements;
 using Library.Api.Utility;
 using Library.Infrastructure.Data;
 using Library.Infrastructure.Images;
-using Library.UseCases.Common.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -191,6 +189,24 @@ namespace Library.Api.Extensions
                options.DefaultChallengeScheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
                options.DefaultScheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
             });
+
+         return services;
+      }
+
+      public static IServiceCollection ConfigurePolicies(this IServiceCollection services)
+      {
+         services.AddScoped<IAuthorizationHandler, RoleAuthorizationHandler>();
+
+         services.AddAuthorizationBuilder()
+            .AddPolicy("customer", policy =>
+            {
+               policy.AddRequirements(new RoleAuthorizationRequirement("customer"));
+            })
+            .AddPolicy("admin", policy =>
+            {
+               policy.AddRequirements(new RoleAuthorizationRequirement("admin"));
+            });
+
 
          return services;
       }

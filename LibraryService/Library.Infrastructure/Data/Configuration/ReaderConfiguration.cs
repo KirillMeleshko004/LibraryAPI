@@ -18,7 +18,7 @@ namespace Library.Infrastructure.Data
             .IsRequired();
 
          builder.HasMany<Book>()
-            .WithOne()
+            .WithOne(b => b.CurrentReader)
             .HasForeignKey(b => b.CurrentReaderId)
             .OnDelete(DeleteBehavior.SetNull);
       }

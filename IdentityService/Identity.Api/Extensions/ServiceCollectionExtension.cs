@@ -1,9 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
-using Identity.Api.Controllers;
 using Identity.Domain.Entities;
 using Identity.Infrastructure.Data.Contexts;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
@@ -15,7 +13,7 @@ using Identity.UseCases.Common.Configuration;
 using Identity.Api.Common.Configuration;
 using Identity.Api.HostedServices;
 using static OpenIddict.Abstractions.OpenIddictConstants;
-using System.Security.Cryptography;
+using Identity.Controllers;
 
 namespace Identity.Api.Extensions
 {
@@ -69,7 +67,7 @@ namespace Identity.Api.Extensions
             //unsupported format
             options.RespectBrowserAcceptHeader = true;
             options.ReturnHttpNotAcceptable = true;
-         }).AddApplicationPart(typeof(AuthorizationController).Assembly);
+         }).AddApplicationPart(typeof(IdentityController).Assembly);
 
          //Supressing default 400 bad request response on invalid model
          services.Configure<ApiBehaviorOptions>(options =>
@@ -219,13 +217,13 @@ namespace Identity.Api.Extensions
             var xmlFilePath = Path.Combine(AppContext.BaseDirectory, xmlFileName);
             options.IncludeXmlComments(xmlFilePath);
 
-            options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme,
+            options.AddSecurityDefinition(OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme,
                new OpenApiSecurityScheme
                {
                   Name = "Authorization",
                   In = ParameterLocation.Header,
                   Type = SecuritySchemeType.ApiKey,
-                  Scheme = JwtBearerDefaults.AuthenticationScheme,
+                  Scheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme,
                   Description = "JWT Authorization header using the Bearer scheme."
                });
 
@@ -243,9 +241,9 @@ namespace Identity.Api.Extensions
                      Reference = new OpenApiReference
                      {
                         Type = ReferenceType.SecurityScheme,
-                        Id = JwtBearerDefaults.AuthenticationScheme
+                        Id = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme
                      },
-                     Name = JwtBearerDefaults.AuthenticationScheme
+                     Name = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme
                   },
                   //the value of the dictionary is a required list of scope names 
                   //for the execution only if the security scheme is oauth2 or openIdConnect

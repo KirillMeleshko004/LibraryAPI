@@ -6,7 +6,6 @@ namespace Identity.Domain.Enum
     public enum Roles
     {
         Admin,
-        Librarian,
         Customer
     }
 }

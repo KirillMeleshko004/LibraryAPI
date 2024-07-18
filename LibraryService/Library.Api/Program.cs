@@ -1,12 +1,8 @@
-
-using System.Security.Cryptography.X509Certificates;
-using Azure.Core;
 using Library.Api.Extensions;
-using Library.Api.Middlewares;
 using Library.Infrastructure;
 using Library.Infrastructure.Images;
+using Library.Api.Controllers;
 using Microsoft.Extensions.FileProviders;
-using OpenIddict.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,12 +13,15 @@ builder.Services.ConfigureEF(builder.Configuration);
 builder.Services.ConfigureLogging();
 
 builder.Services.ConfigureControllers();
+builder.Services.ConfigurePresentation();
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureDataProtection();
 
+builder.Services.ConfigureOpenIdDict(builder.Configuration);
+builder.Services.ConfigurePolicies();
+
 builder.Services.ConfigureApplicationServices(builder.Configuration);
 builder.Services.ConfigureInfrastructureServices();
-builder.Services.ConfigureOpenIdDict(builder.Configuration);
 
 #endregion
 
@@ -31,13 +30,11 @@ var app = builder.Build();
 
 #region Configure app pipeline
 
-if (app.Environment.IsDevelopment())
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+app.ConfigureExceptionHandler(logger);
+
+if (!app.Environment.IsDevelopment())
 {
-   app.UseDeveloperExceptionPage();
-}
-else
-{
-   app.UseMiddleware<ExceptionMiddleware>();
    app.UseHsts();
 }
 

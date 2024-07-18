@@ -1,3 +1,5 @@
+using AutoMapper;
+using Library.Api.Controllers.ViewModels;
 using Library.Controllers.Filters;
 using Library.UseCases.Books.Commands;
 using Library.UseCases.Books.DTOs;
@@ -16,11 +18,13 @@ namespace Library.Api.Controllers
    public class BooksController : ControllerBase
    {
       private readonly ISender _sender;
+      private readonly IMapper _mapper;
       private readonly ILogger<BooksController> _logger;
 
-      public BooksController(ISender sender, ILogger<BooksController> logger)
+      public BooksController(ISender sender, IMapper mapper, ILogger<BooksController> logger)
       {
          _sender = sender;
+         _mapper = mapper;
          _logger = logger;
       }
 
@@ -81,7 +85,7 @@ namespace Library.Api.Controllers
       /// <summary>
       /// Creates book
       /// </summary>
-      /// <param name="bookForCreation">represents book to create</param>
+      /// <param name="bookVm">represents book to create</param>
       /// <returns>A newly book book</returns>
       ///<response code="201">Returns created book</response>
       ///<response code="400">If bookDto is null</response>
@@ -89,16 +93,18 @@ namespace Library.Api.Controllers
       ///<response code="422">If bookDto contains invalid fields</response>
       [HttpPost]
       [Authorize]
-      [NullArgumentValidationFilter(names: "bookForCreation")]
-      [ArgumentValidationFilter(names: "bookForCreation")]
-      [BookImageExtractionFilter]
+      [NullArgumentValidationFilter(names: "bookVm")]
+      [ArgumentValidationFilter(names: "bookVm")]
+      // [BookImageExtractionFilter]
       [ProducesResponseType(StatusCodes.Status201Created)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
       public async Task<IActionResult> CreateBook(
-         [FromForm] BookForCreationDto bookForCreation)
+         [FromForm] BookForCreationViewModel bookVm)
       {
+         var bookForCreation = _mapper.Map<BookForCreationDto>(bookVm);
+
          var result = await _sender.Send(
             new CreateBookCommand(bookForCreation, bookForCreation.AuthorId));
 

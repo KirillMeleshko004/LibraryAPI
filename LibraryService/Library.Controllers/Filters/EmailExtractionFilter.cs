@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using OpenIddict.Abstractions;
 
 namespace Library.Controllers.Filters
 {
@@ -16,7 +16,7 @@ namespace Library.Controllers.Filters
       public override void OnActionExecuting(ActionExecutingContext context)
       {
          var email = context.HttpContext.User.Claims
-            .First(c => c.Type == ClaimTypes.Email).Value;
+            .First(c => c.Type == OpenIddictConstants.Claims.Email).Value;
 
          if (string.IsNullOrWhiteSpace(email) ||
             !new EmailAddressAttribute().IsValid(email))

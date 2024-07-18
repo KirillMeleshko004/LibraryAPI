@@ -8,6 +8,10 @@
     <ProjectReference Include="..\Library.UseCases\Library.UseCases.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="OpenIddict.Abstractions" Version="5.7.0" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

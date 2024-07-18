@@ -72,7 +72,7 @@ namespace Library.Api.Controllers
       ///<response code="401">If authorize header missing or contains invalid token</response>
       ///<response code="422">If authorDto contains invalid fields</response>
       [HttpPost]
-      [Authorize]
+      [Authorize(policy: "admin")]
       [NullArgumentValidationFilter(names: "authorDto")]
       [ArgumentValidationFilter(names: "authorDto")]
       [ProducesResponseType(StatusCodes.Status201Created)]
