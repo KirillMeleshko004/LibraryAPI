@@ -21,6 +21,7 @@ namespace Identity.Api.Extensions
                         context.Response.StatusCode = exceptionFeature.Error switch
                         {
                             NotFoundException => StatusCodes.Status404NotFound,
+                            UnauthorizedException => StatusCodes.Status401Unauthorized,
                             UnprocessableEntityException => StatusCodes.Status422UnprocessableEntity,
 
                             _ => StatusCodes.Status500InternalServerError

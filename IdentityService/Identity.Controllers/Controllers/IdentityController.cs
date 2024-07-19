@@ -1,6 +1,4 @@
 using System.Security.Claims;
-using Identity.Controllers.Filters;
-using Identity.Domain.Entities;
 using Identity.UseCases.Users.Commands;
 using Identity.UseCases.Users.Dtos;
 using Identity.UseCases.Users.Queries;
@@ -8,7 +6,6 @@ using MediatR;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
@@ -70,7 +67,6 @@ namespace Identity.Controllers
         ///<response code="200">Returns new tokens</response>
         ///<response code="401">If refresh token invalid</response>
         [HttpPost("refresh")]
-        [DtoValidationFilter("expiredToken")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> RefreshToken(CancellationToken cancellationToken)
@@ -107,18 +103,19 @@ namespace Identity.Controllers
         /// Creates new user
         /// </summary>
         /// <param name="userDto">represents user to create</param>
+        /// <param name="cancellationToken"></param>
         /// <returns>Nothing</returns>
         ///<response code="201">If success. Returns nothing</response>
         ///<response code="400">If userDto is null</response>
         ///<response code="422">If userDto contains invalid fields</response>
         [HttpPost("register")]
-        [DtoValidationFilter("userDto")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> Register([FromBody] UserForCreationDto userDto)
+        public async Task<IActionResult> Register([FromBody] UserForCreationDto userDto,
+            CancellationToken cancellationToken)
         {
-            await _sender.Send(new CreateUserCommand(userDto));
+            await _sender.Send(new CreateUserCommand(userDto), cancellationToken);
 
             return Created();
         }

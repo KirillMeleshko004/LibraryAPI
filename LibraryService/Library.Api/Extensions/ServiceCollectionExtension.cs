@@ -2,36 +2,29 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using Library.Api.AuthorizationRequirements.Handlers;
 using Library.Api.AuthorizationRequirements.Requirements;
-using Library.Api.Utility;
-using Library.Infrastructure.Data;
 using Library.Infrastructure.Images;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
 namespace Library.Api.Extensions
 {
-   /// <summary>
-   /// Class contains exstensions to simplify app configuration and dependency injection
-   /// </summary>
    public static class ServiceCollectionExtension
    {
-      //Register and configure logger for application
-      public static void ConfigureLogging(this IServiceCollection services)
+      public static IServiceCollection ConfigureLogging(this IServiceCollection services)
       {
          services.AddSerilog(configuration =>
          {
             configuration.WriteTo.Console();
          });
+
+         return services;
       }
 
-      //Adding Cors policies to application
-      public static void ConfigureCors(this IServiceCollection services)
+      public static IServiceCollection ConfigureCors(this IServiceCollection services)
       {
          services.AddCors(options =>
          {
@@ -42,111 +35,23 @@ namespace Library.Api.Extensions
                   .AllowAnyOrigin();
             });
          });
+
+         return services;
       }
 
-      //Configure application services and their dependencies
-      public static void ConfigureApplicationServices(this IServiceCollection services,
+      //Register TOption instances in DI container (Microsft options pattern)
+      public static IServiceCollection ConfigureOptions(this IServiceCollection services,
          IConfiguration configuration)
       {
-         //pass assembly with mapping profiles
-         services.AddAutoMapper(typeof(UseCases.AssemblyReference).Assembly);
-
-         services.AddMediatR(config =>
-            config.RegisterServicesFromAssemblies(typeof(UseCases.AssemblyReference).Assembly));
-
          services.Configure<ImageOptions>(configuration.GetSection(ImageOptions.SectionName));
-      }
-
-      public static void ConfigureEF(this IServiceCollection services,
-         IConfiguration configuration)
-      {
-         //Register RepositoryContext as scoped service
-         services.AddDbContext<RepositoryContext>(options =>
-         {
-            options.UseSqlServer(configuration.GetConnectionString("DefaultDb"));
-         });
-      }
-
-      //Configuring API controllers and related services
-      public static void ConfigureControllers(this IServiceCollection services)
-      {
-         services.AddControllers(options =>
-         {
-            //return http 406 Not Acceptable when Accept header contains unsupported format
-            options.RespectBrowserAcceptHeader = true;
-            options.ReturnHttpNotAcceptable = true;
-         })
-         .AddJsonOptions(options =>
-         {
-            options.JsonSerializerOptions.Converters.Insert(0, new DateOnlyJsonConverter());
-         })
-         .AddApplicationPart(typeof(Library.Controllers.AssemblyReference).Assembly);
-
-         //Supressing default 400 bad request response on invalid model
-         services.Configure<ApiBehaviorOptions>(options =>
-         {
-            options.SuppressModelStateInvalidFilter = true;
-         });
-
-         // services.AddScoped<DtoValidationFilter>();
-      }
-
-      public static void ConfigureSwagger(this IServiceCollection services)
-      {
-         services.AddSwaggerGen(options =>
-         {
-            options.SwaggerDoc("v0",
-               new OpenApiInfo
-               {
-                  Title = "Library API",
-                  Version = "v0",
-                  Description = "An ASP.NET Core Web API for managing managing books and authors.",
-               });
-
-            var xmlFileName = $"{typeof(Library.Controllers.AssemblyReference).Assembly.GetName().Name}.xml";
-            var xmlFilePath = Path.Combine(AppContext.BaseDirectory, xmlFileName);
-            options.IncludeXmlComments(xmlFilePath);
-
-            options.AddSecurityDefinition("Bearer",
-               new OpenApiSecurityScheme
-               {
-                  Name = "Authorization",
-                  In = ParameterLocation.Header,
-                  Type = SecuritySchemeType.ApiKey,
-                  Scheme = "Bearer",
-                  Description = "JWT Authorization header using the Bearer scheme."
-               });
-
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement()
-            {
-               //since OpenApiSecurityRequirement implements 
-               //Dictionary<OpenApiSecurityScheme,IList<String>>
-               //dictionary initialization syntax is used
-               {
-                  new OpenApiSecurityScheme
-                  {
-                     //Object to allow referencing other components in the specification
-                     //Reference early created security scheme 
-                     Reference = new OpenApiReference
-                     {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                     },
-                     Name = "Bearer"
-                  },
-                  //the value of the dictionary is a required list of scope names 
-                  //for the execution only if the security scheme is oauth2 or openIdConnect
-                  new List<string>()
-               }
-            });
-         });
+         return services;
       }
 
       //Configure ASP.NET Data protection keys
-      public static void ConfigureDataProtection(this IServiceCollection services)
+      public static IServiceCollection ConfigureDataProtection(this IServiceCollection services)
       {
          //if OS is windows leave default configuration with DPAPI
-         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
+         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return services;
 
          var keyDirName = Environment.GetEnvironmentVariable("KEY_DIR_NAME")!;
          var x509CertPath = Environment.GetEnvironmentVariable("CERT_PATH")!;
@@ -162,11 +67,12 @@ namespace Library.Api.Extensions
             //Adding keys encryption with X509 certificate
             //Using X509 since DPAPI unavailible for linux
             .ProtectKeysWithCertificate(new X509Certificate2(x509CertPath, certPassword));
+
+         return services;
       }
 
-
-      public static IServiceCollection ConfigureOpenIdDict(this IServiceCollection services,
-         IConfiguration configuration)
+      //TODO
+      public static IServiceCollection ConfigureOpenIdDict(this IServiceCollection services)
       {
          services.AddOpenIddict()
             .AddValidation(options =>
@@ -210,5 +116,66 @@ namespace Library.Api.Extensions
 
          return services;
       }
+
+      public static IServiceCollection ConfigureSwagger(this IServiceCollection services)
+      {
+         services.AddSwaggerGen(options =>
+         {
+            options.SwaggerDoc("v0",
+               new OpenApiInfo
+               {
+                  Title = "Library API",
+                  Version = "v0",
+                  Description = "ASP.NET Core Web API for managing managing books and authors.",
+               });
+
+            var xmlFileName = $"{typeof(Controllers.BooksController).Assembly.GetName()
+               .Name}.xml";
+
+            var xmlFilePath = Path.Combine(AppContext.BaseDirectory, xmlFileName);
+            options.IncludeXmlComments(xmlFilePath);
+
+            options.AddSecurityDefinition("OAuth2",
+               new OpenApiSecurityScheme
+               {
+                  Name = "Authorization",
+                  In = ParameterLocation.Header,
+                  Type = SecuritySchemeType.OAuth2,
+                  Flows = new OpenApiOAuthFlows
+                  {
+                     Password = new OpenApiOAuthFlow
+                     {
+                        TokenUrl = new Uri("https://localhost:7213/api/connect/token"),
+                        Scopes = new Dictionary<string, string>
+                        {
+                           {"api.library", "Library API"},
+                           {"openid", "Identity"},
+                           {"offline_access", "Refresh token"}
+                        }
+                     },
+                  },
+                  Scheme = "OAuth2",
+               });
+
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+            {
+               {
+                  new OpenApiSecurityScheme
+                  {
+                     Reference = new OpenApiReference
+                     {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "OAuth2"
+                     },
+                     Name = "OAuth2"
+                  },
+                  new List<string>()
+               }
+            });
+         });
+
+         return services;
+      }
+
    }
 }

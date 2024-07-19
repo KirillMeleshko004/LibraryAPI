@@ -2,7 +2,7 @@ using AutoMapper;
 using Library.Domain.Entities;
 using Library.UseCases.Authors.DTOs;
 
-namespace Identity.UseCases.Common.Mapping
+namespace Library.UseCases.Common.Mapping
 {
 
    public class AuthorProfile : Profile

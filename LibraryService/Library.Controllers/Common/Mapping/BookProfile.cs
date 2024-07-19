@@ -1,5 +1,5 @@
 using AutoMapper;
-using Library.Api.Controllers.ViewModels;
+using Library.Controllers.ViewModels;
 using Library.UseCases.Books.DTOs;
 using Microsoft.AspNetCore.Http;
 
@@ -15,6 +15,12 @@ namespace Library.Controllers.Common.Mapping
             .ConvertUsing<IFormFileTypeConverter>();
 
          CreateMap<BookForCreationViewModel, BookForCreationDto>()
+            .ForMember(dto => dto.ImageName, options =>
+            {
+               options.Condition(vm => vm.Image != null);
+               options.MapFrom(vm => Path.GetFileName(vm.Image!.FileName));
+            });
+         CreateMap<BookForUpdateViewModel, BookForUpdateDto>()
             .ForMember(dto => dto.ImageName, options =>
             {
                options.Condition(vm => vm.Image != null);

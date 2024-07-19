@@ -5,15 +5,11 @@ using Identity.Infrastructure.Data.Contexts;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using Serilog;
 using Identity.UseCases.Common.Configuration;
 using Identity.Api.Common.Configuration;
 using Identity.Api.HostedServices;
 using static OpenIddict.Abstractions.OpenIddictConstants;
-using Identity.Controllers;
 
 namespace Identity.Api.Extensions
 {
@@ -22,7 +18,6 @@ namespace Identity.Api.Extensions
    /// </summary>
    public static class ServiceCollectionExtension
    {
-      //Register and configure logger for application
       public static IServiceCollection ConfigureLogger(this IServiceCollection services)
       {
          return services.AddSerilog(configuration =>
@@ -31,7 +26,6 @@ namespace Identity.Api.Extensions
          });
       }
 
-      //Adding Cors policies to application
       public static IServiceCollection ConfigureCors(this IServiceCollection services)
       {
          return services.AddCors(options =>
@@ -43,39 +37,6 @@ namespace Identity.Api.Extensions
                   .AllowAnyOrigin();
             });
          });
-      }
-
-      //Configure all data store and retrieve options, 
-      //like database context and repositories
-      public static IServiceCollection ConfigureData(this IServiceCollection services,
-         IConfiguration configuration)
-      {
-         return services.AddDbContext<RepositoryContext>(options =>
-         {
-            options.UseSqlServer(configuration.GetConnectionString("DefaultDb"));
-
-            options.UseOpenIddict();
-         });
-      }
-
-      //Configuring API controllers and related services
-      public static IServiceCollection ConfigurePresentationControllers(this IServiceCollection services)
-      {
-         services.AddControllers(options =>
-         {
-            //return http 406 Not Acceptable when Accept header contains
-            //unsupported format
-            options.RespectBrowserAcceptHeader = true;
-            options.ReturnHttpNotAcceptable = true;
-         }).AddApplicationPart(typeof(IdentityController).Assembly);
-
-         //Supressing default 400 bad request response on invalid model
-         services.Configure<ApiBehaviorOptions>(options =>
-         {
-            options.SuppressModelStateInvalidFilter = true;
-         });
-
-         return services;
       }
 
       //Configure ASP.NET Data protection keys
@@ -104,7 +65,6 @@ namespace Identity.Api.Extensions
          return services;
       }
 
-
       //Configure microsoft Identity to work with stored users
       public static IServiceCollection ConfigureIdentity(this IServiceCollection services)
       {
@@ -130,10 +90,7 @@ namespace Identity.Api.Extensions
       public static IServiceCollection ConfigureOpenIdDict(this IServiceCollection services,
          IConfiguration configuration)
       {
-
-
          services.AddHostedService<ClientsConfiguration>();
-
 
          var jwt = new JwtOptions();
          configuration.GetSection(JwtOptions.Jwt).Bind(jwt);
@@ -197,60 +154,6 @@ namespace Identity.Api.Extensions
          services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.Jwt))
             .Configure<ClientsOptions>(configuration.GetSection(ClientsOptions.Clients))
             .Configure<ScopesOptions>(configuration.GetSection(ScopesOptions.Scopes));
-
-         return services;
-      }
-
-      public static IServiceCollection ConfigureSwagger(this IServiceCollection services)
-      {
-         services.AddSwaggerGen(options =>
-         {
-            options.SwaggerDoc("v0",
-               new OpenApiInfo
-               {
-                  Title = "Identity API v0",
-                  Version = "v0"
-               });
-
-            var xmlFileName = $"{typeof(Identity.Controllers.AssemblyReference)
-               .Assembly.GetName().Name}.xml";
-            var xmlFilePath = Path.Combine(AppContext.BaseDirectory, xmlFileName);
-            options.IncludeXmlComments(xmlFilePath);
-
-            options.AddSecurityDefinition(OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme,
-               new OpenApiSecurityScheme
-               {
-                  Name = "Authorization",
-                  In = ParameterLocation.Header,
-                  Type = SecuritySchemeType.ApiKey,
-                  Scheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme,
-                  Description = "JWT Authorization header using the Bearer scheme."
-               });
-
-            //Add an authorization header to each endpoint when the request is sent. 
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement()
-            {
-               //since OpenApiSecurityRequirement implements 
-               //Dictionary<OpenApiSecurityScheme,IList<String>>
-               //dictionary initialization syntax is used
-               {
-                  new OpenApiSecurityScheme
-                  {
-                     //Object to allow referencing other components in the specification
-                     //Reference early created security scheme 
-                     Reference = new OpenApiReference
-                     {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme
-                     },
-                     Name = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme
-                  },
-                  //the value of the dictionary is a required list of scope names 
-                  //for the execution only if the security scheme is oauth2 or openIdConnect
-                  new List<string>()
-               }
-            });
-         });
 
          return services;
       }

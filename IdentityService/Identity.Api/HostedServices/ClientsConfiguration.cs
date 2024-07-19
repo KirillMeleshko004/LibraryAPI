@@ -40,8 +40,14 @@ namespace Identity.Api.HostedServices
                         DisplayName = client.DisplayName,
                     };
 
-                    appDescriptor.RedirectUris.UnionWith(client.RedirectUris);
-                    appDescriptor.Permissions.UnionWith(client.Permissions);
+                    if (client.RedirectUris != null)
+                    {
+                        appDescriptor.RedirectUris.UnionWith(client.RedirectUris);
+                    }
+                    if (client.Permissions != null)
+                    {
+                        appDescriptor.Permissions.UnionWith(client.Permissions);
+                    }
 
                     await appManager.CreateAsync(appDescriptor, cancellationToken);
                 }

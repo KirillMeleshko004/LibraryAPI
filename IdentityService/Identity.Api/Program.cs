@@ -1,23 +1,22 @@
 using Identity.Api.Extensions;
+using Identity.Controllers;
+using Identity.Infrastructure;
 using Identity.UseCases;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.ConfigureLogger();
 builder.Services.ConfigureCors();
-builder.Services.ConfigureData(builder.Configuration);
+builder.Services.ConfigureLogger();
+builder.Services.ConfigureOptions(builder.Configuration);
 
-builder.Services.ConfigurePresentationControllers();
-builder.Services.ConfigureSwagger();
-
-builder.Services.ConfigureUseCases();
-
-builder.Services.ConfigureOpenIdDict(builder.Configuration);
+builder.Services.ConfigurePresentation();
+builder.Services.ConfigureDataProtection();
 
 builder.Services.ConfigureIdentity();
+builder.Services.ConfigureOpenIdDict(builder.Configuration);
 
-builder.Services.ConfigureOptions(builder.Configuration);
-builder.Services.ConfigureDataProtection();
+builder.Services.ConfigureUseCases();
+builder.Services.ConfigureInfrastructureServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -39,12 +38,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseSwagger();
-app.UseSwaggerUI(options =>
-{
-   options.SwaggerEndpoint("/swagger/v0/swagger.json", "Identity API v0");
-});
 
 #endregion
 

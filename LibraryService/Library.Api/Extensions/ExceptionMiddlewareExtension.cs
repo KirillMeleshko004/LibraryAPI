@@ -1,4 +1,4 @@
-using Library.Api.Common;
+using Library.Api.Common.Models;
 using Library.UseCases.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 

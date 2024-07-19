@@ -52,7 +52,7 @@ namespace Identity.UseCases.Users.Commands
             var message = new StringBuilder();
             foreach (var error in res.Errors)
             {
-               message.Append(error);
+               message.Append($"{error.Description} ");
             }
 
             throw new UnprocessableEntityException(message.ToString());

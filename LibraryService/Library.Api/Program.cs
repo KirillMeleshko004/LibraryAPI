@@ -1,7 +1,8 @@
 using Library.Api.Extensions;
 using Library.Infrastructure;
 using Library.Infrastructure.Images;
-using Library.Api.Controllers;
+using Library.Controllers;
+using Library.UseCases;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,22 +10,20 @@ var builder = WebApplication.CreateBuilder(args);
 #region Configure services
 
 builder.Services.ConfigureCors();
-builder.Services.ConfigureEF(builder.Configuration);
 builder.Services.ConfigureLogging();
+builder.Services.ConfigureOptions(builder.Configuration);
 
-builder.Services.ConfigureControllers();
 builder.Services.ConfigurePresentation();
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureDataProtection();
 
-builder.Services.ConfigureOpenIdDict(builder.Configuration);
+builder.Services.ConfigureOpenIdDict();
 builder.Services.ConfigurePolicies();
 
-builder.Services.ConfigureApplicationServices(builder.Configuration);
-builder.Services.ConfigureInfrastructureServices();
+builder.Services.ConfigureApplicationServices();
+builder.Services.ConfigureInfrastructureServices(builder.Configuration);
 
 #endregion
-
 
 var app = builder.Build();
 
@@ -42,12 +41,10 @@ app.UseCors("default");
 app.UseAuthentication();
 app.UseAuthorization();
 
-//Add endpoints for controllers
 app.MapControllers();
 
-
 var imageOptions = new ImageOptions();
-builder.Configuration.Bind(ImageOptions.SectionName, imageOptions);
+app.Configuration.Bind(ImageOptions.SectionName, imageOptions);
 app.UseStaticFiles(new StaticFileOptions()
 {
    RequestPath = "/images",
@@ -66,6 +63,8 @@ app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
    options.SwaggerEndpoint("/swagger/v0/swagger.json", "Library API v0");
+   options.OAuthClientId("swagger");
+   options.OAuthClientSecret("swagger-secret");
 });
 
 #endregion

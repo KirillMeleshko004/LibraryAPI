@@ -1,12 +1,9 @@
-using AutoMapper;
-using Library.Infrastructure.Data;
-using Library.Infrastructure.Images;
-using Library.UseCases.Common.Interfaces;
+using Identity.Infrastructure.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Library.Infrastructure
+namespace Identity.Infrastructure
 {
    /// <summary>
    /// Class helps injecting infrastructure dependencies
@@ -16,28 +13,20 @@ namespace Library.Infrastructure
       public static IServiceCollection ConfigureInfrastructureServices(
          this IServiceCollection services, IConfiguration configuration)
       {
-         services.ConfigureDB(configuration)
-            .ConfigureRepositorties();
-         services.AddScoped<IImageService, ImageService>();
+         services.ConfigureDB(configuration);
 
          return services;
-      }
-
-      private static IServiceCollection ConfigureRepositorties(
-         this IServiceCollection services)
-      {
-         return services.AddTransient<IRepositoryManager, RepositoryManager>();
       }
 
       private static IServiceCollection ConfigureDB(this IServiceCollection services,
          IConfiguration configuration)
       {
-         services.AddDbContext<RepositoryContext>(options =>
+         return services.AddDbContext<RepositoryContext>(options =>
          {
             options.UseSqlServer(configuration.GetConnectionString("DefaultDb"));
-         });
 
-         return services;
+            options.UseOpenIddict();
+         });
       }
    }
 }

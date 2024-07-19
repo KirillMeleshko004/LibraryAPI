@@ -1,5 +1,5 @@
 using AutoMapper;
-using Library.Api.Controllers.ViewModels;
+using Library.Controllers.ViewModels;
 using Library.Controllers.Filters;
 using Library.UseCases.Books.Commands;
 using Library.UseCases.Books.DTOs;
@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Library.Api.Controllers
+namespace Library.Controllers
 {
    [ApiController]
    [Route("api/books")]
@@ -32,15 +32,16 @@ namespace Library.Api.Controllers
       /// Retrieve book based on id
       /// </summary>
       /// <param name="id">id of required book</param>
+      /// <param name="cancellationToken"></param>
       /// <returns>Book</returns>
       ///<response code="200">Returns book</response>
       ///<response code="404">If book with id not found</response>
       [HttpGet("{id:guid}")]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
-      public async Task<IActionResult> GetBookById(Guid id)
+      public async Task<IActionResult> GetBookById(Guid id, CancellationToken cancellationToken)
       {
-         var result = await _sender.Send(new GetBookByIdQuery(id));
+         var result = await _sender.Send(new GetBookByIdQuery(id), cancellationToken);
 
          return Ok(result);
       }
@@ -49,15 +50,16 @@ namespace Library.Api.Controllers
       /// Retrieve book based on ISBN
       /// </summary>
       /// <param name="isbn">isbn of required book</param>
+      /// <param name="cancellationToken"></param>
       /// <returns>Book</returns>
       ///<response code="200">Returns book</response>
       ///<response code="404">If book with isbn not found</response>
       [HttpGet("isbn/{isbn}")]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
-      public async Task<IActionResult> GetBookByISBN(string isbn)
+      public async Task<IActionResult> GetBookByISBN(string isbn, CancellationToken cancellationToken)
       {
-         var result = await _sender.Send(new GetBookByISBNQuery(isbn));
+         var result = await _sender.Send(new GetBookByISBNQuery(isbn), cancellationToken);
 
          return Ok(result);
       }
@@ -66,18 +68,20 @@ namespace Library.Api.Controllers
       /// Retrieve list of books base on request parameters
       /// </summary>
       /// <param name="parameters">Parameters that describes what books should be retrieved</param>
+      /// <param name="cancellationToken"></param>
       /// <returns>List of books</returns>
       ///<response code="200">Returns list of books</response>
       ///<response code="400">If some request parameters has invalid values</response>
       ///<response code="404">If none of books match request</response>
       [HttpGet]
-      [ArgumentValidationFilter(names: "parameters")]
+      [ArgumentValidationFilter]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
-      public async Task<IActionResult> GetBooks([FromQuery] BookParameters parameters)
+      public async Task<IActionResult> GetBooks([FromQuery] BookParameters parameters,
+         CancellationToken cancellationToken)
       {
-         var result = await _sender.Send(new ListBooksQuery(parameters));
+         var result = await _sender.Send(new ListBooksQuery(parameters), cancellationToken);
 
          return Ok(result);
       }
@@ -86,6 +90,7 @@ namespace Library.Api.Controllers
       /// Creates book
       /// </summary>
       /// <param name="bookVm">represents book to create</param>
+      /// <param name="cancellationToken"></param>
       /// <returns>A newly book book</returns>
       ///<response code="201">Returns created book</response>
       ///<response code="400">If bookDto is null</response>
@@ -94,19 +99,18 @@ namespace Library.Api.Controllers
       [HttpPost]
       [Authorize]
       [NullArgumentValidationFilter(names: "bookVm")]
-      [ArgumentValidationFilter(names: "bookVm")]
-      // [BookImageExtractionFilter]
+      [ArgumentValidationFilter]
       [ProducesResponseType(StatusCodes.Status201Created)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
       public async Task<IActionResult> CreateBook(
-         [FromForm] BookForCreationViewModel bookVm)
+         [FromForm] BookForCreationViewModel bookVm, CancellationToken cancellationToken)
       {
          var bookForCreation = _mapper.Map<BookForCreationDto>(bookVm);
 
          var result = await _sender.Send(
-            new CreateBookCommand(bookForCreation, bookForCreation.AuthorId));
+            new CreateBookCommand(bookForCreation, bookForCreation.AuthorId), cancellationToken);
 
          return CreatedAtAction(nameof(GetBookById),
             new { id = result.Id }, result);
@@ -116,7 +120,8 @@ namespace Library.Api.Controllers
       /// Updates existing book
       /// </summary>
       /// <param name="id">id of book to update</param>
-      /// <param name="bookForUpdate">represents new book's values</param>
+      /// <param name="bookVm">represents new book's values</param>
+      /// <param name="cancellationToken"></param>
       /// <returns>Nothing</returns>
       ///<response code="204">If book updated successfully</response>
       ///<response code="400">If bookDto is null</response>
@@ -126,17 +131,18 @@ namespace Library.Api.Controllers
       [HttpPut("{id:guid}")]
       [Authorize]
       [NullArgumentValidationFilter(names: "bookForCreation")]
-      [ArgumentValidationFilter(names: "bookForUpdate")]
-      [BookImageExtractionFilter]
+      [ArgumentValidationFilter]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
       public async Task<IActionResult> UpdateBook(Guid id,
-         [FromBody] BookForUpdateDto bookForUpdate)
+         [FromBody] BookForUpdateViewModel bookVm, CancellationToken cancellationToken)
       {
-         await _sender.Send(new UpdateBookCommand(id, bookForUpdate));
+         var bookForUpdate = _mapper.Map<BookForUpdateDto>(bookVm);
+
+         await _sender.Send(new UpdateBookCommand(id, bookForUpdate), cancellationToken);
 
          return NoContent();
       }
@@ -145,6 +151,7 @@ namespace Library.Api.Controllers
       ///  Deletes a specific book
       /// </summary>
       /// <param name="id">id of required book</param>
+      /// <param name="cancellationToken"></param>
       /// <returns>Nothing</returns>
       ///<response code="204">If book deleted or not exist</response>
       ///<response code="401">If authorize header missing or contains invalid token</response>
@@ -152,9 +159,9 @@ namespace Library.Api.Controllers
       [Authorize]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-      public async Task<IActionResult> DeleteBookById(Guid id)
+      public async Task<IActionResult> DeleteBookById(Guid id, CancellationToken cancellationToken)
       {
-         await _sender.Send(new DeleteBookCommand(id));
+         await _sender.Send(new DeleteBookCommand(id), cancellationToken);
 
          return NoContent();
       }
@@ -163,6 +170,7 @@ namespace Library.Api.Controllers
       /// Borrows specific book
       /// </summary>
       /// <param name="id">Id of book to borrow</param>
+      /// <param name="cancellationToken"></param>
       /// <returns>Nothing</returns>
       ///<response code="204">If book borrowed successfully</response>
       ///<response code="401">If authorize header missing or contains invalid token</response>
@@ -175,12 +183,12 @@ namespace Library.Api.Controllers
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(StatusCodes.Status403Forbidden)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
-      public async Task<IActionResult> BorrowBook(Guid id)
+      public async Task<IActionResult> BorrowBook(Guid id, CancellationToken cancellationToken)
       {
          string email = (HttpContext.Items["email"] as string)!;
 
          await _sender.Send(
-            new BorrowBookCommand(email, id));
+            new BorrowBookCommand(email, id), cancellationToken);
 
          return NoContent();
       }
@@ -189,6 +197,7 @@ namespace Library.Api.Controllers
       /// Returns specific book
       /// </summary>
       /// <param name="id">Id of book to return</param>
+      /// <param name="cancellationToken"></param>
       /// <returns>Nothing</returns>
       ///<response code="204">If book borrowed successfully</response>
       ///<response code="401">If authorize header missing or contains invalid token</response>
@@ -203,12 +212,12 @@ namespace Library.Api.Controllers
       [ProducesResponseType(StatusCodes.Status403Forbidden)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-      public async Task<IActionResult> ReturnBook(Guid id)
+      public async Task<IActionResult> ReturnBook(Guid id, CancellationToken cancellationToken)
       {
          string email = (HttpContext.Items["email"] as string)!;
 
          await _sender.Send(
-            new ReturnBookCommand(email, id));
+            new ReturnBookCommand(email, id), cancellationToken);
 
          return NoContent();
       }
@@ -216,6 +225,7 @@ namespace Library.Api.Controllers
       /// <summary>
       /// Retrieve list of books that reader borrowed
       /// </summary>
+      /// <param name="cancellationToken"></param>
       /// <returns>List of books</returns>
       ///<response code="200">Returns list of books</response>
       ///<response code="400">If some request parameters has invalid values</response>
@@ -226,11 +236,11 @@ namespace Library.Api.Controllers
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
-      public async Task<IActionResult> GetBooksForReader()
+      public async Task<IActionResult> GetBooksForReader(CancellationToken cancellationToken)
       {
          string email = (HttpContext.Items["email"] as string)!;
 
-         var result = await _sender.Send(new ListBooksForReaderQuery(email));
+         var result = await _sender.Send(new ListBooksForReaderQuery(email), cancellationToken);
 
          return Ok(result);
       }

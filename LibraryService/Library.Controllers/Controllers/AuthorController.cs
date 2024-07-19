@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Library.Api.Controllers
+namespace Library.Controllers
 {
    [ApiController]
    [Route("api/authors")]
@@ -29,18 +29,20 @@ namespace Library.Api.Controllers
       /// Retrieve list of authors base on request parameters
       /// </summary>
       /// <param name="parameters">Parameters that describes what authors should be retrieved</param>
+      /// <param name="cancellationToken"></param>
       /// <returns>List of authors. Could be empty</returns>
       ///<response code="200">Returns list of authors</response>
       ///<response code="400">If some request parameters has invalid values</response>
       ///<response code="404">If none of authors match request</response>
       [HttpGet]
-      [ArgumentValidationFilter(names: "parameters")]
+      [ArgumentValidationFilter]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
-      public async Task<IActionResult> GetAuthors([FromQuery] AuthorParameters parameters)
+      public async Task<IActionResult> GetAuthors([FromQuery] AuthorParameters parameters,
+         CancellationToken cancellationToken)
       {
-         var result = await _sender.Send(new ListAuthorsQuery(parameters));
+         var result = await _sender.Send(new ListAuthorsQuery(parameters), cancellationToken);
 
          return Ok(result);
       }
@@ -49,15 +51,16 @@ namespace Library.Api.Controllers
       /// Retrieve author based on id
       /// </summary>
       /// <param name="id">id of required author</param>
+      /// <param name="cancellationToken"></param>
       /// <returns>Author</returns>
       ///<response code="200">Returns author</response>
       ///<response code="404">If author with id not found</response>
       [HttpGet("{id:guid}")]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
-      public async Task<IActionResult> GetAuthorById(Guid id)
+      public async Task<IActionResult> GetAuthorById(Guid id, CancellationToken cancellationToken)
       {
-         var result = await _sender.Send(new GetAuthorByIdQuery(id));
+         var result = await _sender.Send(new GetAuthorByIdQuery(id), cancellationToken);
 
          return Ok(result);
       }
@@ -66,6 +69,7 @@ namespace Library.Api.Controllers
       /// Creates author
       /// </summary>
       /// <param name="authorDto">represents author to create</param>
+      /// <param name="cancellationToken"></param>
       /// <returns>A newly created author</returns>
       ///<response code="201">Returns created author</response>
       ///<response code="400">If authorDto is null</response>
@@ -74,15 +78,16 @@ namespace Library.Api.Controllers
       [HttpPost]
       [Authorize(policy: "admin")]
       [NullArgumentValidationFilter(names: "authorDto")]
-      [ArgumentValidationFilter(names: "authorDto")]
+      [ArgumentValidationFilter]
       [ProducesResponseType(StatusCodes.Status201Created)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-      public async Task<IActionResult> CreateAuthor([FromBody] AuthorForCreationDto authorDto)
+      public async Task<IActionResult> CreateAuthor([FromBody] AuthorForCreationDto authorDto,
+         CancellationToken cancellationToken)
       {
 
-         var result = await _sender.Send(new CreateAuthorCommand(authorDto));
+         var result = await _sender.Send(new CreateAuthorCommand(authorDto), cancellationToken);
 
          return CreatedAtAction(nameof(GetAuthorById),
             new { id = result.Id }, result);
@@ -93,6 +98,7 @@ namespace Library.Api.Controllers
       /// </summary>
       /// <param name="id">id of author to update</param>
       /// <param name="authorDto">represents new author's values</param>
+      /// <param name="cancellationToken"></param>
       /// <returns>Nothing</returns>
       ///<response code="204">If author updated successfully</response>
       ///<response code="400">If authorDto is null</response>
@@ -102,16 +108,16 @@ namespace Library.Api.Controllers
       [HttpPut("{id:guid}")]
       [Authorize]
       [NullArgumentValidationFilter(names: "authorDto")]
-      [ArgumentValidationFilter(names: "authorDto")]
+      [ArgumentValidationFilter]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
       public async Task<IActionResult> UpdateAuthor(Guid id,
-         [FromBody] AuthorForUpdateDto authorDto)
+         [FromBody] AuthorForUpdateDto authorDto, CancellationToken cancellationToken)
       {
-         await _sender.Send(new UpdateAuthorCommand(id, authorDto));
+         await _sender.Send(new UpdateAuthorCommand(id, authorDto), cancellationToken);
 
          return NoContent();
       }
@@ -120,6 +126,7 @@ namespace Library.Api.Controllers
       /// Deletes a specific author
       /// </summary>
       /// <param name="id">id of required author</param>
+      /// <param name="cancellationToken"></param>
       /// <returns>Nothing</returns>
       ///<response code="204">If author deleted or not exist</response>
       ///<response code="401">If authorize header missing or contains invalid token</response>
@@ -127,9 +134,9 @@ namespace Library.Api.Controllers
       [Authorize]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-      public async Task<IActionResult> DeleteAuthor(Guid id)
+      public async Task<IActionResult> DeleteAuthor(Guid id, CancellationToken cancellationToken)
       {
-         await _sender.Send(new DeleteAuthorCommand(id));
+         await _sender.Send(new DeleteAuthorCommand(id), cancellationToken);
 
          return NoContent();
       }
@@ -139,19 +146,21 @@ namespace Library.Api.Controllers
       /// </summary>
       /// <param name="id">Id of autrhor</param>
       /// <param name="parameters">Parameters that describes what books should be retrieved</param>
+      /// <param name="cancellationToken"></param>
       /// <returns>List of books by author. Could be empty</returns>
       ///<response code="200">Returns list of books</response>
       ///<response code="400">If some request parameters has invalid values</response>
       ///<response code="404">If author with id not found OR he has no books</response>
       [HttpGet("{id:guid}/books")]
-      [ArgumentValidationFilter(names: "parameters")]
+      [ArgumentValidationFilter]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       public async Task<IActionResult> GetBooksForAuthor(Guid id,
-         [FromQuery] BookParameters parameters)
+         [FromQuery] BookParameters parameters, CancellationToken cancellationToken)
       {
-         var result = await _sender.Send(new ListBooksByAuthorQuery(parameters, id));
+         var result =
+            await _sender.Send(new ListBooksByAuthorQuery(parameters, id), cancellationToken);
 
          return Ok(result);
       }

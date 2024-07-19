@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Library.Api.Common
+namespace Library.Api.Common.Models
 {
    /// <summary>
    /// Exception info to send to client
