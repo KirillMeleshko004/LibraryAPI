@@ -4,6 +4,7 @@ using Library.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Library.Infrastructure.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20240720113844_AddedBaseEntity")]
+    partial class AddedBaseEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,71 +64,71 @@ namespace Library.Infrastructure.Migrations
                         {
                             Id = new Guid("4dc4b580-7fb5-4c2a-938a-7e464116c7dd"),
                             Country = "Russia",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(444),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateOnly(1828, 9, 9),
                             FirstName = "Lev",
                             LastName = "Tolstoy",
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(455)
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("21cb29da-047a-4d85-a581-8ef6cffec67f"),
                             Country = "Russia",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(459),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateOnly(1868, 3, 28),
                             FirstName = "Maxim",
                             LastName = "Gorkiy",
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(460)
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("3bc8f089-2d00-4346-af71-d9f9fcdceb20"),
                             Country = "Japan",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(494),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateOnly(1995, 7, 3),
                             FirstName = "Miya",
                             LastName = "Kazuki",
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(495)
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("188ec0f1-b4a1-4a86-9bb4-f249c2a1032b"),
                             Country = "Russia",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(498),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateOnly(1821, 11, 11),
                             FirstName = "Fedor",
                             LastName = "Dostoyevskiy",
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(499)
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("ec891ac2-f620-415f-9f86-3d15259eb071"),
                             Country = "Russia",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(501),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateOnly(1809, 1, 4),
                             FirstName = "Nikolay",
                             LastName = "Gogol",
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(502)
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("4792ce31-a3e8-4df3-b0d7-4ea1c8e40dbd"),
                             Country = "United Kingdom",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(509),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateOnly(1564, 4, 23),
                             FirstName = "William",
                             LastName = "Shakespeare",
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(510)
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                             Country = "Belarus",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(512),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateOnly(1924, 6, 22),
                             FirstName = "Vasil",
                             LastName = "Bykov",
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(512)
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -200,12 +203,12 @@ namespace Library.Infrastructure.Migrations
                             Id = new Guid("14ca202e-dfb4-4d97-b7ef-76cf510bf319"),
                             AuthorId = new Guid("4dc4b580-7fb5-4c2a-938a-7e464116c7dd"),
                             AuthorName = "Lev Tolstoy",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(732),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius rhoncus nisl, nec egestas lacus pellentesque vitae. Donec eleifend urna at nunc tincidunt facilisis. Nam consectetur odio erat sed.",
                             Genre = "Novel",
                             ISBN = "ISBN 13: 9781566190275",
                             IsAvailable = true,
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(734),
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Title = "War and Peace"
                         },
                         new
@@ -213,12 +216,12 @@ namespace Library.Infrastructure.Migrations
                             Id = new Guid("2f346383-bd6a-4564-8dce-343c355e795a"),
                             AuthorId = new Guid("4dc4b580-7fb5-4c2a-938a-7e464116c7dd"),
                             AuthorName = "Lev Tolstoy",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(738),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius rhoncus nisl, nec egestas lacus pellentesque vitae. Donec eleifend urna at nunc tincidunt facilisis. Nam consectetur odio erat sed.",
                             Genre = "Novel",
                             ISBN = "ISBN 13: 9780672523830",
                             IsAvailable = true,
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(739),
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Title = "Anna Karenina"
                         },
                         new
@@ -226,12 +229,12 @@ namespace Library.Infrastructure.Migrations
                             Id = new Guid("ad9c4dbe-5dff-43e0-a58c-cea9327a4464"),
                             AuthorId = new Guid("21cb29da-047a-4d85-a581-8ef6cffec67f"),
                             AuthorName = "Maxim Gorkiy",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(742),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius rhoncus nisl, nec egestas lacus pellentesque vitae. Donec eleifend urna at nunc tincidunt facilisis. Nam consectetur odio erat sed.",
                             Genre = "Friction",
                             ISBN = "ISBN-13: 9798390533352",
                             IsAvailable = true,
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(742),
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Title = "Old Izergil"
                         },
                         new
@@ -239,12 +242,12 @@ namespace Library.Infrastructure.Migrations
                             Id = new Guid("f31001c4-fb5d-42f0-aafd-dd0e6e08476e"),
                             AuthorId = new Guid("3bc8f089-2d00-4346-af71-d9f9fcdceb20"),
                             AuthorName = "Miya Kazuki",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(745),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius rhoncus nisl, nec egestas lacus pellentesque vitae. Donec eleifend urna at nunc tincidunt facilisis. Nam consectetur odio erat sed.",
                             Genre = "Friction",
                             ISBN = "ISBN-13: 9781718357976",
                             IsAvailable = true,
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(745),
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Title = "Ascendance of a bookworm"
                         },
                         new
@@ -252,12 +255,12 @@ namespace Library.Infrastructure.Migrations
                             Id = new Guid("6328fcf9-5846-4f7c-960c-da5ea5c32f22"),
                             AuthorId = new Guid("188ec0f1-b4a1-4a86-9bb4-f249c2a1032b"),
                             AuthorName = "Fedor Dostoyevskiy",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(748),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius rhoncus nisl, nec egestas lacus pellentesque vitae. Donec eleifend urna at nunc tincidunt facilisis. Nam consectetur odio erat sed.",
                             Genre = "Novel",
                             ISBN = "ISBN 13: 9785050000149",
                             IsAvailable = true,
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(749),
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Title = "Crime and Punishment"
                         },
                         new
@@ -265,12 +268,12 @@ namespace Library.Infrastructure.Migrations
                             Id = new Guid("424e64e8-c811-42ef-8153-f7952ced8c51"),
                             AuthorId = new Guid("188ec0f1-b4a1-4a86-9bb4-f249c2a1032b"),
                             AuthorName = "Fedor Dostoyevskiy",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(751),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius rhoncus nisl, nec egestas lacus pellentesque vitae. Donec eleifend urna at nunc tincidunt facilisis. Nam consectetur odio erat sed.",
                             Genre = "Novel",
                             ISBN = "ISBN 10: 0374528373",
                             IsAvailable = true,
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(752),
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Title = "The Brothers Karamazov"
                         },
                         new
@@ -278,12 +281,12 @@ namespace Library.Infrastructure.Migrations
                             Id = new Guid("81ebde25-7b81-4bf2-8691-edef624642d8"),
                             AuthorId = new Guid("ec891ac2-f620-415f-9f86-3d15259eb071"),
                             AuthorName = "Nikolay Gogol",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(754),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius rhoncus nisl, nec egestas lacus pellentesque vitae. Donec eleifend urna at nunc tincidunt facilisis. Nam consectetur odio erat sed.",
                             Genre = "Satire",
                             ISBN = "ISBN 10: 0300060998",
                             IsAvailable = true,
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(755),
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Title = "Dead souls"
                         },
                         new
@@ -291,12 +294,12 @@ namespace Library.Infrastructure.Migrations
                             Id = new Guid("8e32b21e-1a32-4272-bc46-6f7b709a7696"),
                             AuthorId = new Guid("4792ce31-a3e8-4df3-b0d7-4ea1c8e40dbd"),
                             AuthorName = "William Shakespeare",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(758),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius rhoncus nisl, nec egestas lacus pellentesque vitae. Donec eleifend urna at nunc tincidunt facilisis. Nam consectetur odio erat sed.",
                             Genre = "Shakespearean tragedy",
                             ISBN = "ISBN 13: 9780671722852",
                             IsAvailable = true,
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(759),
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Title = "Romeo and Juliet"
                         },
                         new
@@ -304,12 +307,12 @@ namespace Library.Infrastructure.Migrations
                             Id = new Guid("a0283873-60b8-45de-a411-02a0a3fbc465"),
                             AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                             AuthorName = "Vasil Bykov",
-                            CreatedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(762),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius rhoncus nisl, nec egestas lacus pellentesque vitae. Donec eleifend urna at nunc tincidunt facilisis. Nam consectetur odio erat sed.",
                             Genre = "War novel",
                             ISBN = "ISBN 13: 9781909156821",
                             IsAvailable = true,
-                            ModifiedAt = new DateTime(2024, 7, 21, 10, 56, 15, 879, DateTimeKind.Local).AddTicks(762),
+                            ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Title = "Alpine Ballad"
                         });
                 });

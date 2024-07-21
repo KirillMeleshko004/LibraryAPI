@@ -35,7 +35,6 @@ namespace Library.Controllers
       ///<response code="400">If some request parameters has invalid values</response>
       ///<response code="404">If none of authors match request</response>
       [HttpGet]
-      [ArgumentValidationFilter]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -77,8 +76,6 @@ namespace Library.Controllers
       ///<response code="422">If authorDto contains invalid fields</response>
       [HttpPost]
       [Authorize(policy: "admin")]
-      [NullArgumentValidationFilter(names: "authorDto")]
-      [ArgumentValidationFilter]
       [ProducesResponseType(StatusCodes.Status201Created)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -107,8 +104,6 @@ namespace Library.Controllers
       ///<response code="422">If authorDto contains invalid fields</response>
       [HttpPut("{id:guid}")]
       [Authorize]
-      [NullArgumentValidationFilter(names: "authorDto")]
-      [ArgumentValidationFilter]
       [ProducesResponseType(StatusCodes.Status204NoContent)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -152,7 +147,6 @@ namespace Library.Controllers
       ///<response code="400">If some request parameters has invalid values</response>
       ///<response code="404">If author with id not found OR he has no books</response>
       [HttpGet("{id:guid}/books")]
-      [ArgumentValidationFilter]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]

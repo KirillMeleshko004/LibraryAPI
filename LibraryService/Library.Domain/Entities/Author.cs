@@ -3,10 +3,8 @@ namespace Library.Domain.Entities
    /// <summary>
    /// Class represents author entity
    /// </summary>
-   public class Author
+   public class Author : Entity
    {
-      public Guid Id { get; set; }
-
       public string FirstName { get; set; } = null!;
       public string LastName { get; set; } = null!;
       public DateOnly DateOfBirth { get; set; }

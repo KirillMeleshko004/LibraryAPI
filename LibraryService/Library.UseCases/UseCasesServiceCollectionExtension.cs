@@ -1,3 +1,4 @@
+using FluentValidation;
 using Library.UseCases.Common.Mapping;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +10,8 @@ namespace Library.UseCases
             this IServiceCollection services)
         {
             //pass assembly with mapping profiles
-            services.AddAutoMapper(typeof(BookProfile).Assembly);
+            services.AddAutoMapper(typeof(BookProfile).Assembly)
+                .AddValidatorsFromAssembly(typeof(UseCasesServiceCollectionExtension).Assembly);
 
             services.AddMediatR(config =>
                 config.RegisterServicesFromAssemblies(typeof(BookProfile).Assembly));

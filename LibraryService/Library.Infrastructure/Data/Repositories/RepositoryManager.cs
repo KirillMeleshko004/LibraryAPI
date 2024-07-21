@@ -1,3 +1,4 @@
+using Library.Domain.Entities;
 using Library.UseCases.Common.Interfaces;
 
 namespace Library.Infrastructure.Data
@@ -53,6 +54,27 @@ namespace Library.Infrastructure.Data
       //Saves all changes made during request to database
       public async Task SaveChangesAsync()
       {
+         _context.ChangeTracker.DetectChanges();
+         var a = _context.ChangeTracker.Entries();
+         var changed = _context.ChangeTracker.Entries()
+            .Where(e => e.State == Microsoft.EntityFrameworkCore.EntityState.Modified ||
+               e.State == Microsoft.EntityFrameworkCore.EntityState.Added);
+
+         foreach (var entry in changed)
+         {
+            if (!typeof(Entity).IsAssignableFrom(entry.Entity.GetType()))
+            {
+               continue;
+            }
+            var entity = entry.Entity as Entity;
+
+            if (entry.State == Microsoft.EntityFrameworkCore.EntityState.Added)
+            {
+               entity!.CreatedAt = DateTime.Now;
+            }
+
+            entity!.ModifiedAt = DateTime.Now;
+         }
          await _context.SaveChangesAsync();
       }
    }

@@ -3,10 +3,8 @@ namespace Library.Domain.Entities
     /// <summary>
     /// Class represents book entity
     /// </summary>
-    public class Book
+    public class Book : Entity
     {
-        public Guid Id { get; set; }
-
         public string ISBN { get; set; } = null!;
 
         public string Title { get; set; } = null!;

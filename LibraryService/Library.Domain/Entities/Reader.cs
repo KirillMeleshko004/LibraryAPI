@@ -1,8 +1,7 @@
 namespace Library.Domain.Entities
 {
-   public class Reader
+   public class Reader : Entity
    {
-      public Guid Id { get; set; }
       public string Email { get; set; } = null!;
 
       public IEnumerable<Book>? BorrowedBooks { get; set; }

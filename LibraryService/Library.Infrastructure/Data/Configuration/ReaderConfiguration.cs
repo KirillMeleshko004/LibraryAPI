@@ -2,14 +2,15 @@ using Library.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Library.Infrastructure.Data
+namespace Library.Infrastructure.Data.Configuration
 {
-   public class ReaderConfiguration : IEntityTypeConfiguration<Reader>
+   public class ReaderConfiguration : BaseEntityConfiguration<Reader>
    {
       private const int EMAIL_MAX_LENGTH = 40;
-      public void Configure(EntityTypeBuilder<Reader> builder)
+      public override void Configure(EntityTypeBuilder<Reader> builder)
       {
-         builder.HasKey(r => r.Id);
+         base.Configure(builder);
+
          builder.HasIndex(r => r.Email)
             .IsUnique();
 

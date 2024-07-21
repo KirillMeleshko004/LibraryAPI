@@ -36,7 +36,7 @@ namespace Identity.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-        public async Task<IActionResult> Exchange([FromForm] UserForAuthorizationDto userDto,
+        public async Task<IActionResult> Authorize([FromForm] UserForAuthorizationDto userDto,
             CancellationToken cancellationToken)
         {
             var request = HttpContext.GetOpenIddictServerRequest() ??

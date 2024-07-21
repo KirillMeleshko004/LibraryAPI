@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Text;
 using AutoMapper;
 using Identity.Domain.Entities;

@@ -1,4 +1,6 @@
 using Library.Domain.Entities;
+using Library.Infrastructure.Data.Configuration;
+using Library.Infrastructure.Data.Seed;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Infrastructure.Data
@@ -19,11 +21,15 @@ namespace Library.Infrastructure.Data
          modelBuilder.ApplyConfiguration(new AuthorConfiguration());
          modelBuilder.ApplyConfiguration(new BooksConfiguration());
          modelBuilder.ApplyConfiguration(new ReaderConfiguration());
+
+         modelBuilder.ApplyConfiguration(new AuthorSeed());
+         modelBuilder.ApplyConfiguration(new BookSeed());
       }
 
       public RepositoryContext(DbContextOptions<RepositoryContext> options)
          : base(options)
       {
       }
+
    }
 }

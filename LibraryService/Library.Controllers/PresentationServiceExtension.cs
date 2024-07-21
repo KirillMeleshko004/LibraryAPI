@@ -1,6 +1,8 @@
+using FluentValidation;
 using Library.Controllers.Common.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 namespace Library.Controllers
 {
@@ -8,7 +10,14 @@ namespace Library.Controllers
     {
         public static IServiceCollection ConfigurePresentation(this IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(ViewModels.BookForCreationViewModel).Assembly);
+            services.AddAutoMapper(typeof(ViewModels.BookForCreationViewModel).Assembly)
+                .AddValidatorsFromAssembly(typeof(PresentationServiceExtension).Assembly)
+                .AddFluentValidationAutoValidation(options =>
+                {
+                    options.EnableBodyBindingSourceAutomaticValidation = true;
+                    options.EnableQueryBindingSourceAutomaticValidation = true;
+                    options.EnableFormBindingSourceAutomaticValidation = true;
+                });
 
             services.ConfigureControllers();
 

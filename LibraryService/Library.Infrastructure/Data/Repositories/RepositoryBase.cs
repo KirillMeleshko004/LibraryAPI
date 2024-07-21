@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Library.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Infrastructure.Data
@@ -8,7 +9,7 @@ namespace Library.Infrastructure.Data
    /// Include basic CRUD operations
    /// </summary>
    /// <typeparam name="T"></typeparam>
-   public class RepositoryBase<T> where T : class
+   public class RepositoryBase<T> where T : Entity
    {
       private protected readonly RepositoryContext _context;
 
@@ -19,13 +20,15 @@ namespace Library.Infrastructure.Data
 
       public IQueryable<T> Get()
       {
-         return _context.Set<T>();
+         return _context.Set<T>()
+            .AsNoTracking();
       }
 
       public IQueryable<T> Get(Expression<Func<T, bool>> filter)
       {
          return _context.Set<T>()
-            .Where(filter);
+            .Where(filter)
+            .AsNoTracking();
       }
 
       public void Create(T entity)
@@ -40,7 +43,7 @@ namespace Library.Infrastructure.Data
 
       public void Update(T entity)
       {
-         _context.Entry(entity).State = EntityState.Modified;
+         _context.Set<T>().Update(entity);
       }
    }
 }
