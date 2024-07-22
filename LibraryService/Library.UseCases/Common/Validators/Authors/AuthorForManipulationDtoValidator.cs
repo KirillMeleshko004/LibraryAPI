@@ -9,7 +9,7 @@ namespace Library.UseCases.Common.Validators.Authors
         protected const int MIN_NAME_LENGTH = 1;
         protected const int MAX_NAME_LENGTH = 20;
         protected const int MIN_COUNTRY_LENGTH = 2;
-        protected const int MAX_COUNTRY_LENGTH = 62;
+        protected const int MAX_COUNTRY_LENGTH = 73;
         public AuthorForManipulationDtoValidator()
         {
             RuleFor(a => a.FirstName)
@@ -20,7 +20,8 @@ namespace Library.UseCases.Common.Validators.Authors
                 .NotEmpty()
                 .Length(MIN_NAME_LENGTH, MAX_NAME_LENGTH);
 
-            RuleFor(a => a.DateOfBirth).NotEmpty();
+            RuleFor(a => a.DateOfBirth).NotEmpty()
+                .Must(d => d.CompareTo(DateOnly.FromDateTime(DateTime.Now)) < 0);
 
             RuleFor(a => a.Country)
                 .NotEmpty()

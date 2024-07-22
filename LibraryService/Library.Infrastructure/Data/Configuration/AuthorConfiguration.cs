@@ -10,7 +10,7 @@ namespace Library.Infrastructure.Data.Configuration
    public class AuthorConfiguration : BaseEntityConfiguration<Author>
    {
       private const int NAME_MAX_LENGTH = 20;
-      private const int COUNTRY_MAX_LENGTH = 62;
+      private const int COUNTRY_MAX_LENGTH = 73;
 
       public override void Configure(EntityTypeBuilder<Author> builder)
       {

@@ -47,6 +47,13 @@ namespace Library.UseCases.Books.Commands
 
          _mapper.Map(request.BookDto, book);
          book.AuthorName = $"{author.FirstName} {author.LastName}";
+
+         if (book.ImagePath != null)
+         {
+            await _images.DeleteImageAsync(book.ImagePath!);
+            book.ImagePath = string.Empty;
+         }
+
          if (request.BookDto.Image != null && request.BookDto.ImageName != null)
          {
             book.ImagePath = await _images.SaveImageAsync(request.BookDto.Image,

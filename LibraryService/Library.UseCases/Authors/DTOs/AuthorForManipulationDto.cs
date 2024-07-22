@@ -9,7 +9,7 @@ namespace Library.UseCases.Authors.DTOs
    {
       public string FirstName { get; set; } = null!;
       public string LastName { get; set; } = null!;
-      public DateOnly? DateOfBirth { get; set; }
+      public DateOnly DateOfBirth { get; set; }
       public string Country { get; set; } = null!;
 
    }

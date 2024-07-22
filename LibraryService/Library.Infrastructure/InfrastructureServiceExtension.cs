@@ -1,4 +1,3 @@
-using AutoMapper;
 using Library.Infrastructure.Data;
 using Library.Infrastructure.Images;
 using Library.UseCases.Common.Interfaces;

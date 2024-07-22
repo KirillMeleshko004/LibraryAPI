@@ -13,7 +13,7 @@ namespace Library.UseCases.Common.Validators.Books
         protected const int MIN_GENRE_LENGTH = 1;
         protected const int MAX_GENRE_LENGTH = 30;
         protected const int MIN_DESCRIPTION_LENGTH = 1;
-        protected const int MAX_DESCRIPTION_LENGTH = 30;
+        protected const int MAX_DESCRIPTION_LENGTH = 300;
         public BookForManipulationDtoValidator()
         {
             RuleFor(b => b.ISBN)
