@@ -107,7 +107,7 @@ namespace Library.Controllers
          var bookForCreation = _mapper.Map<BookForCreationDto>(bookVm);
 
          var result = await _sender.Send(
-            new CreateBookCommand(bookForCreation, bookForCreation.AuthorId), cancellationToken);
+            new CreateBookCommand(bookForCreation), cancellationToken);
 
          return CreatedAtAction(nameof(GetBookById),
             new { id = result.Id }, result);

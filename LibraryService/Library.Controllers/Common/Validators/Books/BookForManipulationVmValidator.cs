@@ -34,13 +34,11 @@ namespace Library.Controllers.Common.Validators.Books
                 .NotEmpty()
                 .Length(MIN_DESCRIPTION_LENGTH, MAX_DESCRIPTION_LENGTH);
 
-            RuleFor(b => b.Image!.ContentType)
-                .Must(ct => ct.StartsWith("image"))
+
+            RuleFor(b => b.Image)
+                .Must(i => i!.ContentType.StartsWith("image"))
                 .WithMessage("File must be image type.")
-                .DependentRules(() =>
-                {
-                    RuleFor(b => b.Image).NotNull();
-                });
+                .When(b => b.Image != null);
         }
     }
 

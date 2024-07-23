@@ -37,10 +37,7 @@ namespace Library.UseCases.Common.Validators.Books
 
             RuleFor(b => b.ImageName)
                 .NotEmpty()
-                .DependentRules(() =>
-                {
-                    RuleFor(b => b.Image).NotNull();
-                });
+                .When(b => b.Image != null);
         }
     }
 }

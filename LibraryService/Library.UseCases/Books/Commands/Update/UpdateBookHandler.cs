@@ -36,26 +36,30 @@ namespace Library.UseCases.Books.Commands
             throw new NotFoundException(string.Format(BookNotFound, request.BookId));
          }
 
-         var newAuthorId = request.BookDto.AuthorId;
-         var author = await _repo.Authors.GetAuthorByIdAsync(newAuthorId, cancellationToken);
-
-         if (author == null)
+         if (!request.BookDto.AuthorId.Equals(book.AuthorId))
          {
-            _logger.LogWarning(IncorrectAuthorIdLog, newAuthorId);
-            throw new UnprocessableEntityException(string.Format(IncorrectAuthorId, newAuthorId));
+            var newAuthorId = request.BookDto.AuthorId;
+            var author = await _repo.Authors.GetAuthorByIdAsync(newAuthorId, cancellationToken);
+
+            if (author == null)
+            {
+               _logger.LogWarning(IncorrectAuthorIdLog, newAuthorId);
+               throw new UnprocessableEntityException(string.Format(IncorrectAuthorId, newAuthorId));
+            }
+
+            book.AuthorName = $"{author.FirstName} {author.LastName}";
          }
 
          _mapper.Map(request.BookDto, book);
-         book.AuthorName = $"{author.FirstName} {author.LastName}";
 
-         if (book.ImagePath != null)
-         {
-            await _images.DeleteImageAsync(book.ImagePath!);
-            book.ImagePath = string.Empty;
-         }
 
          if (request.BookDto.Image != null && request.BookDto.ImageName != null)
          {
+            if (book.ImagePath != null)
+            {
+               await _images.DeleteImageAsync(book.ImagePath!);
+            }
+
             book.ImagePath = await _images.SaveImageAsync(request.BookDto.Image,
                request.BookDto.ImageName);
          }

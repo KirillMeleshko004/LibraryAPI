@@ -30,14 +30,14 @@ namespace Library.UseCases.Books.Commands
          CancellationToken cancellationToken)
       {
          var author = await _repo.Authors
-            .GetAuthorByIdAsync(request.AuthorId, cancellationToken);
+            .GetAuthorByIdAsync(request.BookDto.AuthorId, cancellationToken);
 
          if (author == null)
          {
-            _logger.LogWarning(AuthorNotFoundBookCreationLog, request.AuthorId);
+            _logger.LogWarning(AuthorNotFoundBookCreationLog, request.BookDto.AuthorId);
 
             throw new UnprocessableEntityException(
-               string.Format(AuthorNotFoundBookCreation, request.AuthorId));
+               string.Format(AuthorNotFoundBookCreation, request.BookDto.AuthorId));
          }
 
          var book = _mapper.Map<Book>(request.BookDto);

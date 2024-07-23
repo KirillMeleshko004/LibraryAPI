@@ -1,16 +1,17 @@
 using FluentValidation.TestHelper;
-using Library.UseCases.Books.DTOs;
-using Library.UseCases.Common.Validators.Books;
+using Library.Controllers.Common.Validators.Books;
+using Library.Controllers.ViewModels;
+using Microsoft.AspNetCore.Http;
 
 namespace Library.Test.Validators
 {
-    public class BookDtoValidatorsTests
+    public class BookVmValidatorsTests
     {
         [Theory]
         [MemberData(nameof(GetValidBooksForCreation))]
-        public void ValidBookForCreation_ShouldNotHaveValidationError(BookForCreationDto book)
+        public void ValidBookForCreation_ShouldNotHaveValidationError(BookForCreationViewModel book)
         {
-            var creationValidator = new BookForCreationDtoValidator();
+            var creationValidator = new BookForCreationVmValidator();
 
             var result = creationValidator.TestValidate(book);
 
@@ -19,10 +20,10 @@ namespace Library.Test.Validators
 
         [Theory]
         [MemberData(nameof(GetInvalidBooksForCreation))]
-        public void InvalidBookForCreation_ShouldHaveValidationError(BookForCreationDto book,
+        public void InvalidBookForCreation_ShouldHaveValidationError(BookForCreationViewModel book,
             string errorField)
         {
-            var creationValidator = new BookForCreationDtoValidator();
+            var creationValidator = new BookForCreationVmValidator();
 
             var result = creationValidator.TestValidate(book);
 
@@ -31,9 +32,9 @@ namespace Library.Test.Validators
 
         [Theory]
         [MemberData(nameof(GetValidBooksForUpdate))]
-        public void ValidBookForUpdate_ShouldNotHaveValidationError(BookForUpdateDto book)
+        public void ValidBookForUpdate_ShouldNotHaveValidationError(BookForUpdateViewModel book)
         {
-            var creationValidator = new BookForUpdateDtoValidator();
+            var creationValidator = new BookForUpdateVmValidator();
 
             var result = creationValidator.TestValidate(book);
 
@@ -42,10 +43,10 @@ namespace Library.Test.Validators
 
         [Theory]
         [MemberData(nameof(GetInvalidBooksForUpdate))]
-        public void InvalidBookForUpdate_ShouldHaveValidationError(BookForUpdateDto book,
+        public void InvalidBookForUpdate_ShouldHaveValidationError(BookForUpdateViewModel book,
             string errorField)
         {
-            var creationValidator = new BookForUpdateDtoValidator();
+            var creationValidator = new BookForUpdateVmValidator();
 
             var result = creationValidator.TestValidate(book);
 
@@ -59,372 +60,454 @@ namespace Library.Test.Validators
             return
             [
                 [
-                    new BookForCreationDto
+                    new BookForCreationViewModel
                     {
                         ISBN = "ISBN 9780596520686",
                         Title = "Test book",
                         Genre = "Test genre",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
-                        Description = "Test description"
+                        Description = "Test description",
                     }
                 ],
                 [
-                    new BookForCreationDto
+                    new BookForCreationViewModel
                     {
                         ISBN = "9780596520686",
                         Title = "A",
                         Genre = "B",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "A",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "image.png")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/png"
+                        }
                     }
                 ],
                 [
-                    new BookForCreationDto
+                    new BookForCreationViewModel
                     {
                         ISBN = "ISBN-10 0545010225",
                         Title = "A",
                         Genre = "B",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "A",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "testimage.jpeg")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/jpeg"
+                        }
                     }
                 ]
             ];
         }
+        
         public static IEnumerable<object[]> GetInvalidBooksForCreation()
         {
             return
             [
                 [
-                    new BookForCreationDto
+                    new BookForCreationViewModel
                     {
                         ISBN = "ISBN 97805965206861",
                         Title = "Test book",
                         Genre = "Test genre",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "Test description",
-                        ImageName = "testimage.jpeg",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "image.png")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/png"
+                        }
                     },
-                    nameof(BookForCreationDto.ISBN)
+                    nameof(BookForCreationViewModel.ISBN)
                 ],
                 [
-                    new BookForCreationDto
+                    new BookForCreationViewModel
                     {
                         ISBN = "ISBN 978059652068",
                         Title = "Test book",
                         Genre = "Test genre",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "Test description",
-                        ImageName = "testimage.jpeg",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "image.png")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/png"
+                        }
                     },
-                    nameof(BookForCreationDto.ISBN)
+                    nameof(BookForCreationViewModel.ISBN)
                 ],
                 [
-                    new BookForCreationDto
+                    new BookForCreationViewModel
                     {
                         ISBN = "ISBN",
                         Title = "Test book",
                         Genre = "Test genre",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "Test description",
-                        ImageName = "testimage.jpeg",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "image.png")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/png"
+                        }
                     },
-                    nameof(BookForCreationDto.ISBN)
+                    nameof(BookForCreationViewModel.ISBN)
                 ],
                 [
-                    new BookForCreationDto
+                    new BookForCreationViewModel
                     {
-                        ISBN = "ISBN 97805965206861",
+                        ISBN = "ISBN 9780596520686",
                         Genre = "B",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "A",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "image.png")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/png"
+                        }
                     },
-                    nameof(BookForCreationDto.Title)
+                    nameof(BookForCreationViewModel.Title)
                 ],
                 [
-                    new BookForCreationDto
+                    new BookForCreationViewModel
                     {
-                        ISBN = "ISBN 97805965206861",
+                        ISBN = "ISBN 9780596520686",
                         Title = "AbcdefghijklmnopqrstAbcdefghijklmnopqrstu",
                         Genre = "B",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "A",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "image.png")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/png"
+                        }
                     },
-                    nameof(BookForCreationDto.Title)
+                    nameof(BookForCreationViewModel.Title)
                 ],
                 [
-                    new BookForCreationDto
+                    new BookForCreationViewModel
                     {
-                        ISBN = "ISBN 97805965206861",
+                        ISBN = "ISBN 9780596520686",
                         Title = "A",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "A",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "image.png")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/png"
+                        }
                     },
-                    nameof(BookForCreationDto.Genre)
+                    nameof(BookForCreationViewModel.Genre)
                 ],
                 [
-                    new BookForCreationDto
+                    new BookForCreationViewModel
                     {
-                        ISBN = "ISBN 97805965206861",
+                        ISBN = "ISBN 9780596520686",
                         Title = "A",
                         Genre = "AbcdefghijklmnopqrstAbcdefghijk",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "A",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "image.png")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/png"
+                        }
                     },
-                    nameof(BookForCreationDto.Genre)
+                    nameof(BookForCreationViewModel.Genre)
                 ],
                 [
-                    new BookForCreationDto
+                    new BookForCreationViewModel
                     {
-                        ISBN = "ISBN 97805965206861",
+                        ISBN = "ISBN 9780596520686",
                         Title = "A",
                         Genre = "B",
                         Description = "A",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "image.png")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/png"
+                        }
                     },
-                    nameof(BookForCreationDto.AuthorId)
+                    nameof(BookForCreationViewModel.AuthorId)
                 ],
                 [
-                    new BookForCreationDto
+                    new BookForCreationViewModel
                     {
-                        ISBN = "ISBN 97805965206861",
+                        ISBN = "ISBN 9780596520686",
                         Title = "A",
                         Genre = "B",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "image.png")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/png"
+                        }
                     },
-                    nameof(BookForCreationDto.Description)
+                    nameof(BookForCreationViewModel.Description)
                 ],
                 [
-                    new BookForCreationDto
+                    new BookForCreationViewModel
                     {
-                        ISBN = "ISBN 97805965206861",
+                        ISBN = "ISBN 9780596520686",
                         Title = "A",
                         Genre = "B",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "AbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAb",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "image.png")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/png"
+                        }
                     },
-                    nameof(BookForCreationDto.Description)
+                    nameof(BookForCreationViewModel.Description)
                 ],
                 [
-                    new BookForCreationDto
+                    new BookForCreationViewModel
                     {
-                        ISBN = "ISBN 97805965206861",
+                        ISBN = "ISBN 9780596520686",
                         Title = "A",
                         Genre = "B",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "C",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "image.png")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = " application/octet-stream "
+                        }
                     },
-                    nameof(BookForCreationDto.ImageName)
+                    nameof(BookForCreationViewModel.Image)
                 ],
             ];
         }
+
         public static IEnumerable<object[]> GetValidBooksForUpdate()
         {
             return
             [
-                [
-                    new BookForUpdateDto
+                 [
+                    new BookForUpdateViewModel
                     {
                         ISBN = "ISBN 9780596520686",
                         Title = "Test book",
                         Genre = "Test genre",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "Test description",
-                        ImageName = "testimage.jpeg",
-                        Image = new MemoryStream([1,2,1,2,1])
                     }
                 ],
                 [
-                    new BookForUpdateDto
+                    new BookForUpdateViewModel
                     {
                         ISBN = "9780596520686",
                         Title = "A",
                         Genre = "B",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "A",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "image.png")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/png"
+                        }
                     }
                 ],
                 [
-                    new BookForUpdateDto
+                    new BookForUpdateViewModel
                     {
-                        ISBN = "9780596520686",
+                        ISBN = "ISBN-10 0545010225",
                         Title = "A",
                         Genre = "B",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "A",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "testimage.jpeg")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/jpeg"
+                        }
                     }
                 ]
             ];
         }
+
         public static IEnumerable<object[]> GetInvalidBooksForUpdate()
         {
             return
             [
                 [
-                    new BookForUpdateDto
+                    new BookForUpdateViewModel
                     {
                         ISBN = "ISBN 97805965206861",
                         Title = "Test book",
                         Genre = "Test genre",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "Test description",
-                        ImageName = "testimage.jpeg",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "testimage.jpeg")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/jpeg"
+                        }
                     },
-                    nameof(BookForUpdateDto.ISBN)
+                    nameof(BookForUpdateViewModel.ISBN)
                 ],
                 [
-                    new BookForUpdateDto
+                    new BookForUpdateViewModel
                     {
                         ISBN = "ISBN 978059652068",
                         Title = "Test book",
                         Genre = "Test genre",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "Test description",
-                        ImageName = "testimage.jpeg",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "testimage.jpeg")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/jpeg"
+                        }
                     },
-                    nameof(BookForUpdateDto.ISBN)
+                    nameof(BookForUpdateViewModel.ISBN)
                 ],
                 [
-                    new BookForUpdateDto
+                    new BookForUpdateViewModel
                     {
                         ISBN = "ISBN",
                         Title = "Test book",
                         Genre = "Test genre",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "Test description",
-                        ImageName = "testimage.jpeg",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "testimage.jpeg")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/jpeg"
+                        }
                     },
-                    nameof(BookForUpdateDto.ISBN)
+                    nameof(BookForUpdateViewModel.ISBN)
                 ],
                 [
-                    new BookForUpdateDto
+                    new BookForUpdateViewModel
                     {
                         ISBN = "ISBN 97805965206861",
                         Genre = "B",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "A",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "testimage.jpeg")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/jpeg"
+                        }
                     },
-                    nameof(BookForUpdateDto.Title)
+                    nameof(BookForUpdateViewModel.Title)
                 ],
                 [
-                    new BookForUpdateDto
+                    new BookForUpdateViewModel
                     {
                         ISBN = "ISBN 97805965206861",
                         Title = "AbcdefghijklmnopqrstAbcdefghijklmnopqrstu",
                         Genre = "B",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "A",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "testimage.jpeg")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/jpeg"
+                        }
                     },
-                    nameof(BookForUpdateDto.Title)
+                    nameof(BookForUpdateViewModel.Title)
                 ],
                 [
-                    new BookForUpdateDto
+                    new BookForUpdateViewModel
                     {
                         ISBN = "ISBN 97805965206861",
                         Title = "A",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "A",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "testimage.jpeg")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/jpeg"
+                        }
                     },
-                    nameof(BookForUpdateDto.Genre)
+                    nameof(BookForUpdateViewModel.Genre)
                 ],
                 [
-                    new BookForUpdateDto
+                    new BookForUpdateViewModel
                     {
                         ISBN = "ISBN 97805965206861",
                         Title = "A",
                         Genre = "AbcdefghijklmnopqrstAbcdefghijk",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "A",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "testimage.jpeg")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/jpeg"
+                        }
                     },
-                    nameof(BookForUpdateDto.Genre)
+                    nameof(BookForUpdateViewModel.Genre)
                 ],
                 [
-                    new BookForUpdateDto
+                    new BookForUpdateViewModel
                     {
                         ISBN = "ISBN 97805965206861",
                         Title = "A",
                         Genre = "B",
                         Description = "A",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "testimage.jpeg")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/jpeg"
+                        }
                     },
-                    nameof(BookForUpdateDto.AuthorId)
+                    nameof(BookForUpdateViewModel.AuthorId)
                 ],
                 [
-                    new BookForUpdateDto
+                    new BookForUpdateViewModel
                     {
                         ISBN = "ISBN 97805965206861",
                         Title = "A",
                         Genre = "B",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "testimage.jpeg")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/jpeg"
+                        }
                     },
-                    nameof(BookForUpdateDto.Description)
+                    nameof(BookForUpdateViewModel.Description)
                 ],
                 [
-                    new BookForUpdateDto
+                    new BookForUpdateViewModel
                     {
                         ISBN = "ISBN 97805965206861",
                         Title = "A",
                         Genre = "B",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "AbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAbcdefghijkAbcdefghijklmnopqrstAb",
-                        ImageName = "testimage.png",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "testimage.jpeg")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = "image/jpeg"
+                        }
                     },
-                    nameof(BookForUpdateDto.Description)
+                    nameof(BookForUpdateViewModel.Description)
                 ],
                 [
-                    new BookForUpdateDto
+                    new BookForUpdateViewModel
                     {
                         ISBN = "ISBN 97805965206861",
                         Title = "A",
                         Genre = "B",
                         AuthorId = new Guid("ac31fda2-411c-4669-8e42-b4b18cc659cb"),
                         Description = "C",
-                        Image = new MemoryStream([1,2,1,2,1])
+                        Image = new FormFile(new MemoryStream(), 0, 0, "", "image.png")
+                        {
+                            Headers = new HeaderDictionary(),
+                            ContentType = " application/octet-stream "
+                        }
                     },
-                    nameof(BookForUpdateDto.ImageName)
+                    nameof(BookForCreationViewModel.Image)
                 ],
             ];
         }
 
         #endregion
+
     }
 }

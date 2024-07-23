@@ -1,0 +1,101 @@
+using System.Linq.Expressions;
+using Library.Domain.Entities;
+using Library.UseCases.Books.Commands;
+using Library.UseCases.Common.Interfaces;
+using Microsoft.Extensions.Logging;
+using Moq;
+
+
+namespace Library.Test.UseCases.Books.Commands
+{
+    public class DeleteBookCommandTest
+    {
+        private readonly Mock<IRepositoryManager> _repoMock;
+        private readonly Mock<ILogger<DeleteBookHandler>> _loggerMock;
+        private readonly Mock<IImageService> _imageMock;
+
+        public DeleteBookCommandTest()
+        {
+            _repoMock = new();
+            _loggerMock = new();
+            _imageMock = new();
+        }
+
+        [Theory]
+        [InlineData("14ca202e-dfb4-4d97-b7ef-76cf510bf319")]
+        public async Task Handle_Should_CallDeleteMethod_IfBookExist(Guid bookId)
+        {
+            //Arrange
+            var command = new DeleteBookCommand(bookId);
+            var handler = new DeleteBookHandler(_repoMock.Object, _imageMock.Object,
+                _loggerMock.Object);
+
+            _repoMock.Setup(
+                x => x.Books.GetBookByIdAsync(
+                    It.IsAny<Guid>(),
+                    It.IsAny<CancellationToken>(),
+                    It.IsAny<Expression<Func<Book, object>>>()))
+                .ReturnsAsync(new Book() { Id = bookId });
+
+            //Act
+            await handler.Handle(command, default);
+
+            //Assert
+            _repoMock.Verify(
+                x => x.Books.DeleteBookAsync(It.IsAny<Book>(), It.IsAny<CancellationToken>())
+            );
+        }
+
+        [Theory]
+        [InlineData("14ca202e-dfb4-4d97-b7ef-76cf510bf319")]
+        public async Task Handle_ShouldNot_CallDeleteMethod_IfBookNotExist(Guid bookId)
+        {
+            //Arrange
+            var command = new DeleteBookCommand(bookId);
+            var handler = new DeleteBookHandler(_repoMock.Object, _imageMock.Object,
+                _loggerMock.Object);
+
+            _repoMock.Setup(
+                x => x.Books.GetBookByIdAsync(
+                    It.IsAny<Guid>(),
+                    It.IsAny<CancellationToken>(),
+                    It.IsAny<Expression<Func<Book, object>>>()))
+                .ReturnsAsync(null as Book);
+
+            //Act
+            await handler.Handle(command, default);
+
+            //Assert
+            _repoMock.Verify(
+                x => x.Books.DeleteBookAsync(It.IsAny<Book>(), It.IsAny<CancellationToken>()),
+                Times.Never
+            );
+        }
+
+        [Theory]
+        [InlineData("14ca202e-dfb4-4d97-b7ef-76cf510bf319")]
+        public async Task Handle_Should_CallDeleteImageMethod_IfBookHaveImage(Guid bookId)
+        {
+            //Arrange
+            var command = new DeleteBookCommand(bookId);
+            var handler = new DeleteBookHandler(_repoMock.Object, _imageMock.Object,
+                _loggerMock.Object);
+
+            _repoMock.Setup(
+                x => x.Books.GetBookByIdAsync(
+                    It.IsAny<Guid>(),
+                    It.IsAny<CancellationToken>(),
+                    It.IsAny<Expression<Func<Book, object>>>()))
+                .ReturnsAsync(new Book() { Id = bookId, ImagePath = "testpath.png" });
+
+            //Act
+            await handler.Handle(command, default);
+
+            //Assert
+            _imageMock.Verify(
+                x => x.DeleteImageAsync(It.IsAny<string>())
+            );
+        }
+
+    }
+}

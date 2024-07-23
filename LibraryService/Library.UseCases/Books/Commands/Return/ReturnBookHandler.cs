@@ -28,7 +28,7 @@ namespace Library.UseCases.Books.Commands
          if (reader == null)
          {
             _logger.LogInformation(ReaderNotFoundLog, request.ReaderEmail);
-            throw new UnauthorizedException("Invalid reader");
+            throw new UnauthorizedException("Invalid reader.");
          }
 
          var book = await _repo.Books.GetBookByIdAsync(request.BookId, cancellationToken);
@@ -52,6 +52,7 @@ namespace Library.UseCases.Books.Commands
          book.BorrowTime = null;
          book.ReturnTime = null;
 
+         await _repo.Books.UpdateBookAsync(book, cancellationToken);
          await _repo.SaveChangesAsync();
       }
    }

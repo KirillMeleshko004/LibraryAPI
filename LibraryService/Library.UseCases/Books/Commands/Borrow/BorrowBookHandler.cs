@@ -50,6 +50,8 @@ namespace Library.UseCases.Books.Commands
          book.BorrowTime = DateTime.Now;
          book.ReturnTime = DateTime.Now.AddDays(30);
 
+         //Test if necessary
+         await _repo.Books.UpdateBookAsync(book, cancellationToken);
          await _repo.SaveChangesAsync();
       }
    }
