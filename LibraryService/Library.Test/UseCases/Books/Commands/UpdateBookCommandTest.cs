@@ -118,7 +118,7 @@ namespace Library.Test.UseCases.Books.Commands
             );
         }
 
-        delegate BookDto MockMapBookDtoReturnsReturns(object src);
+        delegate BookDto MockMapBookDtoReturns(object src);
         [Fact]
         public async Task Handle_Should_ReturnUpdateedBook_IfBookIsValid()
         {
@@ -147,7 +147,7 @@ namespace Library.Test.UseCases.Books.Commands
 
             _mapperMock.Setup(
                 x => x.Map<BookDto>(It.IsAny<object>()))
-                .Returns(new MockMapBookDtoReturnsReturns(b =>
+                .Returns(new MockMapBookDtoReturns(b =>
                 {
                     return new BookDto() { Id = (b as Book)!.Id };
                 })
