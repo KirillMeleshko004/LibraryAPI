@@ -47,14 +47,6 @@ namespace Library.Test.UseCases.Books.Commands
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Author());
 
-            _mapperMock.Setup(
-                x => x.Map(It.IsAny<BookForUpdateDto>(),
-                    It.IsAny<Book>()));
-
-            _mapperMock.Setup(
-                x => x.Map<BookDto>(It.IsAny<object>()))
-                .Returns(new BookDto());
-
             //Act
             var result = await handler.Handle(command, default);
 
@@ -120,7 +112,7 @@ namespace Library.Test.UseCases.Books.Commands
 
         delegate BookDto MockMapBookDtoReturns(object src);
         [Fact]
-        public async Task Handle_Should_ReturnUpdateedBook_IfBookIsValid()
+        public async Task Handle_Should_ReturnUpdatedBook_IfBookIsValid()
         {
             //Arrange
             var bookId = new Guid("14ca202e-dfb4-4d97-b7ef-76cf510bf319");

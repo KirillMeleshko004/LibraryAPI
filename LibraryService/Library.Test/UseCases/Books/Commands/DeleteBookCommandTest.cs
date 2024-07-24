@@ -23,7 +23,7 @@ namespace Library.Test.UseCases.Books.Commands
 
         [Theory]
         [InlineData("14ca202e-dfb4-4d97-b7ef-76cf510bf319")]
-        public async Task Handle_Should_CallDeleteMethod_IfBookExist(Guid bookId)
+        public async Task Handle_Should_CallDeleteAndSaveMethods_IfBookExist(Guid bookId)
         {
             //Arrange
             var command = new DeleteBookCommand(bookId);
@@ -42,7 +42,12 @@ namespace Library.Test.UseCases.Books.Commands
 
             //Assert
             _repoMock.Verify(
-                x => x.Books.DeleteBookAsync(It.IsAny<Book>(), It.IsAny<CancellationToken>())
+                x => x.Books.DeleteBookAsync(It.Is<Book>(b => b.Id.Equals(bookId)),
+                    It.IsAny<CancellationToken>()
+            ));
+            _repoMock.Verify(
+                x => x.SaveChangesAsync(),
+                Times.AtLeastOnce
             );
         }
 
