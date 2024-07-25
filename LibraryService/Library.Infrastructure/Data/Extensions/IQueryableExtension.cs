@@ -11,27 +11,13 @@ namespace Library.Infrastructure.Data.Extensions
    /// </summary>
    public static class IQueryableExtension
    {
-      public static IQueryable<Book> FilterBooks(this IQueryable<Book> books,
-         BookParameters parameters)
+
+      private static readonly Dictionary<Type, string> _defaultOrderField = new()
       {
-         if (parameters.Authors != null && parameters.Authors.Length > 0)
-         {
-            books = books.Where(b => parameters.Authors.Contains(b.AuthorName));
-         }
-
-         if (parameters.Genres != null && parameters.Genres.Length > 0)
-         {
-            books = books.Where(b => parameters.Genres.Contains(b.Genre));
-         }
-
-         return books;
-      }
-
-      public static IQueryable<Author> FilterAuthors(this IQueryable<Author> authors,
-         AuthorParameters parameters)
-      {
-         return authors;
-      }
+         {typeof(Book), nameof(Book.Title)},
+         {typeof(Author), nameof(Author.FirstName)},
+         {typeof(Reader), nameof(Reader.Email)},
+      };
 
       public static IQueryable<T> Page<T>(this IQueryable<T> entities,
          RequestParameters parameters)
@@ -41,44 +27,20 @@ namespace Library.Infrastructure.Data.Extensions
             .Take(parameters.PageSize);
       }
 
-      public static IQueryable<Book> Sort(this IQueryable<Book> books,
+
+      public static IQueryable<T> Sort<T>(this IQueryable<T> query,
          string? queryString)
       {
-         var orderQuery = CreateOrderQuery<Book>(queryString);
+         var orderQuery = CreateOrderQuery<T>(queryString);
 
          if (string.IsNullOrWhiteSpace(queryString) || string.IsNullOrWhiteSpace(orderQuery))
-            return books.OrderBy(b => b.Title);
+         {
+            var defaultOrderField = _defaultOrderField[typeof(T)];
 
-         return books.OrderBy(orderQuery);
-      }
+            return query.OrderBy(defaultOrderField);
+         }
 
-      public static IQueryable<Author> Sort(this IQueryable<Author> books,
-         string? queryString)
-      {
-         var orderQuery = CreateOrderQuery<Author>(queryString);
-
-         if (string.IsNullOrWhiteSpace(queryString) || string.IsNullOrWhiteSpace(orderQuery))
-            return books.OrderBy(b => b.FirstName);
-
-         return books.OrderBy(orderQuery);
-      }
-
-      public static IQueryable<Book> SearchByName(this IQueryable<Book> books,
-         string? searchTerm)
-      {
-         if (string.IsNullOrWhiteSpace(searchTerm)) return books;
-
-         //Convert toLower there since ef core can not translate 
-         //string.Contains with StringComparison to query
-         var lowerTerm = searchTerm.Trim().ToLower();
-
-#pragma warning disable CA1862 // Use the 'StringComparison' method overloads to perform case-insensitive string comparisons
-
-         return books.Where(b => b.Title.ToLower()
-            .Contains(lowerTerm));
-
-#pragma warning restore CA1862 // Use the 'StringComparison' method overloads to perform case-insensitive string comparisons
-
+         return query.OrderBy(orderQuery);
       }
 
       #region Private methods

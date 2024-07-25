@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace Library.Controllers
 {
@@ -77,12 +78,15 @@ namespace Library.Controllers
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
-      public async Task<IActionResult> GetBooks([FromQuery] BookParameters parameters,
+      public async Task<IActionResult> GetBooks([FromQuery] RequestParameters parameters,
          CancellationToken cancellationToken)
       {
          var result = await _sender.Send(new ListBooksQuery(parameters), cancellationToken);
 
-         return Ok(result);
+         Response.Headers.TryAdd("X-Pagination",
+            JsonSerializer.Serialize(result.Pages));
+
+         return Ok(result.Items);
       }
 
       /// <summary>
@@ -220,6 +224,7 @@ namespace Library.Controllers
       /// <summary>
       /// Retrieve list of books that reader borrowed
       /// </summary>
+      /// <param name="parameters"></param>
       /// <param name="cancellationToken"></param>
       /// <returns>List of books</returns>
       ///<response code="200">Returns list of books</response>
@@ -231,13 +236,18 @@ namespace Library.Controllers
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
-      public async Task<IActionResult> GetBooksForReader(CancellationToken cancellationToken)
+      public async Task<IActionResult> GetBooksForReader([FromQuery] RequestParameters parameters,
+         CancellationToken cancellationToken)
       {
          string email = (HttpContext.Items["email"] as string)!;
 
-         var result = await _sender.Send(new ListBooksForReaderQuery(email), cancellationToken);
+         var result = await _sender.Send(new ListBooksForReaderQuery(parameters, email),
+            cancellationToken);
 
-         return Ok(result);
+         Response.Headers.TryAdd("X-Pagination",
+            JsonSerializer.Serialize(result.Pages));
+
+         return Ok(result.Items);
       }
 
    }

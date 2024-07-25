@@ -31,10 +31,10 @@ namespace Library.Test.UseCases.Books.Commands
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Books.GetBookByIdAsync(
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>(),
-                    It.IsAny<Expression<Func<Book, object>>>()))
+                x => x.Books.GetSingle(
+                    It.IsAny<Expression<Func<Book, bool>>>(),
+                    It.IsAny<Expression<Func<Book, object>>>(),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Book() { Id = bookId });
 
             //Act
@@ -42,7 +42,7 @@ namespace Library.Test.UseCases.Books.Commands
 
             //Assert
             _repoMock.Verify(
-                x => x.Books.DeleteBookAsync(It.Is<Book>(b => b.Id.Equals(bookId)),
+                x => x.Books.Delete(It.Is<Book>(b => b.Id.Equals(bookId)),
                     It.IsAny<CancellationToken>()
             ));
             _repoMock.Verify(
@@ -61,10 +61,10 @@ namespace Library.Test.UseCases.Books.Commands
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Books.GetBookByIdAsync(
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>(),
-                    It.IsAny<Expression<Func<Book, object>>>()))
+                x => x.Books.GetSingle(
+                    It.IsAny<Expression<Func<Book, bool>>>(),
+                    It.IsAny<Expression<Func<Book, object>>>(),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(null as Book);
 
             //Act
@@ -72,7 +72,7 @@ namespace Library.Test.UseCases.Books.Commands
 
             //Assert
             _repoMock.Verify(
-                x => x.Books.DeleteBookAsync(It.IsAny<Book>(), It.IsAny<CancellationToken>()),
+                x => x.Books.Delete(It.IsAny<Book>(), It.IsAny<CancellationToken>()),
                 Times.Never
             );
         }
@@ -87,10 +87,10 @@ namespace Library.Test.UseCases.Books.Commands
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Books.GetBookByIdAsync(
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>(),
-                    It.IsAny<Expression<Func<Book, object>>>()))
+                x => x.Books.GetSingle(
+                    It.IsAny<Expression<Func<Book, bool>>>(),
+                    It.IsAny<Expression<Func<Book, object>>>(),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Book() { Id = bookId, ImagePath = "testpath.png" });
 
             //Act

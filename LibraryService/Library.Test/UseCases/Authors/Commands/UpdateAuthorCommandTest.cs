@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Library.Domain.Entities;
 using Library.UseCases.Authors.Commands;
@@ -33,10 +34,10 @@ namespace Library.Test.UseCases.Authors.Commands
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Authors.GetAuthorByIdAsync(
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>()
-                ))
+                x => x.Authors.GetSingle(
+                    It.IsAny<Expression<Func<Author, bool>>>(),
+                    It.IsAny<Expression<Func<Author, object>>>(),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Author() { Id = authorId });
 
             //Act
@@ -44,7 +45,7 @@ namespace Library.Test.UseCases.Authors.Commands
 
             //Assert
             _repoMock.Verify(
-                x => x.Authors.UpdateAuthorAsync(It.Is<Author>(a => a.Id.Equals(authorId)),
+                x => x.Authors.Update(It.Is<Author>(a => a.Id.Equals(authorId)),
                     It.IsAny<CancellationToken>()),
                 Times.AtLeastOnce
             );
@@ -71,15 +72,15 @@ namespace Library.Test.UseCases.Authors.Commands
                 .Returns(new Author());
 
             _repoMock.Setup(
-                x => x.Authors.GetAuthorByIdAsync(
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>()
-                ))
+                x => x.Authors.GetSingle(
+                    It.IsAny<Expression<Func<Author, bool>>>(),
+                    It.IsAny<Expression<Func<Author, object>>>(),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Author() { Id = authorId });
 
 
             _repoMock.Setup(
-                x => x.Authors.UpdateAuthorAsync(
+                x => x.Authors.Update(
                     It.IsAny<Author>(),
                     It.IsAny<CancellationToken>()
                 ))
@@ -116,11 +117,11 @@ namespace Library.Test.UseCases.Authors.Commands
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Authors.GetAuthorByIdAsync(
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>()
-                )
-            ).ReturnsAsync(null as Author);
+                x => x.Authors.GetSingle(
+                    It.IsAny<Expression<Func<Author, bool>>>(),
+                    It.IsAny<Expression<Func<Author, object>>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(null as Author);
 
             //Act
             try

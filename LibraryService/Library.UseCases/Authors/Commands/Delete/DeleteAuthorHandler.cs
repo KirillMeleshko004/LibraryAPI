@@ -19,11 +19,12 @@ namespace Library.UseCases.Authors.Commands
       public async Task Handle(DeleteAuthorCommand request,
          CancellationToken cancellationToken)
       {
-         var author = await _repo.Authors.GetAuthorByIdAsync(request.Id, cancellationToken);
+         var author = await _repo.Authors.GetSingle(a => a.Id.Equals(request.Id),
+            cancellationToken: cancellationToken);
 
          if (author == null) return;
 
-         await _repo.Authors.DeleteAuthorAsync(author, cancellationToken);
+         _repo.Authors.Delete(author, cancellationToken);
          await _repo.SaveChangesAsync();
 
          _logger.LogInformation(AuthorDeletedLog, author.Id);

@@ -27,8 +27,8 @@ namespace Library.UseCases.Books.Queries
       public async Task<BookDto> Handle(GetBookByIdQuery request,
          CancellationToken cancellationToken)
       {
-         var book = await _repo.Books.GetBookByIdAsync(request.Id,
-            cancellationToken, b => b.Author!);
+         var book = await _repo.Books.GetSingle(b => b.Id.Equals(request.Id),
+            b => b.Author!, cancellationToken);
 
          if (book == null)
          {

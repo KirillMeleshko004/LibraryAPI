@@ -5,6 +5,7 @@ using Library.UseCases.Books.DTOs;
 using Library.UseCases.Books.Queries;
 using Library.UseCases.Common.Interfaces;
 using Library.UseCases.Common.RequestFeatures;
+using Library.UseCases.Common.Utility;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -23,29 +24,27 @@ namespace Library.Test.UseCases.Books.Queries
             _mapperMock = new();
         }
 
-        delegate IEnumerable<BookDto> MockMapBookDtoReturns(object src);
+        delegate IPagedEnumerable<BookDto> MockMapBookDtoReturns(object src);
         [Fact]
         public async Task Handle_Should_ReturnBooksList_IfBooksExist()
         {
             //Arrange
-            var bookParams = new BookParameters();
+            var bookParams = new RequestParameters();
 
-            var command = new ListBooksQuery(new BookParameters());
+            var command = new ListBooksQuery(bookParams);
             var handler = new ListBooksHandler(_repoMock.Object, _mapperMock.Object,
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Books.GetBooksAsync(
-                    It.IsAny<BookParameters>(),
-                    It.IsAny<CancellationToken>(),
-                    It.IsAny<Expression<Func<Book, object>>>()))
-                .ReturnsAsync(new List<Book>()
-                {
-                    new(), new(), new(), new()
-                });
+                x => x.Books.GetRange(
+                    It.IsAny<RequestParameters>(),
+                    It.IsAny<Expression<Func<Book, bool>>>(),
+                    It.IsAny<Expression<Func<Book, object>>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new PagedList<Book>([new(), new(), new(), new()], new()));
 
             _mapperMock.Setup(
-                x => x.Map<IEnumerable<BookDto>>(It.IsAny<object>()))
+                x => x.Map<IPagedEnumerable<BookDto>>(It.IsAny<object>()))
                 .Returns(new MockMapBookDtoReturns(bl =>
                 {
                     var booksToReturn = new List<BookDto>();
@@ -53,7 +52,7 @@ namespace Library.Test.UseCases.Books.Queries
                     {
                         booksToReturn.Add(new BookDto());
                     }
-                    return booksToReturn;
+                    return new PagedList<BookDto>(booksToReturn, new());
                 }));
 
             //Act
@@ -67,21 +66,22 @@ namespace Library.Test.UseCases.Books.Queries
         public async Task Handle_Should_ReturnEmptyList_IfNoBooksMatchParams()
         {
             //Arrange
-            var bookParams = new BookParameters();
+            var bookParams = new RequestParameters();
 
-            var command = new ListBooksQuery(new BookParameters());
+            var command = new ListBooksQuery(bookParams);
             var handler = new ListBooksHandler(_repoMock.Object, _mapperMock.Object,
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Books.GetBooksAsync(
-                    It.IsAny<BookParameters>(),
-                    It.IsAny<CancellationToken>(),
-                    It.IsAny<Expression<Func<Book, object>>>()))
-                .ReturnsAsync([]);
+                x => x.Books.GetRange(
+                    It.IsAny<RequestParameters>(),
+                    It.IsAny<Expression<Func<Book, bool>>>(),
+                    It.IsAny<Expression<Func<Book, object>>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new PagedList<Book>([], new()));
 
             _mapperMock.Setup(
-                x => x.Map<IEnumerable<BookDto>>(It.IsAny<object>()))
+                x => x.Map<IPagedEnumerable<BookDto>>(It.IsAny<object>()))
                 .Returns(new MockMapBookDtoReturns(bl =>
                 {
                     var booksToReturn = new List<BookDto>();
@@ -89,7 +89,7 @@ namespace Library.Test.UseCases.Books.Queries
                     {
                         booksToReturn.Add(new BookDto());
                     }
-                    return booksToReturn;
+                    return new PagedList<BookDto>(booksToReturn, new());
                 }));
 
             //Act

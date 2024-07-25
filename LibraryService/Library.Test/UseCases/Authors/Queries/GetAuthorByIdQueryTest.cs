@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Library.Domain.Entities;
 using Library.UseCases.Authors.DTOs;
@@ -34,8 +35,9 @@ namespace Library.Test.UseCases.Authors.Queries
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Authors.GetAuthorByIdAsync(
-                    It.IsAny<Guid>(),
+                x => x.Authors.GetSingle(
+                    It.IsAny<Expression<Func<Author, bool>>>(),
+                    It.IsAny<Expression<Func<Author, object>>>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Author() { Id = authorId });
 
@@ -62,8 +64,9 @@ namespace Library.Test.UseCases.Authors.Queries
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Authors.GetAuthorByIdAsync(
-                    It.IsAny<Guid>(),
+                x => x.Authors.GetSingle(
+                    It.IsAny<Expression<Func<Author, bool>>>(),
+                    It.IsAny<Expression<Func<Author, object>>>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(null as Author);
 

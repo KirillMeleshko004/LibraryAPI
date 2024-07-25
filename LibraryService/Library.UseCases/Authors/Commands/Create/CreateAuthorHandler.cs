@@ -27,7 +27,7 @@ namespace Library.UseCases.Authors.Commands
       {
          var author = _mapper.Map<Author>(request.AuthorDto);
 
-         await _repo.Authors.AddAuthorAsync(author, cancellationToken);
+         _repo.Authors.Create(author, cancellationToken);
          await _repo.SaveChangesAsync();
 
          var authorToReturn = _mapper.Map<AuthorDto>(author);

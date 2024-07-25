@@ -10,7 +10,7 @@ using static Library.UseCases.Common.Messages.ResponseMessages;
 namespace Library.UseCases.Books.Queries
 {
    public class ListBooksByAuthorHandler :
-      IRequestHandler<ListBooksByAuthorQuery, IEnumerable<BookDto>>
+      IRequestHandler<ListBooksByAuthorQuery, IPagedEnumerable<BookDto>>
    {
       private readonly IRepositoryManager _repo;
       private readonly IMapper _mapper;
@@ -23,11 +23,11 @@ namespace Library.UseCases.Books.Queries
          _mapper = mapper;
          _logger = logger;
       }
-      public async Task<IEnumerable<BookDto>> Handle(ListBooksByAuthorQuery request,
+      public async Task<IPagedEnumerable<BookDto>> Handle(ListBooksByAuthorQuery request,
          CancellationToken cancellationToken)
       {
-         var author = await _repo.Authors.GetAuthorByIdAsync(request.AuthorId,
-            cancellationToken);
+         var author = await _repo.Authors.GetSingle(a => a.Id.Equals(request.AuthorId),
+            cancellationToken: cancellationToken);
 
          if (author == null)
          {
@@ -35,12 +35,11 @@ namespace Library.UseCases.Books.Queries
             throw new NotFoundException(string.Format(AuthorNotFound, request.AuthorId));
          }
 
-         var books = await _repo.Books.GetBookByAuthorAsync(
-            request.Parameters,
-            request.AuthorId,
-            cancellationToken);
+         var books = await _repo.Books.GetRange(request.Parameters,
+            condition: b => b.AuthorId.Equals(request.AuthorId),
+            cancellationToken: cancellationToken);
 
-         var booksToReturn = _mapper.Map<IEnumerable<BookDto>>(books);
+         var booksToReturn = _mapper.Map<IPagedEnumerable<BookDto>>(books);
 
          return booksToReturn;
       }

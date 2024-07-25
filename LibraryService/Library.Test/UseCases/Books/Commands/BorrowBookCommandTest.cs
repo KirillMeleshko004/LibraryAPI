@@ -27,15 +27,16 @@ namespace Library.Test.UseCases.Books.Commands
             var handler = new BorrowBookHandler(_repoMock.Object, _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Books.GetBookByIdAsync(
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>(),
-                    It.IsAny<Expression<Func<Book, object>>>()))
+                x => x.Books.GetSingle(
+                    It.IsAny<Expression<Func<Book, bool>>>(),
+                    It.IsAny<Expression<Func<Book, object>>>(),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Book() { IsAvailable = true });
 
             _repoMock.Setup(
-                x => x.Readers.GetReaderByEmailAsync(
-                    It.IsAny<string>(),
+                x => x.Readers.GetSingle(
+                    It.IsAny<Expression<Func<Reader, bool>>>(),
+                    It.IsAny<Expression<Func<Reader, object>>>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Reader());
 
@@ -44,7 +45,7 @@ namespace Library.Test.UseCases.Books.Commands
 
             //Assert
             _repoMock.Verify(
-                x => x.Books.UpdateBookAsync(It.IsAny<Book>(), It.IsAny<CancellationToken>()),
+                x => x.Books.Update(It.IsAny<Book>(), It.IsAny<CancellationToken>()),
                 Times.Once
             );
             _repoMock.Verify(
@@ -61,15 +62,16 @@ namespace Library.Test.UseCases.Books.Commands
             var handler = new BorrowBookHandler(_repoMock.Object, _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Books.GetBookByIdAsync(
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>(),
-                    It.IsAny<Expression<Func<Book, object>>>()))
+                x => x.Books.GetSingle(
+                    It.IsAny<Expression<Func<Book, bool>>>(),
+                    It.IsAny<Expression<Func<Book, object>>>(),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Book() { IsAvailable = true });
 
             _repoMock.SetupSequence(
-                x => x.Readers.GetReaderByEmailAsync(
-                    It.IsAny<string>(),
+                x => x.Readers.GetSingle(
+                    It.IsAny<Expression<Func<Reader, bool>>>(),
+                    It.IsAny<Expression<Func<Reader, object>>>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(null as Reader)
                 .ReturnsAsync(new Reader());
@@ -79,7 +81,7 @@ namespace Library.Test.UseCases.Books.Commands
 
             //Assert
             _repoMock.Verify(
-                x => x.Readers.AddReaderAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()),
+                x => x.Readers.Create(It.IsAny<Reader>(), It.IsAny<CancellationToken>()),
                 Times.Once
             );
             _repoMock.Verify(
@@ -96,20 +98,21 @@ namespace Library.Test.UseCases.Books.Commands
             var handler = new BorrowBookHandler(_repoMock.Object, _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Books.GetBookByIdAsync(
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>(),
-                    It.IsAny<Expression<Func<Book, object>>>()))
+                x => x.Books.GetSingle(
+                    It.IsAny<Expression<Func<Book, bool>>>(),
+                    It.IsAny<Expression<Func<Book, object>>>(),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Book() { IsAvailable = true });
 
             _repoMock.Setup(
-                x => x.Readers.GetReaderByEmailAsync(
-                    It.IsAny<string>(),
+                x => x.Readers.GetSingle(
+                    It.IsAny<Expression<Func<Reader, bool>>>(),
+                    It.IsAny<Expression<Func<Reader, object>>>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Reader() { Id = new Guid("14ca202e-dfb4-4d97-b7ef-76cf510bf319") });
 
             _repoMock.Setup(
-                x => x.Books.UpdateBookAsync(
+                x => x.Books.Update(
                     It.IsAny<Book>(),
                     It.IsAny<CancellationToken>()
                 )
@@ -120,7 +123,7 @@ namespace Library.Test.UseCases.Books.Commands
 
             //Assert
             _repoMock.Verify(
-                x => x.Books.UpdateBookAsync(
+                x => x.Books.Update(
                     It.Is<Book>(b => b.IsAvailable == false &&
                         b.CurrentReaderId.Equals(new Guid("14ca202e-dfb4-4d97-b7ef-76cf510bf319")) &&
                         b.BorrowTime != null && b.ReturnTime != null),
@@ -137,10 +140,10 @@ namespace Library.Test.UseCases.Books.Commands
             var handler = new BorrowBookHandler(_repoMock.Object, _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Books.GetBookByIdAsync(
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>(),
-                    It.IsAny<Expression<Func<Book, object>>>()))
+                x => x.Books.GetSingle(
+                    It.IsAny<Expression<Func<Book, bool>>>(),
+                    It.IsAny<Expression<Func<Book, object>>>(),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(null as Book);
 
             //Act
@@ -166,10 +169,10 @@ namespace Library.Test.UseCases.Books.Commands
             var handler = new BorrowBookHandler(_repoMock.Object, _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Books.GetBookByIdAsync(
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>(),
-                    It.IsAny<Expression<Func<Book, object>>>()))
+                x => x.Books.GetSingle(
+                    It.IsAny<Expression<Func<Book, bool>>>(),
+                    It.IsAny<Expression<Func<Book, object>>>(),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Book { IsAvailable = false });
 
             //Act

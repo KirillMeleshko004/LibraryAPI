@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Library.Controllers.Filters;
 using Library.UseCases.Authors.Commands;
 using Library.UseCases.Authors.DTOs;
@@ -38,12 +39,15 @@ namespace Library.Controllers
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
-      public async Task<IActionResult> GetAuthors([FromQuery] AuthorParameters parameters,
+      public async Task<IActionResult> GetAuthors([FromQuery] RequestParameters parameters,
          CancellationToken cancellationToken)
       {
          var result = await _sender.Send(new ListAuthorsQuery(parameters), cancellationToken);
 
-         return Ok(result);
+         Response.Headers.TryAdd("X-Pagination",
+            JsonSerializer.Serialize(result.Pages));
+
+         return Ok(result.Items);
       }
 
       /// <summary>
@@ -151,12 +155,15 @@ namespace Library.Controllers
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       public async Task<IActionResult> GetBooksForAuthor(Guid id,
-         [FromQuery] BookParameters parameters, CancellationToken cancellationToken)
+         [FromQuery] RequestParameters parameters, CancellationToken cancellationToken)
       {
          var result =
             await _sender.Send(new ListBooksByAuthorQuery(parameters, id), cancellationToken);
 
-         return Ok(result);
+         Response.Headers.TryAdd("X-Pagination",
+            JsonSerializer.Serialize(result.Pages));
+
+         return Ok(result.Items);
       }
    }
 }

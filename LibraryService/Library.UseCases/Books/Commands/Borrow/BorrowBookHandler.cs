@@ -1,3 +1,4 @@
+using Library.Domain.Entities;
 using Library.UseCases.Common.Interfaces;
 using Library.UseCases.Exceptions;
 using MediatR;
@@ -21,7 +22,7 @@ namespace Library.UseCases.Books.Commands
       public async Task Handle(BorrowBookCommand request, CancellationToken cancellationToken)
       {
          var book = await _repo.Books
-            .GetBookByIdAsync(request.BookId, cancellationToken);
+            .GetSingle(b => b.Id.Equals(request.BookId), cancellationToken: cancellationToken);
 
          if (book == null)
          {
@@ -35,14 +36,17 @@ namespace Library.UseCases.Books.Commands
          }
 
          var reader = await _repo.Readers
-            .GetReaderByEmailAsync(request.ReaderEmail, cancellationToken);
+            .GetSingle(r => r.Email.Equals(request.ReaderEmail),
+               cancellationToken: cancellationToken);
 
          if (reader == null)
          {
-            await _repo.Readers.AddReaderAsync(request.ReaderEmail, cancellationToken);
+            reader = new Reader
+            {
+               Email = request.ReaderEmail
+            };
+            _repo.Readers.Create(reader, cancellationToken);
             await _repo.SaveChangesAsync();
-            reader = await _repo.Readers
-               .GetReaderByEmailAsync(request.ReaderEmail, cancellationToken);
          }
 
          book.IsAvailable = false;
@@ -51,7 +55,7 @@ namespace Library.UseCases.Books.Commands
          book.ReturnTime = DateTime.Now.AddDays(30);
 
          //Test if necessary
-         await _repo.Books.UpdateBookAsync(book, cancellationToken);
+         _repo.Books.Update(book, cancellationToken);
          await _repo.SaveChangesAsync();
       }
    }

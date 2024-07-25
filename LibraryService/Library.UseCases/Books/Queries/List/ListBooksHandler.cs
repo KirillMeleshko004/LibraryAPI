@@ -3,11 +3,10 @@ using Library.UseCases.Books.DTOs;
 using Library.UseCases.Common.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using static Library.UseCases.Common.Messages.ResponseMessages;
 
 namespace Library.UseCases.Books.Queries
 {
-   public class ListBooksHandler : IRequestHandler<ListBooksQuery, IEnumerable<BookDto>>
+   public class ListBooksHandler : IRequestHandler<ListBooksQuery, IPagedEnumerable<BookDto>>
    {
       private readonly IRepositoryManager _repo;
       private readonly IMapper _mapper;
@@ -21,13 +20,13 @@ namespace Library.UseCases.Books.Queries
          _logger = logger;
       }
 
-      public async Task<IEnumerable<BookDto>> Handle(ListBooksQuery request,
+      public async Task<IPagedEnumerable<BookDto>> Handle(ListBooksQuery request,
          CancellationToken cancellationToken)
       {
-         var books = await _repo.Books.GetBooksAsync(request.Parameters,
-            cancellationToken);
+         var books = await _repo.Books.GetRange(request.Parameters,
+            cancellationToken: cancellationToken);
 
-         var booksToReturn = _mapper.Map<IEnumerable<BookDto>>(books);
+         var booksToReturn = _mapper.Map<IPagedEnumerable<BookDto>>(books);
 
          return booksToReturn;
       }

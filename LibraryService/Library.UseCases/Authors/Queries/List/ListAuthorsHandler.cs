@@ -3,12 +3,11 @@ using Library.UseCases.Authors.DTOs;
 using Library.UseCases.Common.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using static Library.UseCases.Common.Messages.ResponseMessages;
 
 namespace Library.UseCases.Authors.Queries
 {
    public class ListAuthorsHandler :
-      IRequestHandler<ListAuthorsQuery, IEnumerable<AuthorDto>>
+      IRequestHandler<ListAuthorsQuery, IPagedEnumerable<AuthorDto>>
    {
 
       private readonly IRepositoryManager _repo;
@@ -23,13 +22,13 @@ namespace Library.UseCases.Authors.Queries
          _logger = logger;
       }
 
-      public async Task<IEnumerable<AuthorDto>> Handle(ListAuthorsQuery request,
+      public async Task<IPagedEnumerable<AuthorDto>> Handle(ListAuthorsQuery request,
          CancellationToken cancellationToken)
       {
          var authors = await _repo.Authors
-            .GetAuthorsAsync(request.Parameters, cancellationToken);
+            .GetRange(request.Parameters, cancellationToken: cancellationToken);
 
-         var authorsToReturn = _mapper.Map<IEnumerable<AuthorDto>>(authors);
+         var authorsToReturn = _mapper.Map<IPagedEnumerable<AuthorDto>>(authors);
 
          return authorsToReturn;
       }

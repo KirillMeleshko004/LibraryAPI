@@ -5,6 +5,7 @@ using Library.UseCases.Books.DTOs;
 using Library.UseCases.Books.Queries;
 using Library.UseCases.Common.Interfaces;
 using Library.UseCases.Common.RequestFeatures;
+using Library.UseCases.Common.Utility;
 using Library.UseCases.Exceptions;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -24,36 +25,34 @@ namespace Library.Test.UseCases.Books.Queries
             _mapperMock = new();
         }
 
-        delegate IEnumerable<BookDto> MockMapBookDtoReturns(object src);
+        delegate IPagedEnumerable<BookDto> MockMapBookDtoReturns(object src);
         [Fact]
         public async Task Handle_Should_ReturnBooksList_IfReaderExist()
         {
             //Arrange
             var email = "test@test.com";
 
-            var command = new ListBooksForReaderQuery(email);
+            var command = new ListBooksForReaderQuery(new RequestParameters(), email);
             var handler = new ListBooksForReaderHandler(_repoMock.Object, _mapperMock.Object,
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Readers.GetReaderByEmailAsync(
-                    It.IsAny<string>(),
-                    It.IsAny<CancellationToken>()
-                ))
+                x => x.Readers.GetSingle(
+                    It.IsAny<Expression<Func<Reader, bool>>>(),
+                    It.IsAny<Expression<Func<Reader, object>>>(),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Reader());
 
             _repoMock.Setup(
-                x => x.Books.GetBookByReaderAsync(
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>(),
-                    It.IsAny<Expression<Func<Book, object>>>()))
-                .ReturnsAsync(new List<Book>()
-                {
-                    new(), new(), new(), new()
-                });
+                x => x.Books.GetRange(
+                    It.IsAny<RequestParameters>(),
+                    It.IsAny<Expression<Func<Book, bool>>>(),
+                    It.IsAny<Expression<Func<Book, object>>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new PagedList<Book>([new(), new(), new(), new()], new()));
 
             _mapperMock.Setup(
-                x => x.Map<IEnumerable<BookDto>>(It.IsAny<object>()))
+                x => x.Map<IPagedEnumerable<BookDto>>(It.IsAny<object>()))
                 .Returns(new MockMapBookDtoReturns(bl =>
                 {
                     var booksToReturn = new List<BookDto>();
@@ -61,7 +60,7 @@ namespace Library.Test.UseCases.Books.Queries
                     {
                         booksToReturn.Add(new BookDto());
                     }
-                    return booksToReturn;
+                    return new PagedList<BookDto>(booksToReturn, new());
                 }));
 
             //Act
@@ -77,26 +76,27 @@ namespace Library.Test.UseCases.Books.Queries
             //Arrange
             var email = "test@test.com";
 
-            var command = new ListBooksForReaderQuery(email);
+            var command = new ListBooksForReaderQuery(new RequestParameters(), email);
             var handler = new ListBooksForReaderHandler(_repoMock.Object, _mapperMock.Object,
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Readers.GetReaderByEmailAsync(
-                    It.IsAny<string>(),
-                    It.IsAny<CancellationToken>()
-                ))
+                x => x.Readers.GetSingle(
+                    It.IsAny<Expression<Func<Reader, bool>>>(),
+                    It.IsAny<Expression<Func<Reader, object>>>(),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Reader());
 
             _repoMock.Setup(
-                x => x.Books.GetBookByReaderAsync(
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>(),
-                    It.IsAny<Expression<Func<Book, object>>>()))
-                .ReturnsAsync([]);
+                x => x.Books.GetRange(
+                    It.IsAny<RequestParameters>(),
+                    It.IsAny<Expression<Func<Book, bool>>>(),
+                    It.IsAny<Expression<Func<Book, object>>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new PagedList<Book>([], new()));
 
             _mapperMock.Setup(
-                x => x.Map<IEnumerable<BookDto>>(It.IsAny<object>()))
+                x => x.Map<IPagedEnumerable<BookDto>>(It.IsAny<object>()))
                 .Returns(new MockMapBookDtoReturns(bl =>
                 {
                     var booksToReturn = new List<BookDto>();
@@ -104,7 +104,7 @@ namespace Library.Test.UseCases.Books.Queries
                     {
                         booksToReturn.Add(new BookDto());
                     }
-                    return booksToReturn;
+                    return new PagedList<BookDto>(booksToReturn, new());
                 }));
 
             //Act
@@ -120,15 +120,15 @@ namespace Library.Test.UseCases.Books.Queries
             //Arrange
             var email = "test@test.com";
 
-            var command = new ListBooksForReaderQuery(email);
+            var command = new ListBooksForReaderQuery(new RequestParameters(), email);
             var handler = new ListBooksForReaderHandler(_repoMock.Object, _mapperMock.Object,
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Readers.GetReaderByEmailAsync(
-                    It.IsAny<string>(),
-                    It.IsAny<CancellationToken>()
-                ))
+                x => x.Readers.GetSingle(
+                    It.IsAny<Expression<Func<Reader, bool>>>(),
+                    It.IsAny<Expression<Func<Reader, object>>>(),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(null as Reader);
 
             //Act

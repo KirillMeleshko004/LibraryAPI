@@ -11,5 +11,6 @@ namespace Library.Domain.Entities
       public string Country { get; set; } = null!;
 
       public IEnumerable<Book>? Books { get; set; }
+
    }
 }

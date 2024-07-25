@@ -3,13 +3,11 @@ using Library.UseCases.Common.RequestFeatures;
 
 namespace Library.UseCases.Common.Validators.RequestParams
 {
-    public abstract class RequestParametersValidator<T> : AbstractValidator<T>
-        where T : RequestParameters
+    public class RequestParametersValidator : AbstractValidator<RequestParameters>
     {
         protected const int MIN_PAGE_SIZE = 1;
         protected const int MAX_PAGE_SIZE = 50;
         protected const int ORDER_MAX_LENGTH = 100;
-        protected const int SEARCH_MAX_LENGTH = 100;
 
         public RequestParametersValidator()
         {
@@ -22,8 +20,6 @@ namespace Library.UseCases.Common.Validators.RequestParams
             RuleFor(p => p.OrderBy)
                 .MaximumLength(ORDER_MAX_LENGTH);
 
-            RuleFor(p => p.SearchTerm)
-                .MaximumLength(SEARCH_MAX_LENGTH);
         }
     }
 }

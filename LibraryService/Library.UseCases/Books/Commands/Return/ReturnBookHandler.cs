@@ -23,7 +23,8 @@ namespace Library.UseCases.Books.Commands
          CancellationToken cancellationToken)
       {
          var reader = await _repo.Readers
-            .GetReaderByEmailAsync(request.ReaderEmail, cancellationToken);
+            .GetSingle(r => r.Email.Equals(request.ReaderEmail),
+               cancellationToken: cancellationToken);
 
          if (reader == null)
          {
@@ -31,7 +32,8 @@ namespace Library.UseCases.Books.Commands
             throw new UnauthorizedException("Invalid reader.");
          }
 
-         var book = await _repo.Books.GetBookByIdAsync(request.BookId, cancellationToken);
+         var book = await _repo.Books
+            .GetSingle(b => b.Id.Equals(request.BookId), cancellationToken: cancellationToken);
 
          if (book == null)
          {
@@ -52,7 +54,7 @@ namespace Library.UseCases.Books.Commands
          book.BorrowTime = null;
          book.ReturnTime = null;
 
-         await _repo.Books.UpdateBookAsync(book, cancellationToken);
+         _repo.Books.Update(book, cancellationToken);
          await _repo.SaveChangesAsync();
       }
    }

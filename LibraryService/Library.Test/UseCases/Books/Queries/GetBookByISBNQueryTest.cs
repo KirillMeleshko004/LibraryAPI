@@ -35,10 +35,10 @@ namespace Library.Test.UseCases.Books.Queries
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Books.GetBookByISBNAsync(
-                    It.IsAny<string>(),
-                    It.IsAny<CancellationToken>(),
-                    It.IsAny<Expression<Func<Book, object>>>()))
+                x => x.Books.GetSingle(
+                    It.IsAny<Expression<Func<Book, bool>>>(),
+                    It.IsAny<Expression<Func<Book, object>>>(),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Book() { ISBN = ISBN });
 
             _mapperMock.Setup(
@@ -66,10 +66,10 @@ namespace Library.Test.UseCases.Books.Queries
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Books.GetBookByIdAsync(
-                    It.IsAny<Guid>(),
-                    It.IsAny<CancellationToken>(),
-                    It.IsAny<Expression<Func<Book, object>>>()))
+                x => x.Books.GetSingle(
+                    It.IsAny<Expression<Func<Book, bool>>>(),
+                    It.IsAny<Expression<Func<Book, object>>>(),
+                    It.IsAny<CancellationToken>()))
                 .ReturnsAsync(null as Book);
 
             //Act

@@ -30,7 +30,8 @@ namespace Library.UseCases.Books.Commands
          CancellationToken cancellationToken)
       {
          var author = await _repo.Authors
-            .GetAuthorByIdAsync(request.BookDto.AuthorId, cancellationToken);
+            .GetSingle(a => a.Id.Equals(request.BookDto.AuthorId),
+               cancellationToken: cancellationToken);
 
          if (author == null)
          {
@@ -49,10 +50,13 @@ namespace Library.UseCases.Books.Commands
                request.BookDto.ImageName);
          }
 
-         await _repo.Books.AddBookAsync(book, cancellationToken);
+         _repo.Books.Create(book, cancellationToken);
          await _repo.SaveChangesAsync();
 
          _logger.LogInformation(BookCreatedLog, book.Id);
+
+         book = await _repo.Books.GetSingle(b => b.Id.Equals(book.Id),
+            b => b.Author!, cancellationToken);
 
          var bookToReturn = _mapper.Map<BookDto>(book);
 

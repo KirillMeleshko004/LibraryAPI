@@ -26,8 +26,8 @@ namespace Library.UseCases.Authors.Commands
       public async Task<AuthorDto> Handle(UpdateAuthorCommand request,
          CancellationToken cancellationToken)
       {
-         var author = await _repo.Authors
-            .GetAuthorByIdAsync(request.AuthorId, cancellationToken);
+         var author = await _repo.Authors.GetSingle(a => a.Id.Equals(request.AuthorId),
+            cancellationToken: cancellationToken);
 
          if (author == null)
          {
@@ -37,7 +37,7 @@ namespace Library.UseCases.Authors.Commands
          }
 
          _mapper.Map(request.AuthorDto, author);
-         await _repo.Authors.UpdateAuthorAsync(author, cancellationToken);
+         _repo.Authors.Update(author, cancellationToken);
          await _repo.SaveChangesAsync();
 
          var authorToReturn = _mapper.Map<AuthorDto>(author);

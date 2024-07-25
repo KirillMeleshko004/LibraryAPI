@@ -7,6 +7,7 @@ using Library.UseCases.Books.DTOs;
 using Library.UseCases.Books.Queries;
 using Library.UseCases.Common.Interfaces;
 using Library.UseCases.Common.RequestFeatures;
+using Library.UseCases.Common.Utility;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -25,28 +26,27 @@ namespace Library.Test.UseCases.Books.Queries
             _mapperMock = new();
         }
 
-        delegate IEnumerable<AuthorDto> MockMapAuthorDtoReturns(object src);
+        delegate IPagedEnumerable<AuthorDto> MockMapAuthorDtoReturns(object src);
         [Fact]
         public async Task Handle_Should_ReturnBooksList_IfBooksExist()
         {
             //Arrange
-            var authorParameters = new AuthorParameters();
+            var authorParameters = new RequestParameters();
 
             var command = new ListAuthorsQuery(authorParameters);
             var handler = new ListAuthorsHandler(_repoMock.Object, _mapperMock.Object,
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Authors.GetAuthorsAsync(
-                    It.IsAny<AuthorParameters>(),
+                x => x.Authors.GetRange(
+                    It.IsAny<RequestParameters>(),
+                    It.IsAny<Expression<Func<Author, bool>>>(),
+                    It.IsAny<Expression<Func<Author, object>>>(),
                     It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new List<Author>()
-                {
-                    new(), new(), new(), new()
-                });
+                .ReturnsAsync(new PagedList<Author>([new(), new(), new(), new()], new()));
 
             _mapperMock.Setup(
-                x => x.Map<IEnumerable<AuthorDto>>(It.IsAny<object>()))
+                x => x.Map<IPagedEnumerable<AuthorDto>>(It.IsAny<object>()))
                 .Returns(new MockMapAuthorDtoReturns(bl =>
                 {
                     var authorsToReturn = new List<AuthorDto>();
@@ -54,7 +54,7 @@ namespace Library.Test.UseCases.Books.Queries
                     {
                         authorsToReturn.Add(new AuthorDto());
                     }
-                    return authorsToReturn;
+                    return new PagedList<AuthorDto>(authorsToReturn, new());
                 }));
 
             //Act
@@ -68,20 +68,22 @@ namespace Library.Test.UseCases.Books.Queries
         public async Task Handle_Should_ReturnEmptyList_IfNoBooksMatchParams()
         {
             //Arrange
-            var authorParameters = new AuthorParameters();
+            var authorParameters = new RequestParameters();
 
             var command = new ListAuthorsQuery(authorParameters);
             var handler = new ListAuthorsHandler(_repoMock.Object, _mapperMock.Object,
                 _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Authors.GetAuthorsAsync(
-                    It.IsAny<AuthorParameters>(),
+                x => x.Authors.GetRange(
+                    It.IsAny<RequestParameters>(),
+                    It.IsAny<Expression<Func<Author, bool>>>(),
+                    It.IsAny<Expression<Func<Author, object>>>(),
                     It.IsAny<CancellationToken>()))
-                .ReturnsAsync([]);
+                .ReturnsAsync(new PagedList<Author>([], new()));
 
             _mapperMock.Setup(
-                x => x.Map<IEnumerable<AuthorDto>>(It.IsAny<object>()))
+                x => x.Map<IPagedEnumerable<AuthorDto>>(It.IsAny<object>()))
                 .Returns(new MockMapAuthorDtoReturns(al =>
                 {
                     var authorsToReturn = new List<AuthorDto>();
@@ -89,7 +91,7 @@ namespace Library.Test.UseCases.Books.Queries
                     {
                         authorsToReturn.Add(new AuthorDto());
                     }
-                    return authorsToReturn;
+                    return new PagedList<AuthorDto>(authorsToReturn, new());
                 }));
 
             //Act

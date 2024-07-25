@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Library.Domain.Entities;
 using Library.UseCases.Authors.Commands;
 using Library.UseCases.Common.Interfaces;
@@ -26,8 +27,9 @@ namespace Library.Test.UseCases.Authors.Commands
             var handler = new DeleteAuthorHandler(_repoMock.Object, _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Authors.GetAuthorByIdAsync(
-                    It.IsAny<Guid>(),
+                x => x.Authors.GetSingle(
+                    It.IsAny<Expression<Func<Author, bool>>>(),
+                    It.IsAny<Expression<Func<Author, object>>>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Author() { Id = authorId });
 
@@ -36,7 +38,7 @@ namespace Library.Test.UseCases.Authors.Commands
 
             //Assert
             _repoMock.Verify(
-                x => x.Authors.DeleteAuthorAsync(It.Is<Author>(a => a.Id.Equals(authorId)),
+                x => x.Authors.Delete(It.Is<Author>(a => a.Id.Equals(authorId)),
                     It.IsAny<CancellationToken>()
             ));
             _repoMock.Verify(
@@ -54,8 +56,9 @@ namespace Library.Test.UseCases.Authors.Commands
             var handler = new DeleteAuthorHandler(_repoMock.Object, _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Authors.GetAuthorByIdAsync(
-                    It.IsAny<Guid>(),
+                x => x.Authors.GetSingle(
+                    It.IsAny<Expression<Func<Author, bool>>>(),
+                    It.IsAny<Expression<Func<Author, object>>>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(null as Author);
 
@@ -64,7 +67,7 @@ namespace Library.Test.UseCases.Authors.Commands
 
             //Assert
             _repoMock.Verify(
-                x => x.Authors.DeleteAuthorAsync(It.IsAny<Author>(), It.IsAny<CancellationToken>()),
+                x => x.Authors.Delete(It.IsAny<Author>(), It.IsAny<CancellationToken>()),
                 Times.Never
             );
         }

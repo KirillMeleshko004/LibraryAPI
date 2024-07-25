@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Library.Domain.Entities;
 using Library.UseCases.Books.Commands;
@@ -33,8 +34,9 @@ namespace Library.Test.UseCases.Books.Commands
                 _imageMock.Object, _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Authors.GetAuthorByIdAsync(
-                    It.IsAny<Guid>(),
+                x => x.Authors.GetSingle(
+                    It.IsAny<Expression<Func<Author, bool>>>(),
+                    It.IsAny<Expression<Func<Author, object>>>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Author());
 
@@ -54,7 +56,7 @@ namespace Library.Test.UseCases.Books.Commands
 
             //Assert
             _repoMock.Verify(
-                x => x.Books.AddBookAsync(It.IsAny<Book>(), It.IsAny<CancellationToken>()),
+                x => x.Books.Create(It.IsAny<Book>(), It.IsAny<CancellationToken>()),
                 Times.Once
             );
             _repoMock.Verify(
@@ -74,8 +76,9 @@ namespace Library.Test.UseCases.Books.Commands
                 _imageMock.Object, _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Authors.GetAuthorByIdAsync(
-                    It.IsAny<Guid>(),
+                x => x.Authors.GetSingle(
+                    It.IsAny<Expression<Func<Author, bool>>>(),
+                    It.IsAny<Expression<Func<Author, object>>>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Author());
 
@@ -101,7 +104,7 @@ namespace Library.Test.UseCases.Books.Commands
         }
 
         delegate void MockAddBookAsyncCallback(Book book, CancellationToken ct);
-        delegate BookDto MockMapBookDtoReturnsReturns(object src);
+        delegate BookDto MockMapBookDtoReturns(object src);
 
         [Fact]
         public async Task Handle_Should_ReturnCreatedBook_IfAuthorExist()
@@ -112,13 +115,21 @@ namespace Library.Test.UseCases.Books.Commands
                 _imageMock.Object, _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Authors.GetAuthorByIdAsync(
-                    It.IsAny<Guid>(),
+                x => x.Authors.GetSingle(
+                    It.IsAny<Expression<Func<Author, bool>>>(),
+                    It.IsAny<Expression<Func<Author, object>>>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new Author());
 
             _repoMock.Setup(
-                x => x.Books.AddBookAsync(It.IsAny<Book>(), It.IsAny<CancellationToken>()))
+                x => x.Books.GetSingle(
+                    It.IsAny<Expression<Func<Book, bool>>>(),
+                    It.IsAny<Expression<Func<Book, object>>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new Book() { Id = new Guid("14ca202e-dfb4-4d97-b7ef-76cf510bf319") });
+
+            _repoMock.Setup(
+                x => x.Books.Create(It.IsAny<Book>(), It.IsAny<CancellationToken>()))
                 .Callback(
                     new MockAddBookAsyncCallback((Book book, CancellationToken ct) =>
                     {
@@ -132,7 +143,7 @@ namespace Library.Test.UseCases.Books.Commands
 
             _mapperMock.Setup(
                 x => x.Map<BookDto>(It.IsAny<object>()))
-                .Returns(new MockMapBookDtoReturnsReturns((b =>
+                .Returns(new MockMapBookDtoReturns((b =>
                 {
                     return new BookDto() { Id = (b as Book)!.Id };
                 }))
@@ -155,8 +166,9 @@ namespace Library.Test.UseCases.Books.Commands
                 _imageMock.Object, _loggerMock.Object);
 
             _repoMock.Setup(
-                x => x.Authors.GetAuthorByIdAsync(
-                    It.IsAny<Guid>(),
+                x => x.Authors.GetSingle(
+                    It.IsAny<Expression<Func<Author, bool>>>(),
+                    It.IsAny<Expression<Func<Author, object>>>(),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(null as Author);
 

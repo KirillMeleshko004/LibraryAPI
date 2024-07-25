@@ -33,7 +33,7 @@ namespace Library.Test.UseCases.Authors.Commands
                 x => x.Map<Author>(It.IsAny<object>()))
                 .Returns(new Author());
             _repoMock.Setup(
-                x => x.Authors.AddAuthorAsync(
+                x => x.Authors.Create(
                     It.IsAny<Author>(),
                     It.IsAny<CancellationToken>())
                 );
@@ -43,7 +43,7 @@ namespace Library.Test.UseCases.Authors.Commands
 
             //Assert
             _repoMock.Verify(
-                x => x.Authors.AddAuthorAsync(It.IsAny<Author>(), It.IsAny<CancellationToken>()),
+                x => x.Authors.Create(It.IsAny<Author>(), It.IsAny<CancellationToken>()),
                 Times.Once
             );
             _repoMock.Verify(
@@ -69,7 +69,7 @@ namespace Library.Test.UseCases.Authors.Commands
                 .Returns(new Author());
 
             _repoMock.Setup(
-                x => x.Authors.AddAuthorAsync(
+                x => x.Authors.Create(
                     It.IsAny<Author>(),
                     It.IsAny<CancellationToken>())
                 )

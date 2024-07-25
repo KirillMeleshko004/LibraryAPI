@@ -26,7 +26,8 @@ namespace Library.UseCases.Authors.Queries
       public async Task<AuthorDto> Handle(GetAuthorByIdQuery request,
          CancellationToken cancellationToken)
       {
-         var author = await _repo.Authors.GetAuthorByIdAsync(request.Id, cancellationToken);
+         var author = await _repo.Authors.GetSingle(a => a.Id.Equals(request.Id),
+            cancellationToken: cancellationToken);
 
          if (author == null)
          {

@@ -21,12 +21,13 @@ namespace Library.UseCases.Books.Commands
       public async Task Handle(DeleteBookCommand request,
          CancellationToken cancellationToken)
       {
-         var book = await _repo.Books.GetBookByIdAsync(request.Id, cancellationToken);
+         var book = await _repo.Books
+            .GetSingle(b => b.Id.Equals(request.Id), cancellationToken: cancellationToken);
 
          //If book not exist or already deleted
          if (book == null) return;
 
-         await _repo.Books.DeleteBookAsync(book, cancellationToken);
+         _repo.Books.Delete(book, cancellationToken);
          if (!string.IsNullOrWhiteSpace(book.ImagePath))
          {
             await _images.DeleteImageAsync(book.ImagePath!);

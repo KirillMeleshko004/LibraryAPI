@@ -28,7 +28,8 @@ namespace Library.UseCases.Books.Commands
       public async Task<BookDto> Handle(UpdateBookCommand request,
          CancellationToken cancellationToken)
       {
-         var book = await _repo.Books.GetBookByIdAsync(request.BookId, cancellationToken);
+         var book = await _repo.Books
+            .GetSingle(b => b.Id.Equals(request.BookId), cancellationToken: cancellationToken);
 
          if (book == null)
          {
@@ -39,7 +40,8 @@ namespace Library.UseCases.Books.Commands
          if (!request.BookDto.AuthorId.Equals(book.AuthorId))
          {
             var newAuthorId = request.BookDto.AuthorId;
-            var author = await _repo.Authors.GetAuthorByIdAsync(newAuthorId, cancellationToken);
+            var author = await _repo.Authors.GetSingle(a => a.Id.Equals(newAuthorId),
+               cancellationToken: cancellationToken);
 
             if (author == null)
             {
@@ -64,7 +66,7 @@ namespace Library.UseCases.Books.Commands
                request.BookDto.ImageName);
          }
 
-         await _repo.Books.UpdateBookAsync(book, cancellationToken);
+         _repo.Books.Update(book, cancellationToken);
          await _repo.SaveChangesAsync();
 
          var bookToReturn = _mapper.Map<BookDto>(book);
