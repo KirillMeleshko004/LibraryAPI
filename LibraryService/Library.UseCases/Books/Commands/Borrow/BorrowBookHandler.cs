@@ -3,7 +3,6 @@ using Library.UseCases.Common.Interfaces;
 using Library.UseCases.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using static Library.UseCases.Common.Messages.LoggingMessages;
 using static Library.UseCases.Common.Messages.ResponseMessages;
 
 namespace Library.UseCases.Books.Commands
@@ -26,7 +25,6 @@ namespace Library.UseCases.Books.Commands
 
          if (book == null)
          {
-            _logger.LogWarning(BookNotFoundLog, request.BookId);
             throw new NotFoundException(string.Format(BookNotFound, request.BookId));
          }
 

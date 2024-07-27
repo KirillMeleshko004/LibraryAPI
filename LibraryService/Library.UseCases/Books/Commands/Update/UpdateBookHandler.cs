@@ -4,7 +4,6 @@ using Library.UseCases.Common.Interfaces;
 using Library.UseCases.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using static Library.UseCases.Common.Messages.LoggingMessages;
 using static Library.UseCases.Common.Messages.ResponseMessages;
 
 namespace Library.UseCases.Books.Commands
@@ -33,7 +32,6 @@ namespace Library.UseCases.Books.Commands
 
          if (book == null)
          {
-            _logger.LogWarning(BookNotFoundLog, request.BookId);
             throw new NotFoundException(string.Format(BookNotFound, request.BookId));
          }
 
@@ -45,8 +43,7 @@ namespace Library.UseCases.Books.Commands
 
             if (author == null)
             {
-               _logger.LogWarning(IncorrectAuthorIdLog, newAuthorId);
-               throw new UnprocessableEntityException(string.Format(IncorrectAuthorId, newAuthorId));
+               throw new UnprocessableEntityException(string.Format(AuthorNotFound, newAuthorId));
             }
 
             book.AuthorName = $"{author.FirstName} {author.LastName}";

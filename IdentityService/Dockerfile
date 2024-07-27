@@ -1,8 +1,8 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 as build
 WORKDIR /source
 
-COPY *.sln .
-COPY */*.csproj .
+COPY ./IdentityService/*.sln .
+COPY ./IdentityService/*/*.csproj .
 
 # create directory for each .csproj file and move each .csproj to corresponding directory
 RUN for file in $(ls *.csproj); do \
@@ -12,22 +12,37 @@ RUN for file in $(ls *.csproj); do \
    mkdir -p ./${file%.*}/ && mv $file ./${file%.*}/; \
    done;
 
-# restore all depen  dencies in .csproj files according to .sln file
+# restore all dependencies in .csproj files according to .sln file
 RUN dotnet restore;
 
 # copy all files and publish application
 # default publishing folder - ./{ProjectName}/bin/{Enviroment}/{.net version}
-COPY . .
-RUN dotnet publish ./LibraryApi.Identity.Web/LibraryApi.Identity.Web.csproj -c release --no-restore;
+COPY ./IdentityService/. .
+
+RUN dotnet publish ./Identity.Api/Identity.Api.csproj -c release --no-restore;
 
 # move results of app publishing into single folder for convenience
-RUN mv ./LibraryApi.Identity.Web/bin/release/net8.0 ./app;
+RUN mv ./Identity.Api/bin/release/net8.0 ./app;
 
+
+#stage for cert creation
+FROM mcr.microsoft.com/dotnet/sdk:8.0 as certs
+WORKDIR /source
+
+COPY ./CertCreator/*.sln .
+COPY ./CertCreator/*.csproj .
+COPY ./CertCreator/. .
+
+RUN dotnet restore;
+RUN dotnet publish ./CertCreator.csproj -c release --no-restore;
+RUN dotnet ./bin/release/net8.0/CertCreator.dll
+RUN ls -laRt
 
 #for next stage of image building use another baseimage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
+
 WORKDIR /app
 COPY --from=build source/app ./
-COPY ./Certs ./Certs
+COPY --from=certs source/Certs ./Certs
 
-ENTRYPOINT ["dotnet", "LibraryApi.Identity.Web.dll"]
+ENTRYPOINT ["dotnet", "Identity.Api.dll"]

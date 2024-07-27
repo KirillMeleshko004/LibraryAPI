@@ -3,7 +3,6 @@ using Library.UseCases.Common.Messages;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using static Library.UseCases.Common.Messages.ResponseMessages;
-using static Library.UseCases.Common.Messages.LoggingMessages;
 using Library.UseCases.Exceptions;
 
 namespace Library.UseCases.Books.Commands
@@ -28,8 +27,7 @@ namespace Library.UseCases.Books.Commands
 
          if (reader == null)
          {
-            _logger.LogInformation(ReaderNotFoundLog, request.ReaderEmail);
-            throw new UnauthorizedException("Invalid reader.");
+            throw new UnauthorizedException(string.Format(ReaderNotFound, request.ReaderEmail));
          }
 
          var book = await _repo.Books
@@ -38,15 +36,13 @@ namespace Library.UseCases.Books.Commands
          if (book == null)
          {
             throw new NotFoundException(
-               string.Format(ResponseMessages.BookNotFound, request.BookId));
+               string.Format(BookNotFound, request.BookId));
          }
 
          if (book.CurrentReaderId != reader.Id)
          {
-            _logger.LogInformation(ReaderDontHaveBookLog,
-               request.ReaderEmail, request.BookId);
-
-            throw new ForbidException(ReaderDontHaveBook);
+            throw new ForbidException(
+               string.Format(ReaderDontHaveBook, request.ReaderEmail, request.BookId));
          }
 
          book.IsAvailable = true;

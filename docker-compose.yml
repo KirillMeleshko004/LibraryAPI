@@ -1,17 +1,4 @@
 services:
-  indentity:
-    container_name: indentity
-    build: ./IdentityService/
-    env_file:
-      - ./Security/identity.env
-      - ./Security/security.env
-    volumes:
-      - ./Security/Keys:/security/keys
-    ports:
-      - "5238:8080"
-    depends_on:
-      - identitydb
-
   identitydb:
     user: "10001"
     container_name: indentitydb
@@ -22,33 +9,61 @@ services:
       - ACCEPT_EULA=y
       - SA_PASSWORD=A&VeryComplex123Password
     volumes:
-      - ./sql/identity/data:/var/opt/mssql/data
-      - ./sql/identity/log:/var/opt/mssql/log
-      - ./sql/identity/secrets:/var/opt/mssql/secrets
+      - identityDb.data:/var/opt/mssql/data
+      - identityDb.log:/var/opt/mssql/log
+      - identityDb.secrets:/var/opt/mssql/secrets
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "A&VeryComplex123Password" -Q "SELECT 1"
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
 
-  library:
-    container_name: library
-    build: ./LibraryService/
+  indentity:
+    container_name: indentity
+    build:
+      context: .
+      dockerfile: /IdentityService/Dockerfile
     env_file:
-      - ./Security/identity.env
-      - ./Security/security.env
+      - ./Environment/security.env
     volumes:
-      - ./Security/Keys:/security/keys
+      - security:/security/keys
+      - security:/app/Certs
     ports:
-      - "5280:8080"
+      - "5238:8080"
     depends_on:
-      - librarydb
+      identitydb:
+        condition: service_healthy
 
-  librarydb:
-    user: "10001"
-    container_name: librarydb
-    build: ./DB/
-    ports:
-      - "1435:1433"
-    environment:
-      - ACCEPT_EULA=y
-      - SA_PASSWORD=A&VeryComplex123Password
-    volumes:
-      - ./sql/library/data:/var/opt/mssql/data
-      - ./sql/library/log:/var/opt/mssql/log
-      - ./sql/library/secrets:/var/opt/mssql/secrets
+  # library:
+  #   container_name: library
+  #   build: ./LibraryService/
+  #   env_file:
+  #     - ./Security/identity.env
+  #     - ./Security/security.env
+  #   volumes:
+  #     - ./Security/Keys:/security/keys
+  #   ports:
+  #     - "5280:8080"
+  #   depends_on:
+  #     - librarydb
+
+  # librarydb:
+  #   user: "10001"
+  #   container_name: librarydb
+  #   build: ./DB/
+  #   ports:
+  #     - "1435:1433"
+  #   environment:
+  #     - ACCEPT_EULA=y
+  #     - SA_PASSWORD=A&VeryComplex123Password
+  #   volumes:
+  #     - ./sql/library/data:/var/opt/mssql/data
+  #     - ./sql/library/log:/var/opt/mssql/log
+  #     - ./sql/library/secrets:/var/opt/mssql/secrets
+
+volumes:
+  security:
+  identityDb.data:
+  identityDb.log:
+  identityDb.secrets:

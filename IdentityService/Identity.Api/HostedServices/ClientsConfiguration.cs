@@ -1,5 +1,6 @@
 using Identity.Api.Common.Configuration;
 using Identity.Infrastructure.Data.Contexts;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OpenIddict.Abstractions;
 
@@ -24,7 +25,11 @@ namespace Identity.Api.HostedServices
             using var scope = _services.CreateScope();
 
             var context = scope.ServiceProvider.GetRequiredService<RepositoryContext>();
-            await context.Database.EnsureCreatedAsync(cancellationToken);
+
+            if (context.Database.GetPendingMigrations().Any())
+            {
+                await context.Database.MigrateAsync(cancellationToken);
+            }
 
             var appManager =
                 scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();

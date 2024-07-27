@@ -45,11 +45,8 @@ namespace Identity.Api.Extensions
          //if OS is windows leave default configuration with DPAPI
          if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return services;
 
-
          var keyDirName = Environment.GetEnvironmentVariable("KEY_DIR_NAME")!;
-         var x509CertPath = Environment.GetEnvironmentVariable("CERT_PATH")!;
-         var certPassword = Environment.GetEnvironmentVariable("CERT_PASSWORD")!;
-
+         var x509CertPath = Environment.GetEnvironmentVariable("HTTPS_CERT_PATH")!;
 
          services.AddDataProtection()
             .PersistKeysToFileSystem(new DirectoryInfo(keyDirName))
@@ -60,7 +57,7 @@ namespace Identity.Api.Extensions
             })
             //Adding keys encryption with X509 certificate
             //Using X509 since DPAPI unavailible for linux
-            .ProtectKeysWithCertificate(new X509Certificate2(x509CertPath, certPassword));
+            .ProtectKeysWithCertificate(new X509Certificate2(File.ReadAllBytes(x509CertPath)));
 
          return services;
       }
@@ -97,6 +94,12 @@ namespace Identity.Api.Extensions
          var scopes = new ScopesOptions();
          configuration.GetSection(ScopesOptions.Scopes).Bind(scopes);
 
+         var encrCertPath = configuration.GetValue<string>("ENCRYPTION_CERT_PATH") ??
+            throw new Exception("Enctyption certificate path missing in configuration");
+
+         var signCertPath = configuration.GetValue<string>("SINGING_CERT_PATH") ??
+            throw new Exception("Signing certificate path missing in configuration");
+
          services.AddOpenIddict()
             .AddCore(options =>
             {
@@ -113,9 +116,9 @@ namespace Identity.Api.Extensions
                //TODO
                //Move certs to different folder
                options.AddEncryptionCertificate(
-                  new X509Certificate2(File.ReadAllBytes("../../CertCreator/Certs/encryption-certificate.pfx")));
+                  new X509Certificate2(File.ReadAllBytes(encrCertPath)));
                options.AddSigningCertificate(
-                  new X509Certificate2(File.ReadAllBytes("../../CertCreator/Certs/signing-certificate.pfx")));
+                  new X509Certificate2(File.ReadAllBytes(signCertPath)));
                // .DisableAccessTokenEncryption();
 
                options.RegisterScopes(scopes.ValidScopes.ToArray());

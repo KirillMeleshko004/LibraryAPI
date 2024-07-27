@@ -54,8 +54,7 @@ namespace Library.Api.Extensions
          if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return services;
 
          var keyDirName = Environment.GetEnvironmentVariable("KEY_DIR_NAME")!;
-         var x509CertPath = Environment.GetEnvironmentVariable("CERT_PATH")!;
-         var certPassword = Environment.GetEnvironmentVariable("CERT_PASSWORD")!;
+         var x509CertPath = Environment.GetEnvironmentVariable("HTTPS_CERT_PATH")!;
 
          services.AddDataProtection()
             .PersistKeysToFileSystem(new DirectoryInfo(keyDirName))
@@ -66,7 +65,7 @@ namespace Library.Api.Extensions
             })
             //Adding keys encryption with X509 certificate
             //Using X509 since DPAPI unavailible for linux
-            .ProtectKeysWithCertificate(new X509Certificate2(x509CertPath, certPassword));
+            .ProtectKeysWithCertificate(new X509Certificate2(File.ReadAllBytes(x509CertPath)));
 
          return services;
       }

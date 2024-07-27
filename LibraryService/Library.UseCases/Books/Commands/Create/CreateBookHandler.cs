@@ -5,7 +5,6 @@ using Library.UseCases.Common.Interfaces;
 using Library.UseCases.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using static Library.UseCases.Common.Messages.LoggingMessages;
 using static Library.UseCases.Common.Messages.ResponseMessages;
 
 namespace Library.UseCases.Books.Commands
@@ -35,10 +34,8 @@ namespace Library.UseCases.Books.Commands
 
          if (author == null)
          {
-            _logger.LogWarning(AuthorNotFoundBookCreationLog, request.BookDto.AuthorId);
-
             throw new UnprocessableEntityException(
-               string.Format(AuthorNotFoundBookCreation, request.BookDto.AuthorId));
+               string.Format(AuthorNotFound, request.BookDto.AuthorId));
          }
 
          var book = _mapper.Map<Book>(request.BookDto);
@@ -52,8 +49,6 @@ namespace Library.UseCases.Books.Commands
 
          _repo.Books.Create(book, cancellationToken);
          await _repo.SaveChangesAsync();
-
-         _logger.LogInformation(BookCreatedLog, book.Id);
 
          book = await _repo.Books.GetSingle(b => b.Id.Equals(book.Id),
             b => b.Author!, cancellationToken);

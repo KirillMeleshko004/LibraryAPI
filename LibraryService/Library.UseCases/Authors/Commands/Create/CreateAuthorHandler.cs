@@ -4,7 +4,6 @@ using Library.UseCases.Authors.DTOs;
 using Library.UseCases.Common.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using static Library.UseCases.Common.Messages.LoggingMessages;
 
 namespace Library.UseCases.Authors.Commands
 {
@@ -31,8 +30,6 @@ namespace Library.UseCases.Authors.Commands
          await _repo.SaveChangesAsync();
 
          var authorToReturn = _mapper.Map<AuthorDto>(author);
-
-         _logger.LogInformation(AuthorCreatedLog, author.Id);
 
          return authorToReturn;
       }

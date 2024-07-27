@@ -20,7 +20,9 @@ public class CertCreatorService : BackgroundService
     {
         //TODO
         //Copy certs to shared folder
-        Directory.CreateDirectory("Certs");
+        Directory.CreateDirectory(_configuration.GetValue<string>("CERT_DIR")!);
+
+        CreateHttpsCertificate();
         CreateEncryptionCertificate();
         CreateSigningCertificate();
 
@@ -29,8 +31,41 @@ public class CertCreatorService : BackgroundService
         _appLifetime.StopApplication();
     }
 
+    private static bool IsCertExistAndValid(string path, X509KeyUsageFlags flag)
+    {
+        if (!File.Exists(path!))
+        {
+            return false;
+        }
+
+        var bytes = File.ReadAllBytes(path);
+        var cert = new X509Certificate2(bytes);
+
+        if (cert.NotAfter <= DateTime.Now)
+        {
+            return false;
+        }
+
+        List<X509KeyUsageExtension> extensions = cert.Extensions
+            .OfType<X509KeyUsageExtension>().ToList();
+
+        if (!extensions.Any(f => f.KeyUsages.Equals(flag)))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     private void CreateEncryptionCertificate()
     {
+        var path = _configuration.GetValue<string>("ENCRYPTION_CERT_PATH")!;
+
+        if (IsCertExistAndValid(path, X509KeyUsageFlags.KeyEncipherment))
+        {
+            return;
+        }
+
         using var algorithm = RSA.Create(keySizeInBits: 2048);
         var subject = new X500DistinguishedName("CN=Development Encryption Certificate");
         var request = new CertificateRequest(subject, algorithm,
@@ -39,13 +74,19 @@ public class CertCreatorService : BackgroundService
             .Add(new X509KeyUsageExtension(X509KeyUsageFlags.KeyEncipherment, critical: true));
         var encCertificate =
             request.CreateSelfSigned(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddYears(2));
-        var path = _configuration.GetSection("Certs").GetValue<string>("ENCRYPTION_CERT_PATH");
         File.WriteAllBytes(path!,
             encCertificate.Export(X509ContentType.Pfx, string.Empty));
     }
 
     private void CreateSigningCertificate()
     {
+        var path = _configuration.GetValue<string>("SINGING_CERT_PATH")!;
+
+        if (IsCertExistAndValid(path, X509KeyUsageFlags.DigitalSignature))
+        {
+            return;
+        }
+
         using var algorithm = RSA.Create(keySizeInBits: 2048);
         var subject = new X500DistinguishedName("CN=Development Signing Certificate");
         var request = new CertificateRequest(subject, algorithm,
@@ -54,7 +95,34 @@ public class CertCreatorService : BackgroundService
             .Add(new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, critical: true));
         var encCertificate =
             request.CreateSelfSigned(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddYears(2));
-        var path = _configuration.GetSection("Certs").GetValue<string>("SINGING_CERT_PATH");
+
+        File.WriteAllBytes(path!,
+            encCertificate.Export(X509ContentType.Pfx, string.Empty));
+    }
+
+    private void CreateHttpsCertificate()
+    {
+        var path = _configuration.GetValue<string>("HTTPS_CERT_PATH")!;
+
+        if (IsCertExistAndValid(path, X509KeyUsageFlags.DataEncipherment
+                | X509KeyUsageFlags.KeyEncipherment
+                | X509KeyUsageFlags.DigitalSignature))
+        {
+            return;
+        }
+
+        using var algorithm = RSA.Create(keySizeInBits: 2048);
+        var subject = new X500DistinguishedName("CN=Development Signing Certificate");
+        var request = new CertificateRequest(subject, algorithm,
+            HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+        request.CertificateExtensions
+            .Add(new X509KeyUsageExtension(X509KeyUsageFlags.DataEncipherment
+                | X509KeyUsageFlags.KeyEncipherment
+                | X509KeyUsageFlags.DigitalSignature,
+                critical: true));
+        var encCertificate =
+            request.CreateSelfSigned(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddYears(2));
+
         File.WriteAllBytes(path!,
             encCertificate.Export(X509ContentType.Pfx, string.Empty));
     }

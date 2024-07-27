@@ -1,7 +1,6 @@
 using Library.UseCases.Common.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using static Library.UseCases.Common.Messages.LoggingMessages;
 
 namespace Library.UseCases.Books.Commands
 {
@@ -34,8 +33,7 @@ namespace Library.UseCases.Books.Commands
          }
          await _repo.SaveChangesAsync();
 
-
-         _logger.LogInformation(BookDeletedLog, book.Id);
+         _logger.LogInformation("Book with id: {id} was deleted.", book.Id);
       }
    }
 }

@@ -1,7 +1,6 @@
 using Library.UseCases.Common.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using static Library.UseCases.Common.Messages.LoggingMessages;
 
 namespace Library.UseCases.Authors.Commands
 {
@@ -26,8 +25,6 @@ namespace Library.UseCases.Authors.Commands
 
          _repo.Authors.Delete(author, cancellationToken);
          await _repo.SaveChangesAsync();
-
-         _logger.LogInformation(AuthorDeletedLog, author.Id);
       }
    }
 }

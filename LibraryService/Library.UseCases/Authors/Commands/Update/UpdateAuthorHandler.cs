@@ -4,7 +4,6 @@ using Library.UseCases.Common.Interfaces;
 using Library.UseCases.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using static Library.UseCases.Common.Messages.LoggingMessages;
 using static Library.UseCases.Common.Messages.ResponseMessages;
 
 namespace Library.UseCases.Authors.Commands
@@ -31,8 +30,6 @@ namespace Library.UseCases.Authors.Commands
 
          if (author == null)
          {
-            _logger.LogWarning(AuthorNotFoundLog, request.AuthorId);
-
             throw new NotFoundException(string.Format(AuthorNotFound, request.AuthorId));
          }
 
