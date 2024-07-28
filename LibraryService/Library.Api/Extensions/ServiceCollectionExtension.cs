@@ -53,8 +53,8 @@ namespace Library.Api.Extensions
          //if OS is windows leave default configuration with DPAPI
          if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return services;
 
-         var keyDirName = Environment.GetEnvironmentVariable("KEY_DIR_NAME")!;
-         var x509CertPath = Environment.GetEnvironmentVariable("HTTPS_CERT_PATH")!;
+         var keyDirName = Environment.GetEnvironmentVariable("DP_KEYS_DIR_NAME")!;
+         var x509CertPath = Environment.GetEnvironmentVariable("DP_CERT_PATH")!;
 
          services.AddDataProtection()
             .PersistKeysToFileSystem(new DirectoryInfo(keyDirName))
@@ -70,21 +70,41 @@ namespace Library.Api.Extensions
          return services;
       }
 
-      //TODO
-      public static IServiceCollection ConfigureOpenIdDict(this IServiceCollection services)
+      public static IServiceCollection ConfigureOpenIdDict(this IServiceCollection services,
+         IConfiguration configuration)
       {
+         var encrCertPath = configuration.GetValue<string>("ENCRYPTION_CERT_PATH") ??
+            throw new Exception("Enctyption certificate path missing in configuration");
+
+         var signCertPath = configuration.GetValue<string>("SINGING_CERT_PATH") ??
+            throw new Exception("Signing certificate path missing in configuration");
+
+         var issuerURI = configuration.GetValue<string>("AUTH_ISSUER") ??
+            throw new Exception("Authentication server URI missing in configuration");
+
          services.AddOpenIddict()
             .AddValidation(options =>
             {
                //TODO
                //Move certs to different folder
                options.AddEncryptionCertificate(
-                  new X509Certificate2(File.ReadAllBytes("../../CertCreator/Certs/encryption-certificate.pfx")));
+                  new X509Certificate2(File.ReadAllBytes(encrCertPath)));
                options.AddSigningCertificate(
-                  new X509Certificate2(File.ReadAllBytes("../../CertCreator/Certs/signing-certificate.pfx")));
-               options.SetIssuer("https://localhost:7213");
+                  new X509Certificate2(File.ReadAllBytes(signCertPath)));
+
+               options.SetIssuer(issuerURI);
                options.UseSystemNetHttp();
                options.UseAspNetCore();
+
+               options.Configure(builder =>
+               {
+                  builder.TokenValidationParameters.ValidIssuers = [
+                     "http://identity:8080/",
+                     "https://identity:433/",
+                     "http://localhost:5238/",
+                     "https://localhost:7213/",
+                  ];
+               });
             });
 
          services

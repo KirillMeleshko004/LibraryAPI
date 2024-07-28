@@ -102,7 +102,7 @@ public class CertCreatorService : BackgroundService
 
     private void CreateHttpsCertificate()
     {
-        var path = _configuration.GetValue<string>("HTTPS_CERT_PATH")!;
+        var path = _configuration.GetValue<string>("DP_CERT_PATH")!;
 
         if (IsCertExistAndValid(path, X509KeyUsageFlags.DataEncipherment
                 | X509KeyUsageFlags.KeyEncipherment
@@ -112,7 +112,7 @@ public class CertCreatorService : BackgroundService
         }
 
         using var algorithm = RSA.Create(keySizeInBits: 2048);
-        var subject = new X500DistinguishedName("CN=Development Signing Certificate");
+        var subject = new X500DistinguishedName("CN=Development Data Protection Certificate");
         var request = new CertificateRequest(subject, algorithm,
             HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         request.CertificateExtensions

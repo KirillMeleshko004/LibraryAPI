@@ -1,7 +1,7 @@
 services:
   identitydb:
     user: "10001"
-    container_name: indentitydb
+    container_name: identitydb
     build: ./DB/
     ports:
       - "1434:1433"
@@ -19,13 +19,14 @@ services:
       retries: 10
       start_period: 10s
 
-  indentity:
-    container_name: indentity
+  identity:
+    container_name: identity
     build:
       context: .
       dockerfile: /IdentityService/Dockerfile
     env_file:
       - ./Environment/security.env
+      - ./Environment/asp.env
     volumes:
       - security:/security/keys
       - security:/app/Certs
@@ -35,35 +36,50 @@ services:
       identitydb:
         condition: service_healthy
 
-  # library:
-  #   container_name: library
-  #   build: ./LibraryService/
-  #   env_file:
-  #     - ./Security/identity.env
-  #     - ./Security/security.env
-  #   volumes:
-  #     - ./Security/Keys:/security/keys
-  #   ports:
-  #     - "5280:8080"
-  #   depends_on:
-  #     - librarydb
+  librarydb:
+    user: "10001"
+    container_name: librarydb
+    build: ./DB/
+    ports:
+      - "1435:1433"
+    environment:
+      - ACCEPT_EULA=y
+      - SA_PASSWORD=A&VeryComplex123Password
+    volumes:
+      - libraryDb.data:/var/opt/mssql/data
+      - libraryDb.log:/var/opt/mssql/log
+      - libraryDb.secrets:/var/opt/mssql/secrets
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "A&VeryComplex123Password" -Q "SELECT 1"
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
 
-  # librarydb:
-  #   user: "10001"
-  #   container_name: librarydb
-  #   build: ./DB/
-  #   ports:
-  #     - "1435:1433"
-  #   environment:
-  #     - ACCEPT_EULA=y
-  #     - SA_PASSWORD=A&VeryComplex123Password
-  #   volumes:
-  #     - ./sql/library/data:/var/opt/mssql/data
-  #     - ./sql/library/log:/var/opt/mssql/log
-  #     - ./sql/library/secrets:/var/opt/mssql/secrets
+  library:
+    container_name: library
+    build:
+      context: .
+      dockerfile: /LibraryService/Dockerfile
+    env_file:
+      - ./Environment/security.env
+      - ./Environment/asp.env
+    volumes:
+      - security:/security/keys
+      - security:/app/Certs
+      - library.data:/app/Data
+    ports:
+      - "5280:8080"
+    depends_on:
+      librarydb:
+        condition: service_healthy
 
 volumes:
   security:
   identityDb.data:
   identityDb.log:
   identityDb.secrets:
+  libraryDb.data:
+  libraryDb.log:
+  libraryDb.secrets:
+  library.data:

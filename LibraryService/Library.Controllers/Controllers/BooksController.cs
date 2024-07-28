@@ -137,7 +137,7 @@ namespace Library.Controllers
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
       public async Task<IActionResult> UpdateBook(Guid id,
-         [FromBody] BookForUpdateViewModel bookVm, CancellationToken cancellationToken)
+         [FromForm] BookForUpdateViewModel bookVm, CancellationToken cancellationToken)
       {
          var bookForUpdate = _mapper.Map<BookForUpdateDto>(bookVm);
 

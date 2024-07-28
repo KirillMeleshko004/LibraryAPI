@@ -18,16 +18,13 @@ RUN dotnet restore;
 # copy all files and publish application
 # default publishing folder - ./{ProjectName}/bin/{Enviroment}/{.net version}
 COPY ./IdentityService/. .
-
 RUN dotnet publish ./Identity.Api/Identity.Api.csproj -c release --no-restore;
 
 # move results of app publishing into single folder for convenience
 RUN mv ./Identity.Api/bin/release/net8.0 ./app;
 
-
-#stage for cert creation
-FROM mcr.microsoft.com/dotnet/sdk:8.0 as certs
-WORKDIR /source
+#cert creation 
+WORKDIR /certs
 
 COPY ./CertCreator/*.sln .
 COPY ./CertCreator/*.csproj .
@@ -36,13 +33,15 @@ COPY ./CertCreator/. .
 RUN dotnet restore;
 RUN dotnet publish ./CertCreator.csproj -c release --no-restore;
 RUN dotnet ./bin/release/net8.0/CertCreator.dll
-RUN ls -laRt
 
 #for next stage of image building use another baseimage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
 WORKDIR /app
 COPY --from=build source/app ./
-COPY --from=certs source/Certs ./Certs
+COPY --from=build certs/Certs ./Certs
+
+EXPOSE 8080
+EXPOSE 443
 
 ENTRYPOINT ["dotnet", "Identity.Api.dll"]

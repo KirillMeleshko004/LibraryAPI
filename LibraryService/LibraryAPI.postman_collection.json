@@ -24,6 +24,23 @@
 							"path": [
 								"api",
 								"books"
+							],
+							"query": [
+								{
+									"key": "PageNumber",
+									"value": "-1",
+									"disabled": true
+								},
+								{
+									"key": "PageSize",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "PageNumber",
+									"value": "3",
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -36,11 +53,81 @@
 					},
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
+							"type": "oauth2",
+							"oauth2": [
 								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJsb2NhbCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTIzOCIsImV4cCI6MTcxMzM0NDU3MSwiZW1haWwiOiJjcmF6eS50YXBvay5tZUBnbWFpbC5jb20iLCJSb2xlcyI6WyJMaWJyYXJpYW4iLCJBZG1pbiIsIkN1c3RvbWVyIl0sImlhdCI6MTcxMzM0Mzk3MSwibmJmIjoxNzEzMzQzOTcxfQ.dXVulFtxueEme1WCxdIwroMcgdISH7oJInsSYNSlMy0",
+									"key": "accessTokenUrl",
+									"value": "http://localhost:5238/api/connect/token",
+									"type": "string"
+								},
+								{
+									"key": "refreshTokenUrl",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "scope",
+									"value": "api.library",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "kirilll",
+									"type": "string"
+								},
+								{
+									"key": "tokenRequestParams",
+									"value": [],
+									"type": "any"
+								},
+								{
+									"key": "password",
+									"value": "1234567890aB",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "useBrowser",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "client_authentication",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "state",
+									"value": "1234",
+									"type": "string"
+								},
+								{
+									"key": "authUrl",
+									"value": "https://localhost:7213/api/connect/authorize",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "Auth token",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "postman-secret",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "postman",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
 									"type": "string"
 								}
 							]
@@ -54,13 +141,40 @@
 							}
 						],
 						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"isbn\": \"ISBN 9780596520686\",\r\n    \"title\": \"Test Book\",\r\n    \"genre\": \"Test Genre\",\r\n    \"authorId\": \"ac31fda2-411c-4669-8e42-b4b18cc659cb\",\r\n    \"description\": \"Test description 2\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "isbn",
+									"value": "ISBN 9780596520686",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "Test Book",
+									"type": "text"
+								},
+								{
+									"key": "genre",
+									"value": "Test Genre",
+									"type": "text"
+								},
+								{
+									"key": "authorId",
+									"value": "ac31fda2-411c-4669-8e42-b4b18cc659cb",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Test description 2",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": [],
+									"disabled": true
 								}
-							}
+							]
 						},
 						"url": {
 							"raw": "http://localhost:5280/api/books",
@@ -83,7 +197,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5280/api/books/isbn/ISBN 13: 9785050000149",
+							"raw": "http://localhost:5280/api/books/isbn/ISBN 13: 9781909156821",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -93,7 +207,7 @@
 								"api",
 								"books",
 								"isbn",
-								"ISBN 13: 9785050000149"
+								"ISBN 13: 9781909156821"
 							]
 						}
 					},
@@ -101,11 +215,18 @@
 				},
 				{
 					"name": "Get Book by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
 						"url": {
-							"raw": "http://localhost:5280/api/books/6328fcf9-5846-4f7c-960c-da5ea5c32f22",
+							"raw": "http://localhost:5280/api/books/a0283873-60b8-45de-a411-02a0a3fbc465",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -114,7 +235,7 @@
 							"path": [
 								"api",
 								"books",
-								"6328fcf9-5846-4f7c-960c-da5ea5c32f22"
+								"a0283873-60b8-45de-a411-02a0a3fbc465"
 							]
 						}
 					},
@@ -124,11 +245,81 @@
 					"name": "Update Book",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
+							"type": "oauth2",
+							"oauth2": [
 								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJsb2NhbCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTIzOCIsImV4cCI6MTcxMzM0NDU3MSwiZW1haWwiOiJjcmF6eS50YXBvay5tZUBnbWFpbC5jb20iLCJSb2xlcyI6WyJMaWJyYXJpYW4iLCJBZG1pbiIsIkN1c3RvbWVyIl0sImlhdCI6MTcxMzM0Mzk3MSwibmJmIjoxNzEzMzQzOTcxfQ.dXVulFtxueEme1WCxdIwroMcgdISH7oJInsSYNSlMy0",
+									"key": "refreshTokenUrl",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "accessTokenUrl",
+									"value": "http://localhost:5238/api/connect/token",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "scope",
+									"value": "api.library",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "kirilll",
+									"type": "string"
+								},
+								{
+									"key": "tokenRequestParams",
+									"value": [],
+									"type": "any"
+								},
+								{
+									"key": "password",
+									"value": "1234567890aB",
+									"type": "string"
+								},
+								{
+									"key": "useBrowser",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "client_authentication",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "state",
+									"value": "1234",
+									"type": "string"
+								},
+								{
+									"key": "authUrl",
+									"value": "https://localhost:7213/api/connect/authorize",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "Auth token",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "postman-secret",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "postman",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
 									"type": "string"
 								}
 							]
@@ -136,16 +327,43 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"isbn\": \"ISBN 13: 9785050000149\",\r\n    \"title\": \"Crime and Punishment Updated\",\r\n    \"authorId\": \"188ec0f1-b4a1-4a86-9bb4-f249c2a1032b\",\r\n    \"genre\": \"Novel\",\r\n    \"description\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc varius rhoncus nisl, nec egestas lacus pellentesque vitae. Donec eleifend urna at nunc tincidunt facilisis. Nam consectetur odio erat sed.\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "isbn",
+									"value": "ISBN 9780596520686",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "Updated Test Book",
+									"type": "text"
+								},
+								{
+									"key": "genre",
+									"value": "Test Genre",
+									"type": "text"
+								},
+								{
+									"key": "authorId",
+									"value": "ac31fda2-411c-4669-8e42-b4b18cc659cb",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Test description 2",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": [],
+									"disabled": true
 								}
-							}
+							]
 						},
 						"url": {
-							"raw": "http://localhost:5280/api/books/6328fcf9-5846-4f7c-960c-da5ea5c32f22",
+							"raw": "http://localhost:5280/api/books/8ef81c0a-3b3a-46f8-7752-08dcaf34aed3",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -154,7 +372,7 @@
 							"path": [
 								"api",
 								"books",
-								"6328fcf9-5846-4f7c-960c-da5ea5c32f22"
+								"8ef81c0a-3b3a-46f8-7752-08dcaf34aed3"
 							]
 						}
 					},
@@ -164,11 +382,81 @@
 					"name": "Delete Book",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
+							"type": "oauth2",
+							"oauth2": [
 								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJsb2NhbCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTIzOCIsImV4cCI6MTcxMzM0NDU3MSwiZW1haWwiOiJjcmF6eS50YXBvay5tZUBnbWFpbC5jb20iLCJSb2xlcyI6WyJMaWJyYXJpYW4iLCJBZG1pbiIsIkN1c3RvbWVyIl0sImlhdCI6MTcxMzM0Mzk3MSwibmJmIjoxNzEzMzQzOTcxfQ.dXVulFtxueEme1WCxdIwroMcgdISH7oJInsSYNSlMy0",
+									"key": "refreshTokenUrl",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "accessTokenUrl",
+									"value": "http://localhost:5238/api/connect/token",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "scope",
+									"value": "api.library",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "kirilll",
+									"type": "string"
+								},
+								{
+									"key": "tokenRequestParams",
+									"value": [],
+									"type": "any"
+								},
+								{
+									"key": "password",
+									"value": "1234567890aB",
+									"type": "string"
+								},
+								{
+									"key": "useBrowser",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "client_authentication",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "state",
+									"value": "1234",
+									"type": "string"
+								},
+								{
+									"key": "authUrl",
+									"value": "https://localhost:7213/api/connect/authorize",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "Auth token",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "postman-secret",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "postman",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
 									"type": "string"
 								}
 							]
@@ -176,7 +464,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5280/api/books/6328fcf9-5846-4f7c-960c-da5ea5c32f22",
+							"raw": "http://localhost:5280/api/books/80d9c14b-0390-43b8-ce06-08dcaf35bf79",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -185,7 +473,312 @@
 							"path": [
 								"api",
 								"books",
-								"6328fcf9-5846-4f7c-960c-da5ea5c32f22"
+								"80d9c14b-0390-43b8-ce06-08dcaf35bf79"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Borrow Book",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "scope",
+									"value": "api.library",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "kirilll",
+									"type": "string"
+								},
+								{
+									"key": "accessTokenUrl",
+									"value": "https://localhost:7213/api/connect/token",
+									"type": "string"
+								},
+								{
+									"key": "refreshTokenUrl",
+									"value": "http://localhost:5280/api/connect/token",
+									"type": "string"
+								},
+								{
+									"key": "tokenRequestParams",
+									"value": [],
+									"type": "any"
+								},
+								{
+									"key": "password",
+									"value": "1234567890aB",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "useBrowser",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "client_authentication",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "state",
+									"value": "1234",
+									"type": "string"
+								},
+								{
+									"key": "authUrl",
+									"value": "https://localhost:7213/api/connect/authorize",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "Auth token",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "postman-secret",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "postman",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5280/api/books/2f346383-bd6a-4564-8dce-343c355e795a/borrow",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5280",
+							"path": [
+								"api",
+								"books",
+								"2f346383-bd6a-4564-8dce-343c355e795a",
+								"borrow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get borrowed books",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "refreshTokenUrl",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "accessTokenUrl",
+									"value": "http://localhost:5238/api/connect/token",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "scope",
+									"value": "api.library",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "kirilll",
+									"type": "string"
+								},
+								{
+									"key": "tokenRequestParams",
+									"value": [],
+									"type": "any"
+								},
+								{
+									"key": "password",
+									"value": "1234567890aB",
+									"type": "string"
+								},
+								{
+									"key": "useBrowser",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "client_authentication",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "state",
+									"value": "1234",
+									"type": "string"
+								},
+								{
+									"key": "authUrl",
+									"value": "https://localhost:7213/api/connect/authorize",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "Auth token",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "postman-secret",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "postman",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5280/api/books/myBooks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5280",
+							"path": [
+								"api",
+								"books",
+								"myBooks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Return Book",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": [
+								{
+									"key": "scope",
+									"value": "api.library",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "kirilll",
+									"type": "string"
+								},
+								{
+									"key": "accessTokenUrl",
+									"value": "https://localhost:7213/api/connect/token",
+									"type": "string"
+								},
+								{
+									"key": "refreshTokenUrl",
+									"value": "http://localhost:5280/api/connect/token",
+									"type": "string"
+								},
+								{
+									"key": "tokenRequestParams",
+									"value": [],
+									"type": "any"
+								},
+								{
+									"key": "password",
+									"value": "1234567890aB",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "useBrowser",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "client_authentication",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "state",
+									"value": "1234",
+									"type": "string"
+								},
+								{
+									"key": "authUrl",
+									"value": "https://localhost:7213/api/connect/authorize",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "Auth token",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "postman-secret",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "postman",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5280/api/books/2f346383-bd6a-4564-8dce-343c355e795a/return",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5280",
+							"path": [
+								"api",
+								"books",
+								"2f346383-bd6a-4564-8dce-343c355e795a",
+								"return"
 							]
 						}
 					},
@@ -202,7 +795,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5280/api/authors?orderby=lastName desc, firstName&pageNumber=1&pageSize=10",
+							"raw": "http://localhost:5280/api/authors",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -215,15 +808,18 @@
 							"query": [
 								{
 									"key": "orderby",
-									"value": "lastName desc, firstName"
+									"value": "lastName desc, firstName",
+									"disabled": true
 								},
 								{
 									"key": "pageNumber",
-									"value": "1"
+									"value": "1",
+									"disabled": true
 								},
 								{
 									"key": "pageSize",
-									"value": "10"
+									"value": "2",
+									"disabled": true
 								}
 							]
 						}
@@ -234,11 +830,81 @@
 					"name": "Create author",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
+							"type": "oauth2",
+							"oauth2": [
 								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJsb2NhbCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTIzOCIsImV4cCI6MTcxMzM0NDU3MSwiZW1haWwiOiJjcmF6eS50YXBvay5tZUBnbWFpbC5jb20iLCJSb2xlcyI6WyJMaWJyYXJpYW4iLCJBZG1pbiIsIkN1c3RvbWVyIl0sImlhdCI6MTcxMzM0Mzk3MSwibmJmIjoxNzEzMzQzOTcxfQ.dXVulFtxueEme1WCxdIwroMcgdISH7oJInsSYNSlMy0",
+									"key": "refreshTokenUrl",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "accessTokenUrl",
+									"value": "http://localhost:5238/api/connect/token",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "scope",
+									"value": "api.library",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "kirilll",
+									"type": "string"
+								},
+								{
+									"key": "tokenRequestParams",
+									"value": [],
+									"type": "any"
+								},
+								{
+									"key": "password",
+									"value": "1234567890aB",
+									"type": "string"
+								},
+								{
+									"key": "useBrowser",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "client_authentication",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "state",
+									"value": "1234",
+									"type": "string"
+								},
+								{
+									"key": "authUrl",
+									"value": "https://localhost:7213/api/connect/authorize",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "Auth token",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "postman-secret",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "postman",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
 									"type": "string"
 								}
 							]
@@ -247,7 +913,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"firstName\": \"Test First Name\",\r\n    \"lastName\": \"Test Last Name\"\r\n}",
+							"raw": "{\r\n    \"firstName\": \"Test First Name\",\r\n    \"lastName\": \"Test Last Name\",\r\n    \"country\": \"Belarus\",\r\n    \"dateOfBirth\": \"01.25.2004\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -273,11 +939,81 @@
 					"name": "Update author",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
+							"type": "oauth2",
+							"oauth2": [
 								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJsb2NhbCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTIzOCIsImV4cCI6MTcxMzM0NDU3MSwiZW1haWwiOiJjcmF6eS50YXBvay5tZUBnbWFpbC5jb20iLCJSb2xlcyI6WyJMaWJyYXJpYW4iLCJBZG1pbiIsIkN1c3RvbWVyIl0sImlhdCI6MTcxMzM0Mzk3MSwibmJmIjoxNzEzMzQzOTcxfQ.dXVulFtxueEme1WCxdIwroMcgdISH7oJInsSYNSlMy0",
+									"key": "refreshTokenUrl",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "accessTokenUrl",
+									"value": "http://localhost:5238/api/connect/token",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "scope",
+									"value": "api.library",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "kirilll",
+									"type": "string"
+								},
+								{
+									"key": "tokenRequestParams",
+									"value": [],
+									"type": "any"
+								},
+								{
+									"key": "password",
+									"value": "1234567890aB",
+									"type": "string"
+								},
+								{
+									"key": "useBrowser",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "client_authentication",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "state",
+									"value": "1234",
+									"type": "string"
+								},
+								{
+									"key": "authUrl",
+									"value": "https://localhost:7213/api/connect/authorize",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "Auth token",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "postman-secret",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "postman",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
 									"type": "string"
 								}
 							]
@@ -286,7 +1022,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"firstName\": \"Leva\",\r\n    \"lastName\": \"Tolstoy\"\r\n}",
+							"raw": "{\r\n    \"firstName\": \"Updated First Name\",\r\n    \"lastName\": \"Test Last Name\",\r\n    \"dateOfBirth\": \"01.11.1977\",\r\n    \"country\": \"Belarus\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -294,7 +1030,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5280/api/authors/4dc4b580-7fb5-4c2a-938a-7e464116c7dd",
+							"raw": "http://localhost:5280/api/authors/000f4078-b7c4-40f9-a5a8-08dcaf385682",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -303,7 +1039,7 @@
 							"path": [
 								"api",
 								"authors",
-								"4dc4b580-7fb5-4c2a-938a-7e464116c7dd"
+								"000f4078-b7c4-40f9-a5a8-08dcaf385682"
 							]
 						}
 					},
@@ -315,7 +1051,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5280/api/authors/4dc4b580-7fb5-4c2a-938a-7e464116c7dd",
+							"raw": "http://localhost:5280/api/authors/ec891ac2-f620-415f-9f86-3d15259eb071",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -324,7 +1060,7 @@
 							"path": [
 								"api",
 								"authors",
-								"4dc4b580-7fb5-4c2a-938a-7e464116c7dd"
+								"ec891ac2-f620-415f-9f86-3d15259eb071"
 							]
 						}
 					},
@@ -334,11 +1070,81 @@
 					"name": "Delete author",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
+							"type": "oauth2",
+							"oauth2": [
 								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJsb2NhbCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTIzOCIsImV4cCI6MTcxMzM0NDU3MSwiZW1haWwiOiJjcmF6eS50YXBvay5tZUBnbWFpbC5jb20iLCJSb2xlcyI6WyJMaWJyYXJpYW4iLCJBZG1pbiIsIkN1c3RvbWVyIl0sImlhdCI6MTcxMzM0Mzk3MSwibmJmIjoxNzEzMzQzOTcxfQ.dXVulFtxueEme1WCxdIwroMcgdISH7oJInsSYNSlMy0",
+									"key": "refreshTokenUrl",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "accessTokenUrl",
+									"value": "http://localhost:5238/api/connect/token",
+									"type": "string"
+								},
+								{
+									"key": "grant_type",
+									"value": "password_credentials",
+									"type": "string"
+								},
+								{
+									"key": "scope",
+									"value": "api.library",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "kirilll",
+									"type": "string"
+								},
+								{
+									"key": "tokenRequestParams",
+									"value": [],
+									"type": "any"
+								},
+								{
+									"key": "password",
+									"value": "1234567890aB",
+									"type": "string"
+								},
+								{
+									"key": "useBrowser",
+									"value": true,
+									"type": "boolean"
+								},
+								{
+									"key": "client_authentication",
+									"value": "header",
+									"type": "string"
+								},
+								{
+									"key": "state",
+									"value": "1234",
+									"type": "string"
+								},
+								{
+									"key": "authUrl",
+									"value": "https://localhost:7213/api/connect/authorize",
+									"type": "string"
+								},
+								{
+									"key": "tokenName",
+									"value": "Auth token",
+									"type": "string"
+								},
+								{
+									"key": "clientSecret",
+									"value": "postman-secret",
+									"type": "string"
+								},
+								{
+									"key": "clientId",
+									"value": "postman",
+									"type": "string"
+								},
+								{
+									"key": "addTokenTo",
+									"value": "header",
 									"type": "string"
 								}
 							]
@@ -346,7 +1152,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:5280/api/authors/4dc4b580-7fb5-4c2a-938a-7e464116c7dd",
+							"raw": "http://localhost:5280/api/authors/000f4078-b7c4-40f9-a5a8-08dcaf385682",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -355,7 +1161,29 @@
 							"path": [
 								"api",
 								"authors",
-								"4dc4b580-7fb5-4c2a-938a-7e464116c7dd"
+								"000f4078-b7c4-40f9-a5a8-08dcaf385682"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get books for author",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5280/api/authors/ac31fda2-411c-4669-8e42-b4b18cc659cb/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5280",
+							"path": [
+								"api",
+								"authors",
+								"ac31fda2-411c-4669-8e42-b4b18cc659cb",
+								"books"
 							]
 						}
 					},

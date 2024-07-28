@@ -11,6 +11,10 @@ namespace Identity.Infrastructure.Data.Contexts
       public RepositoryContext(DbContextOptions<RepositoryContext> options) :
          base(options)
       {
+         if (Database.GetPendingMigrations().Any())
+         {
+            Database.Migrate();
+         }
       }
 
       protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

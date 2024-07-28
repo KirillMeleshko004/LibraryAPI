@@ -26,11 +26,6 @@ namespace Identity.Api.HostedServices
 
             var context = scope.ServiceProvider.GetRequiredService<RepositoryContext>();
 
-            if (context.Database.GetPendingMigrations().Any())
-            {
-                await context.Database.MigrateAsync(cancellationToken);
-            }
-
             var appManager =
                 scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 

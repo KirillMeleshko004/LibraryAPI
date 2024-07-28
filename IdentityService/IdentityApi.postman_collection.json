@@ -13,41 +13,6 @@
 					"type": "noauth"
 				},
 				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"meleshkokirill004@gmail.com\",\r\n    \"lastName\": \"Meleshko\",\r\n    \"firstName\": \"Kirill\",\r\n    \"Password\": \"1234567890\",\r\n    \"UserRoles\":\r\n    [\r\n        \"Customer\", \"Admin\", \"Librarian\"\r\n    ]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:5238/api/reg",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5238",
-					"path": [
-						"api",
-						"reg"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Authorize",
-			"protocolProfileBehavior": {
-				"followRedirects": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
@@ -57,7 +22,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"meleshkokirill004@gmail.com\",\r\n    \"Password\": \"1234567890\"\r\n}",
+					"raw": "{\r\n    \"email\": \"meleshkokirill005@gmail.com\",\r\n    \"username\": \"kirilll\",\r\n    \"lastName\": \"Meleshko\",\r\n    \"firstName\": \"Kirill\",\r\n    \"Password\": \"1234567890aB\",\r\n    \"UserRoles\":\r\n    [\r\n        \"Admin\", \"Customer\"\r\n    ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -65,7 +30,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:5238/api/auth",
+					"raw": "http://localhost:5238/api/register",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -73,36 +38,167 @@
 					"port": "5238",
 					"path": [
 						"api",
-						"auth"
+						"register"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "RefreshToken",
+			"name": "Authorize",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "a",
+							"value": "v",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "kirilll",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "1234567890aB",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "postman",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "postman-secret",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "offline_access openid",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "api.library",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:7213/api/connect/token",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "7213",
+					"path": [
+						"api",
+						"connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJsb2NhbCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTIzOCIsImV4cCI6MTcxMzM0NDU2NiwiZW1haWwiOiJjcmF6eS50YXBvay5tZUBnbWFpbC5jb20iLCJSb2xlcyI6WyJMaWJyYXJpYW4iLCJBZG1pbiIsIkN1c3RvbWVyIl0sImlhdCI6MTcxMzM0Mzk2NiwibmJmIjoxNzEzMzQzOTY2fQ.323Lq87-E1imJatG0Q__48E09-mIJeUrzql4FsTNFAU\",\r\n    \"refreshToken\": \"WKKmCPa8dw7168H8xMP/fi7D2P1hCWaMKWcR6hXoJ1E0ipgEvxHW5+4SHG+8Zdkz2RTq39suiyvm9VWZwQHsHQ==\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "refresh_token",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "postman",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "postman-secret",
+							"type": "text"
+						},
+						{
+							"key": "refresh_token",
+							"value": "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZDQkMtSFM1MTIiLCJraWQiOiI1NkYwODI2REEwNDhFQUEyMTYwOTAwNjUyMUJBRDEwMkRDM0QyRTVGIiwidHlwIjoib2lfcmVmdCtqd3QiLCJjdHkiOiJKV1QifQ.Li5AcYDwDwptGnxqLOHnCy34s6hQ-Fw9SI_HnFT5e5Zm9yJRwZD6krz0m7yD3SkAIRXrnzQJ1BwKP0F-KKj61V4CN8xegi6s5MNGhCh4tFpIGo6oiik5EHORAX9LXEBW05y7NGPpZVELYU9h1Gke-tKHvYgSyGNXRcxITTu6sCyFf3XAoQG5PWtY7MTkqzageEX3n8rAzJAbagEcsJVfMaJi13z3bn4z6Dj7CSpYqs_7G2VOypcAi4TcFMBzeFnafcss6eVfD5zFGH6nCekBujKExbAFIgWYeAD32K8yr7XLoCQ2DyptGNuJ9uBaBVTIbgLLBOiA8gmI7MYpKZ3ltw.s7spIdqnRIJSUAQ_2TrEtA.uJT7XDyyem8PdLPbYKnPYERSqkJPFE7hRbAMhpSIjHHMDLkOIzlcbxSBKYxTgpVY-uhtxMSm37YPGvTalEgd1eqIkSqHXyjowtfiPJQ16AEBdzywHqfIvXMuX-6b2Qg4mHd8p-ydBsFiOoRP-rzeTuq1tbFCnvePxytR3vfJPRaPCoyeTYoPv7EEMZt9bgk0-3m6hEzgOlBgBFyHarWCPgf6o3YeK0ixAYcdiZUfiQvD1jbcvPQ5A3oHZQSnB5U-Kb3HoaNCSMASn2wLIa-EjDC1ZcITLMPBpOPzwpnW9wi3GgaQoppwlLdpm0dm2PYZzHpRyGZY4vzE56X6xh9wb14ZWcq9PCA17LYpWIs6PXJgttFTX1DVjlSIUYir5aGL6C-Cizd7NgTl6XZWp7FZIP206uZvQuUwuSGWiyywc_mgXuKycaC_eKyg9BeaU4UOcgPX0wWebvK3GF0UxfnkyPa744v7zgmYIB98nYiuCiH5NiQBWQT85axFqYVCnchjFiye_4DtkH0v5a60umuhiGYqRIflR2HPtFd_Zyy7z4u6Rd9kqCiBFH3spKLXZSOgS8Q_GfehNQv82zDvBRrHKQPqFjvcH2Lqscpwn1MxVJMKiaw6xhYjfHXj42Jne6WNzO_q1k_gTJsw631T5gtl28caP2LT3TAnH0ZPoEsjTzNoUOsTHdlLqCySiruPnrkWtiZJKdDaH5K3xu0_BGxNV6p3_brzz3SfGSEf88_vBny52DhoS97dEFF7CG23uCc2_jbkzzxiodSleeJSGsiNZVx0zsHTZ0wMpfGIrfI6IRORfXtibtRz9zJcg0ZsZQpGItzzfiWJiJ3VbT7yPQqgZnYQImGkWf_ryTpdZerZj_Bx_1iDtkQTUkLalVvtSOVcqG6ljePXSFyx8txDPjNCXrAAk3a-T5mxMR80r36yG7_20ug0SJA6ygv9aeEJ4gbpLJTeDnhVD_Z4H2ekgnyOdXqX_AjKZ08dPAyhGwRqdUHBMiDDZj5zHnhpdRmLk1OO3CroOMZC4zSU1hpT3iemswQk3Ocv94oAxNSdftP1lpfiE3WWoHg9qfjV0ZRDsKmMxFrHckd8pFJEMSpzEM_CfOti6Rdf4HCJRyQ7eXgD3jumJMzAGNbCk5Hw-tREyn7EIB-QPPXnd5f14AsjDPiq5voGE8Ax5AiG3st0kDckQivGE9V5LID_aJS7k8bC4szd7HJwS3ri44PpVauWS0fpBewdVdg8Bn1vGwFwFkXbxHNV9ue0TbLH06vtkZyPF8JdAIpiUrfIf6gHIo5jYUMf-iT_0tXcdQcx1mAUeHYzYSXHJ_HFQgtdFl1yzlSu8EUAuEVvAWjiFAKTpL2IX91bNxN5iqMJqktEqQMN8tIOuriehrIqmBm3lqbi1sxlPe4P9MjKq_WNe9JThpa5sm-DtmUB1Ksw3uDeacPaRR5Ngsendjzdc4QiRqsEUHxni_Q0vBh3yhwO-z3j0fYsdev4GY4u6XGih9h5-BsXuRF_u32oktEuw-G9aZKbgaHzHWvTOyIMICNHC8egi407aeaV4q-Iiu5YSHVQjA3xt9iv4km-DUST8KyI4nVas7ODpzKEpQUftqZcDhzV5EsGm2S0FLeQhT_TWWdvIUL2bzdzY3Ph-BCGSSOKAbtVHu5Bo6Ho5ieD-45BP3DEJ4Zw8Q4BHIndV_4A13J9E7_TM_z2fq7ttCFWZJMvwjRdGOGcv4JZ.eHMTybLu0FIB3COQ62bsB1TMPl7jaMGdVDIhWk1xiEc",
+							"type": "text"
 						}
-					}
+					]
 				},
 				"url": {
-					"raw": "http://localhost:5238/api/refresh",
+					"raw": "http://localhost:5280/api/refresh/token",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "5238",
+					"port": "5280",
 					"path": [
 						"api",
-						"refresh"
+						"refresh",
+						"token"
 					]
 				}
 			},

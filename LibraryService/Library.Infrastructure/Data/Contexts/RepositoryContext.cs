@@ -29,6 +29,10 @@ namespace Library.Infrastructure.Data
       public RepositoryContext(DbContextOptions<RepositoryContext> options)
          : base(options)
       {
+         if (Database.GetPendingMigrations().Any())
+         {
+            Database.Migrate();
+         }
       }
 
    }

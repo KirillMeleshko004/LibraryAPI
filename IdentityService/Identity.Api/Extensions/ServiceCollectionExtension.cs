@@ -45,8 +45,8 @@ namespace Identity.Api.Extensions
          //if OS is windows leave default configuration with DPAPI
          if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return services;
 
-         var keyDirName = Environment.GetEnvironmentVariable("KEY_DIR_NAME")!;
-         var x509CertPath = Environment.GetEnvironmentVariable("HTTPS_CERT_PATH")!;
+         var keyDirName = Environment.GetEnvironmentVariable("DP_KEYS_DIR_NAME")!;
+         var x509CertPath = Environment.GetEnvironmentVariable("DP_CERT_PATH")!;
 
          services.AddDataProtection()
             .PersistKeysToFileSystem(new DirectoryInfo(keyDirName))

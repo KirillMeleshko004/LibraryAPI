@@ -17,7 +17,7 @@ builder.Services.ConfigurePresentation();
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureDataProtection();
 
-builder.Services.ConfigureOpenIdDict();
+builder.Services.ConfigureOpenIdDict(builder.Configuration);
 builder.Services.ConfigurePolicies();
 
 builder.Services.ConfigureApplicationServices();

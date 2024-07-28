@@ -87,7 +87,6 @@ namespace Library.Controllers
       public async Task<IActionResult> CreateAuthor([FromBody] AuthorForCreationDto authorDto,
          CancellationToken cancellationToken)
       {
-
          var result = await _sender.Send(new CreateAuthorCommand(authorDto), cancellationToken);
 
          return CreatedAtAction(nameof(GetAuthorById),
