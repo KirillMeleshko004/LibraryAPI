@@ -9,5 +9,9 @@ namespace Library.UseCases.Common.RequestFeatures
         public int PageSize { get; set; } = 10;
 
         public string? OrderBy { get; set; }
+
+        public string? SearchTerm { get; set; }
+
+        public Dictionary<string, IEnumerable<string>>? Filters { get; set; }
     }
 }

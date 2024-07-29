@@ -1,6 +1,9 @@
+using AutoMapper.Internal;
 using Library.Domain.Entities;
 using Library.UseCases.Common.RequestFeatures;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
@@ -12,7 +15,7 @@ namespace Library.Infrastructure.Data.Extensions
    public static class IQueryableExtension
    {
 
-      private static readonly Dictionary<Type, string> _defaultOrderField = new()
+      private static readonly Dictionary<Type, string> _defaultField = new()
       {
          {typeof(Book), nameof(Book.Title)},
          {typeof(Author), nameof(Author.FirstName)},
@@ -35,12 +38,31 @@ namespace Library.Infrastructure.Data.Extensions
 
          if (string.IsNullOrWhiteSpace(queryString) || string.IsNullOrWhiteSpace(orderQuery))
          {
-            var defaultOrderField = _defaultOrderField[typeof(T)];
+            var defaultOrderField = _defaultField[typeof(T)];
 
             return query.OrderBy(defaultOrderField);
          }
 
          return query.OrderBy(orderQuery);
+      }
+
+      public static IQueryable<T> Filter<T>(this IQueryable<T> query,
+         Dictionary<string, IEnumerable<string>>? filters)
+      {
+         if (filters == null) return query;
+
+         foreach (var filter in filters)
+         {
+            var propName = GetValidPropName<T>(filter.Key);
+
+            if (propName == null) continue;
+
+            var exp = BuildFilterExpression<T>(propName, filter.Value.AsQueryable());
+
+            query = query.Where(exp);
+         }
+
+         return query;
       }
 
       #region Private methods
@@ -51,10 +73,6 @@ namespace Library.Infrastructure.Data.Extensions
 
          var result = new StringBuilder();
 
-         //Select all non static public properies
-         var properties = typeof(T)
-               .GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
          //retrieve all tokens from query string
          var tokens = queryString.Trim().Split(',');
 
@@ -64,11 +82,7 @@ namespace Library.Infrastructure.Data.Extensions
 
             var prop = token.Split(' ').FirstOrDefault();
 
-            //Searching property with passed name inside object
-            var propName = properties
-               .Where(p => p.Name.Equals(prop, StringComparison.InvariantCultureIgnoreCase))
-               .Select(p => p.Name)
-               .FirstOrDefault();
+            var propName = GetValidPropName<T>(prop);
 
             if (propName == null) continue;
 
@@ -82,6 +96,42 @@ namespace Library.Infrastructure.Data.Extensions
          var orderString = result.ToString().TrimEnd(',', ' ');
 
          return orderString;
+      }
+
+      private static string? GetValidPropName<T>(string? name)
+      {
+         if (string.IsNullOrEmpty(name))
+         {
+            return null;
+         }
+
+         var properties = typeof(T)
+               .GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+         //Searching property with passed name inside object
+         var propName = properties
+            .Where(p => p.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
+            .Select(p => p.Name)
+            .FirstOrDefault();
+
+         return propName;
+      }
+
+      private static Expression<Func<T, bool>> BuildFilterExpression<T>(
+         string propName, IQueryable<string> values)
+      {
+         var parameter = Expression.Parameter(typeof(T), "entity");
+         var filteringMember = Expression.PropertyOrField(parameter, propName);
+
+         var collection = Expression.Constant(values);
+
+         MethodInfo methodInfo = typeof(Queryable).GetMethods()
+            .Single(x => x.Name == "Contains" && x.GetParameters().Length == 2)
+            .MakeGenericMethod(typeof(string));
+
+         var body = Expression.Call(null, methodInfo, collection, filteringMember);
+
+         return Expression.Lambda<Func<T, bool>>(body, parameter);
       }
 
       #endregion
