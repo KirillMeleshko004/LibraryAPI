@@ -46,6 +46,17 @@ namespace Library.Infrastructure.Data.Extensions
          return query.OrderBy(orderQuery);
       }
 
+      public static IQueryable<T> Search<T>(this IQueryable<T> query, string? term)
+      {
+         if (string.IsNullOrWhiteSpace(term)) return query;
+
+         var lowerTerm = term.Trim().ToLower();
+
+         var expr = BuildSearchExpression<T>(_defaultField[typeof(T)], lowerTerm);
+
+         return query.Where(expr);
+      }
+
       public static IQueryable<T> Filter<T>(this IQueryable<T> query,
          Dictionary<string, IEnumerable<string>>? filters)
       {
@@ -115,6 +126,25 @@ namespace Library.Infrastructure.Data.Extensions
             .FirstOrDefault();
 
          return propName;
+      }
+
+      private static Expression<Func<T, bool>> BuildSearchExpression<T>(string propName,
+         string term)
+      {
+         var parameter = Expression.Parameter(typeof(T), "entity");
+         var filteringMember = Expression.PropertyOrField(parameter, propName);
+
+         var termParam = Expression.Constant(term);
+
+         MethodInfo toLowerMethod = typeof(string).GetMethod("ToLower",
+            Type.EmptyTypes)!;
+         MethodInfo containsMethod = typeof(string).GetMethod("Contains",
+            [typeof(string)])!;
+
+         var toLowerCall = Expression.Call(filteringMember, toLowerMethod);
+         var methodCall = Expression.Call(toLowerCall, containsMethod, termParam);
+
+         return Expression.Lambda<Func<T, bool>>(methodCall, parameter);
       }
 
       private static Expression<Func<T, bool>> BuildFilterExpression<T>(

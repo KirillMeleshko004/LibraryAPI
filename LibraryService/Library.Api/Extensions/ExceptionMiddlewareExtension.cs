@@ -31,11 +31,22 @@ namespace Library.Api.Extensions
 
                         logger.LogError("Something went worng {ex}", exceptionFeature.Error.Message);
 
+                        string message;
+
+                        if (context.Response.StatusCode == StatusCodes.Status500InternalServerError ||
+                            string.IsNullOrWhiteSpace(exceptionFeature.Error.Message))
+                        {
+                            message = "Something went wrong";
+                        }
+                        else
+                        {
+                            message = exceptionFeature.Error.Message;
+                        }
+
                         await context.Response.WriteAsync(new ErrorDetails
                         {
                             StatusCode = context.Response.StatusCode,
-                            Message = string.IsNullOrWhiteSpace(exceptionFeature.Error.Message) ?
-                                "Something went wrong" : exceptionFeature.Error.Message
+                            Message = message
                         }.ToString());
                     }
                 });
