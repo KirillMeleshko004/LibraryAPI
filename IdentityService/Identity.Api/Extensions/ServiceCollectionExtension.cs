@@ -108,7 +108,7 @@ namespace Identity.Api.Extensions
             })
             .AddServer(options =>
             {
-               options.SetTokenEndpointUris("api/connect/token", "api/refresh/token");
+               options.SetTokenEndpointUris("api/connect/token", "api/refresh");
 
                options.AllowPasswordFlow()
                   .AllowRefreshTokenFlow();

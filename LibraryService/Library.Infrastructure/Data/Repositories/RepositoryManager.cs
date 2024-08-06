@@ -55,7 +55,6 @@ namespace Library.Infrastructure.Data
       public async Task SaveChangesAsync()
       {
          _context.ChangeTracker.DetectChanges();
-         var a = _context.ChangeTracker.Entries();
          var changed = _context.ChangeTracker.Entries()
             .Where(e => e.State == Microsoft.EntityFrameworkCore.EntityState.Modified ||
                e.State == Microsoft.EntityFrameworkCore.EntityState.Added);

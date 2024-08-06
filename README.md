@@ -1,13 +1,12 @@
 # LibraryAPI
+
 Test task for Modsen
 
 #Как запустить:
 
 1. Устанавливаем docker
 
-2. В терминале переходим в папку проекта (в примере папка LibraryAPI):
-
-![Открытие терминала](images/terminal.png)
+2. В терминале переходим в папку проекта
 
 3. Вводим комманду "docker-compose up --build"
 
