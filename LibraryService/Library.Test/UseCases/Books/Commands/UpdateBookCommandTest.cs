@@ -192,7 +192,7 @@ namespace Library.Test.UseCases.Books.Commands
             catch (Exception ex)
             {
                 Assert.IsType<UnprocessableEntityException>(ex);
-                Assert.Equal($"Incorret author id: {Guid.Empty}. Author was not found.",
+                Assert.Equal($"Author with id: {command.BookDto.AuthorId} was not found.",
                     ex.Message);
             }
         }

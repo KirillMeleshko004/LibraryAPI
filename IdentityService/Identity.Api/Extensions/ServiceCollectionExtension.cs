@@ -113,13 +113,10 @@ namespace Identity.Api.Extensions
                options.AllowPasswordFlow()
                   .AllowRefreshTokenFlow();
 
-               //TODO
-               //Move certs to different folder
                options.AddEncryptionCertificate(
                   new X509Certificate2(File.ReadAllBytes(encrCertPath)));
                options.AddSigningCertificate(
                   new X509Certificate2(File.ReadAllBytes(signCertPath)));
-               // .DisableAccessTokenEncryption();
 
                options.RegisterScopes(scopes.ValidScopes.ToArray());
 

@@ -118,9 +118,7 @@ namespace Library.Test.UseCases.Books.Queries
         public async Task Handle_Should_ThrowNotFoundException_IfReaderNotFound()
         {
             //Arrange
-            var email = "test@test.com";
-
-            var command = new ListBooksForReaderQuery(new RequestParameters(), email);
+            var command = new ListBooksForReaderQuery(new RequestParameters(), "test@test.com");
             var handler = new ListBooksForReaderHandler(_repoMock.Object, _mapperMock.Object,
                 _loggerMock.Object);
 
@@ -142,7 +140,7 @@ namespace Library.Test.UseCases.Books.Queries
             catch (Exception ex)
             {
                 Assert.IsType<NotFoundException>(ex);
-                Assert.Equal("Reader was not found.", ex.Message);
+                Assert.Equal($"Reader with email: {command.ReaderEmail} was not found.", ex.Message);
             }
         }
 

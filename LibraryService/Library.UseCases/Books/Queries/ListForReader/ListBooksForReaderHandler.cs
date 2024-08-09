@@ -31,7 +31,7 @@ namespace Library.UseCases.Books.Queries
 
          if (reader == null)
          {
-            throw new NotFoundException(ReaderNotFound);
+            throw new NotFoundException(string.Format(ReaderNotFound, request.ReaderEmail));
          }
 
          var books = await _repo.Books.GetRange(request.Parameters,

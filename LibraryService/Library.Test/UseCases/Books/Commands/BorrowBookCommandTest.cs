@@ -186,7 +186,7 @@ namespace Library.Test.UseCases.Books.Commands
             catch (Exception ex)
             {
                 Assert.IsType<UnavailableException>(ex);
-                Assert.Equal($"Book with id: {Guid.Empty} is unavailable now.",
+                Assert.Equal($"Book with id: {command.BookId} is not available.",
                     ex.Message);
             }
         }

@@ -15,9 +15,12 @@ RUN for file in $(ls *.csproj); do \
 # restore all depen  dencies in .csproj files according to .sln file
 RUN dotnet restore;
 
+
 # copy all files and publish application
 # default publishing folder - ./{ProjectName}/bin/{Enviroment}/{.net version}
 COPY ./LibraryService/. .
+
+RUN dotnet test ./Library.Test/Library.Test.csproj --no-restore
 RUN dotnet publish ./Library.Api/Library.Api.csproj -c release --no-restore;
 
 # move results of app publishing into single folder for convenience

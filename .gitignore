@@ -4,7 +4,7 @@
 
 **/sql
 **/Keys
-Data
+**/LibraryService/Data
 Certs
 Security
 .vscode

@@ -40,6 +40,46 @@
 									"key": "PageNumber",
 									"value": "3",
 									"disabled": true
+								},
+								{
+									"key": "author",
+									"value": "a",
+									"disabled": true
+								},
+								{
+									"key": "author",
+									"value": "b",
+									"disabled": true
+								},
+								{
+									"key": "filters[genre]",
+									"value": "novel",
+									"disabled": true
+								},
+								{
+									"key": "filters[genre]",
+									"value": "friction",
+									"disabled": true
+								},
+								{
+									"key": "filters[genre]",
+									"value": "action",
+									"disabled": true
+								},
+								{
+									"key": "filters[authorName]",
+									"value": "Lev Tolstoy",
+									"disabled": true
+								},
+								{
+									"key": "searchTerm",
+									"value": "Al",
+									"disabled": true
+								},
+								{
+									"key": "searchTerm",
+									"value": "test",
+									"disabled": true
 								}
 							]
 						}
@@ -171,8 +211,7 @@
 								{
 									"key": "image",
 									"type": "file",
-									"src": [],
-									"disabled": true
+									"src": "/C:/Users/kirik/OneDrive/Рабочий стол/art/Tsukihime/07o5z0cwrv961.webp"
 								}
 							]
 						},

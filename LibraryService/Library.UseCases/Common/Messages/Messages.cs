@@ -7,7 +7,7 @@ namespace Library.UseCases.Common.Messages
       public const string AuthorDeleted = "Author with id: {0} was deleted.";
 
       public const string BookNotFound = "Book with id: {0} was not found.";
-      public const string BookNotAvailable = "Book with id: {0} not available.";
+      public const string BookNotAvailable = "Book with id: {0} is not available.";
       public const string BookNotFoundISBN = "Book with ISBN: {0} was not found.";
       public const string BookCreated = "Book with id: {0} was created.";
       public const string BookDeleted = "Book with id: {0} was deleted.";

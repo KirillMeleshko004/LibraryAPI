@@ -85,8 +85,6 @@ namespace Library.Api.Extensions
          services.AddOpenIddict()
             .AddValidation(options =>
             {
-               //TODO
-               //Move certs to different folder
                options.AddEncryptionCertificate(
                   new X509Certificate2(File.ReadAllBytes(encrCertPath)));
                options.AddSigningCertificate(
@@ -164,7 +162,7 @@ namespace Library.Api.Extensions
                   {
                      Password = new OpenApiOAuthFlow
                      {
-                        TokenUrl = new Uri("https://localhost:7213/api/connect/token"),
+                        TokenUrl = new Uri("http://localhost:5238/api/connect/token"),
                         Scopes = new Dictionary<string, string>
                         {
                            {"api.library", "Library API"},

@@ -29,7 +29,7 @@ namespace Library.Infrastructure.Data
       public RepositoryContext(DbContextOptions<RepositoryContext> options)
          : base(options)
       {
-         if (Database.GetPendingMigrations().Any())
+         if (Database.IsSqlServer() && Database.GetPendingMigrations().Any())
          {
             Database.Migrate();
          }

@@ -183,7 +183,7 @@ namespace Library.Test.UseCases.Books.Commands
             catch (Exception ex)
             {
                 Assert.IsType<UnprocessableEntityException>(ex);
-                Assert.Equal($"Author with id: {Guid.Empty} was not found during book creation.",
+                Assert.Equal($"Author with id: {Guid.Empty} was not found.",
                     ex.Message);
             }
         }

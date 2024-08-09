@@ -18,8 +18,6 @@ public class CertCreatorService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        //TODO
-        //Copy certs to shared folder
         Directory.CreateDirectory(_configuration.GetValue<string>("CERT_DIR")!);
 
         CreateHttpsCertificate();

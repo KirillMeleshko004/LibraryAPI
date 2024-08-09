@@ -158,7 +158,7 @@ namespace Library.Test.UseCases.Books.Commands
             catch (Exception ex)
             {
                 Assert.IsType<UnauthorizedException>(ex);
-                Assert.Equal("Invalid reader.",
+                Assert.Equal("Reader with email: test@gmail.com was not found.",
                     ex.Message);
             }
         }
@@ -195,7 +195,8 @@ namespace Library.Test.UseCases.Books.Commands
             catch (Exception ex)
             {
                 Assert.IsType<ForbidException>(ex);
-                Assert.Equal("Reader has not borrowed that book.", ex.Message);
+                Assert.Equal($"Reader with email: {command.ReaderEmail} has not borrowed book with id: {command.BookId}.",
+                    ex.Message);
             }
         }
 
